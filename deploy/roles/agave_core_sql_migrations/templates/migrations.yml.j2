@@ -1,0 +1,83 @@
+###############################################################
+# Core Science APIs - Dev Migrations
+# migrations.yml
+#
+# This contains the database migration utilities for updating
+# and repairing the database. For database backup and snapshots,
+# please see the `config/extras/db` folder.
+#
+# note: Do not run this entire file. In the vast majority of
+# cases, it is sufficient to run the info, migrate, and validate
+# tasks in succession to handle the database update in its
+# entirety.
+#
+###############################################################
+
+migrate:
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/agave-migrations:$AGAVE_VERSION
+  command: "./flyway -url=$URL -user=$MYSQL_USER -schemas=$MYSQL_DATABASE -table=migrations migrate"
+  environment:
+      AGAVE_VERSION: '{{ agave_core_version }}'
+      MYSQL_USER: '{{ mysql_core_user }}'
+      MYSQL_PASSWORD: '{{ mysql_core_password }}'
+      MYSQL_HOST: '{{ mysql_core_host }}'
+      MYSQL_PORT: '{{ mysql_core_port }}'
+      MYSQL_DATABASE: 'agave-api'
+      MYSQL_PARMS: 'zeroDateTimeBehavior=convertToNull&amp;sessionVariables=FOREIGN_KEY_CHECKS=0&amp;relaxAutoCommit=true&amp;tinyInt1isBit=false'
+      URL: "jdbc:mysql://{{ mysql_core_host }}:{{ mysql_core_port }}/agave-api?zeroDateTimeBehavior=convertToNull&amp;sessionVariables=FOREIGN_KEY_CHECKS=0&amp;relaxAutoCommit=true&amp;tinyInt1isBit=false"
+
+clean:
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/agave-migrations:$AGAVE_VERSION
+  command: "./flyway -url=$URL -user=$MYSQL_USER -schemas=$MYSQL_DATABASE -table=migrations clean"
+  environment:
+      AGAVE_VERSION: '{{ agave_core_version }}'
+      MYSQL_USER: '{{ mysql_core_user }}'
+      MYSQL_PASSWORD: '{{ mysql_core_password }}'
+      MYSQL_HOST: '{{ mysql_core_host }}'
+      MYSQL_PORT: '{{ mysql_core_port }}'
+      MYSQL_DATABASE: 'agave-api'
+      MYSQL_PARMS: 'zeroDateTimeBehavior=convertToNull&amp;sessionVariables=FOREIGN_KEY_CHECKS=0&amp;relaxAutoCommit=true&amp;tinyInt1isBit=false'
+      URL: "jdbc:mysql://{{ mysql_core_host }}:{{ mysql_core_port }}/agave-api?zeroDateTimeBehavior=convertToNull&amp;sessionVariables=FOREIGN_KEY_CHECKS=0&amp;relaxAutoCommit=true&amp;tinyInt1isBit=false"
+
+info:
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/agave-migrations:$AGAVE_VERSION
+  command: "./flyway -url=$URL -user=$MYSQL_USER -schemas=$MYSQL_DATABASE -table=migrations info"
+  environment:
+      AGAVE_VERSION: '{{ agave_core_version }}'
+      MYSQL_USER: '{{ mysql_core_user }}'
+      MYSQL_PASSWORD: '{{ mysql_core_password }}'
+      MYSQL_HOST: '{{ mysql_core_host }}'
+      MYSQL_PORT: '{{ mysql_core_port }}'
+      MYSQL_DATABASE: 'agave-api'
+      MYSQL_PARMS: 'zeroDateTimeBehavior=convertToNull&amp;sessionVariables=FOREIGN_KEY_CHECKS=0&amp;relaxAutoCommit=true&amp;tinyInt1isBit=false'
+      URL: "jdbc:mysql://{{ mysql_core_host }}:{{ mysql_core_port }}/agave-api?zeroDateTimeBehavior=convertToNull&amp;sessionVariables=FOREIGN_KEY_CHECKS=0&amp;relaxAutoCommit=true&amp;tinyInt1isBit=false"
+
+baseline:
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/agave-migrations:$AGAVE_VERSION
+  command: "./flyway -url=$URL -user=$MYSQL_USER -schemas=$MYSQL_DATABASE -table=migrations baseline"
+  environment:
+      AGAVE_VERSION: '{{ agave_core_version }}'
+      MYSQL_USER: '{{ mysql_core_user }}'
+      MYSQL_PASSWORD: '{{ mysql_core_password }}'
+      MYSQL_HOST: '{{ mysql_core_host }}'
+      MYSQL_PORT: '{{ mysql_core_port }}'
+      MYSQL_DATABASE: 'agave-api'
+      MYSQL_PARMS: 'zeroDateTimeBehavior=convertToNull&amp;sessionVariables=FOREIGN_KEY_CHECKS=0&amp;relaxAutoCommit=true&amp;tinyInt1isBit=false'
+      URL: "jdbc:mysql://{{ mysql_core_host }}:{{ mysql_core_port }}/agave-api?zeroDateTimeBehavior=convertToNull&amp;sessionVariables=FOREIGN_KEY_CHECKS=0&amp;relaxAutoCommit=true&amp;tinyInt1isBit=false"
+
+repair:
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/agave-migrations:$AGAVE_VERSION
+  command: "./flyway -url=$URL -user=$MYSQL_USER -schemas=$MYSQL_DATABASE -table=migrations repair"
+  environment:
+      AGAVE_VERSION: '{{ agave_core_version }}'
+      MYSQL_USER: '{{ mysql_core_user }}'
+      MYSQL_PASSWORD: '{{ mysql_core_password }}'
+      MYSQL_HOST: '{{ mysql_core_host }}'
+      MYSQL_PORT: '{{ mysql_core_port }}'
+      MYSQL_DATABASE: 'agave-api'
+      MYSQL_PARMS: 'zeroDateTimeBehavior=convertToNull&amp;sessionVariables=FOREIGN_KEY_CHECKS=0&amp;relaxAutoCommit=true&amp;tinyInt1isBit=false'
+      URL: "jdbc:mysql://{{ mysql_core_host }}:{{ mysql_core_port }}/agave-api?zeroDateTimeBehavior=convertToNull&amp;sessionVariables=FOREIGN_KEY_CHECKS=0&amp;relaxAutoCommit=true&amp;tinyInt1isBit=false"
+
+tenantconfig:
+    image: mysql:5.6
+    command: mysql -A -u{{ mysql_core_user }} -p{{ mysql_core_password }} -h{{ mysql_core_host }} -P{{ mysql_core_port }} -e  "UPDATE \`tenants\` SET \`base_url\` = 'https://{{ host }}/', \`name\` = 'Agave {{ tenant_id }} Tenant',  \`tenant_id\` = '{{ tenant_id }}' WHERE \`id\` = '1';" agave-api

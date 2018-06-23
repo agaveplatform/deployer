@@ -1,0 +1,52 @@
+---
+
+- name: install common packages
+  apt: name='{{ item }}' state=present update_cache=yes
+  with_items:
+    - git
+    - python-pip
+    - gnome-schedule
+  become: yes
+  become_user: root
+  become_method: sudo
+
+- name: install docker gpg key
+  apt_key: keyserver=hkp://p80.pool.sks-keyservers.net:80 id=58118E89F3A912897C070ADBF76221572C52609D state=present
+  become: yes
+  become_user: root
+  become_method: sudo
+
+- name: update /etc/apt/sources.list.d/docker.list
+  copy: src=docker.list.ubuntu.trusty dest=/etc/apt/sources.list.d/docker.list
+  become: yes
+  become_user: root
+  become_method: sudo
+
+- name: remove old lxc-docker repo
+  apt: name=lxc-docker* state=absent update_cache=yes
+  become: yes
+  become_user: root
+  become_method: sudo
+  ignore_errors: yes
+
+- shell: uname -r
+  register: kernel_version
+
+- name: install new docker packages
+  apt: "name='{{ item }}' state=present update_cache=yes force=yes"
+  with_items:
+    - docker-engine={{ docker_version }}
+    - linux-image-extra-{{ kernel_version.stdout }}
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: "{{ update_docker_version }}"
+
+- name: remove devicemapper
+  file: name=/var/lib/docker/devicemapper state=absent
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: "{{ update_docker_version }}"
+
+

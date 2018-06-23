@@ -1,0 +1,86 @@
+
+# usually will want this to be false to leverage the rolling deployment with 0 downtime. only set to true to
+# recover from an issue or more thoroughly test an update.
+remove_all_auth_containers: false
+
+# whether to remove the entire /home/apim directory. We do this only when deploying new instances of a tenant/platform
+# to ensure files from previous deployments don't create issues.
+remove_apim_dir: False
+
+agave_id_image: agaveapi/agave_id_dedicated
+
+# service versions
+haproxy_auth_version: latest
+apim_httpd_version: latest
+apim19_base_version: latest
+agave_id_dedicated_version: latest
+agave_clients_dedicated_version: latest
+admin_services_nginx_version: latest
+flask_admin_services_version: latest
+
+# whether to compile the core api templates onto the auth host. this is a time expensive operation and only needs to be
+# done once on an auth host, or once each time there is an update to the congfigs of the core APIs.
+deploy_core_api_templates: False
+
+# http or https
+core_api_protocol: http
+
+# IP address for the core services.
+core_host: 172.17.42.1
+
+# the domain to use for the auth mysql host.
+mysql_host: fake-mysql-host.agave.auth
+
+# the IP to use for the auth mysql host
+auth_mysql_host: 172.17.42.1
+
+# IP used by serfnode to connect to the existing network.
+# current strategy is to run a "host serfnode" with host networking and join to 172.17.42.1 for all others.
+# this does not scale to multi-node clusters.
+peer_ip: 172.17.42.1
+
+# version of apim -- used by the sql migration tasks to determine which schemas to manage.
+apim_version: 19
+
+tag: 0.2 # used for clients and id
+
+# port for the apim mysql isntance. should be changed for production since maxscale listens on a different port.
+mysql_port: 3306
+
+# whether to deploy the admin_password_grant which makes it possible to pull delegated tokens using the admin credentials
+deploy_admin_password_grant: False
+
+# length of time, in sexonds, that an access token should be valid.
+access_token_validity_time: 14400
+
+# whether to update the apim hosts file with the location of the core services. if true, requires core_host.
+update_apim_core_dns: False
+
+# whether to update the adminaccounts hosts file with the location of the auth services. relies on docker0
+update_auth_admin_dns: True
+
+# for A/B deployements
+ha_deployment: True
+hap_servers:
+    - name: auth1
+      ip: 172.17.42.1
+      port: 4080
+      ssl_port: 40443
+    - name: auth2
+      ip: 172.17.42.1
+      port: 5080
+      ssl_port: 50443
+
+# whether to deploy a custom branded oauth application
+deploy_custom_oauth_app: False
+
+# whether to update the existing oauth application with a custom version
+update_custom_oauth_app: False
+
+# whether to deploy the tenant admin services
+deploy_admin_services: False
+
+auth_gateway_ip: 172.17.0.1
+
+# sandbox endpoints have not been implemented, but we need a default to compile the API templates.
+agave_profiles_sandbox_url: profiles.dev_sandbox.agave.tacc.utexas.edu/profiles

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+docker pull agaveapi/haproxy_auth:{{ haproxy_auth_version }}
+docker pull agaveapi/apim19_base:{{ apim19_base_version }}
+docker pull agaveapi/apim_httpd:{{ apim_httpd_version }}
+docker pull agaveapi/agave_clients_dedicated:{{ agave_clients_dedicated_version }}
+docker pull {{ agave_id_image }}:{{ agave_id_dedicated_version }}
+docker pull agaveapi/flask_admin_services:{{ flask_admin_services_version }}
+docker pull agaveapi/admin_services_nginx:{{ admin_services_nginx_version }}

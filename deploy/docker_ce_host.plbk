@@ -1,0 +1,63 @@
+# Run this playbook to make a VM into a docker host and ensure the docker engine is running.
+# The lastest Docker CE version is installed from the Docker repository. CentOS and Debian supported.
+# Aliases and bash completion are also installed by default.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+# 1. ssh_remote_user - the linux user accounts that should be used for connecting via ssh.
+# 2. update_docker_version and update_docker_compose_version: by default, this role does not install/update docker. Set
+#    these to true to install a version.
+#
+# Note: SSH credentials (e.g. ansible_ssh_host, ansible_ssh_private_key_file) should be placed in the
+#       hosts file.
+#
+# Example invocation:
+# $ ansible-playbook -i host_files/docker_hosts docker_host.plbk
+#
+# ansible-playbook -i host_files/sandbox_hosts docker_host.plbk -e update_docker_version=True -e update_docker_compose_version=True
+
+
+---
+
+  # deploy and start containers
+- hosts: docker_hosts
+  become: yes
+  roles:
+    - agave_host
+    - {role: zaxos.docker-ce-ansible-role, become: yes, when: update_docker_version}
+    - {role: agave_vm_manager, become: yes}
+
+
+  tasks:
+    - name: install docker compose
+      pip: name=docker-compose state=present
+      when: update_docker_compose_version
+
+    # Aliases, completion, helpers for docker and docker compose
+    - name: install docker aliases
+      get_url:
+        dest: /etc/profile.d/docker.aliases.sh
+        url: https://bitbucket.org/!api/2.0/snippets/deardooley/9KL4X/8cda45426572de3ff43a8da07f12e5ee95f73b5d/files/docker.aliases
+        force: yes
+
+    - name: add execute permission to docker aliases
+      file:
+        path: /etc/profile.d/docker.aliases.sh
+        owner: root
+        group: root
+        mode: 01755
+
+
+    - name: install docker-compose bash completion
+      get_url:
+        url: https://raw.githubusercontent.com/docker/compose/1.21.2/contrib/completion/bash/docker-compose
+        dest: /etc/bash_completion.d/docker-compose
+        force: yes
+
+    - name: add execute permission to docker-compose bash completion
+      file:
+        path: /etc/bash_completion.d/docker-compose
+        owner: root
+        group: root
+        mode: 01755

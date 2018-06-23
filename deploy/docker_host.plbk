@@ -1,0 +1,29 @@
+# Run this playbook to make a VM into a docker host and ensure the docker engine is running.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+# 1. ssh_remote_user - the linux user accounts that should be used for connecting via ssh.
+# 2. update_docker_version and update_docker_compose_version: by default, this role does not install/update docker. Set
+#    these to true to install a version.
+# 3. docker_version (optional) - the version to update to. Must match the package name for the given package manager.
+#    For example, docker_version=1.11.2-1.el7.centos or   docker_version=1.12.6-1.el7.centos
+#    Note: use `sudo yum list docker-engine` to get a list of available docker versions once the docker yum repo has
+#          been added to the host. (This requires the Docker Yum repo to have already been added).
+#
+# Note: SSH credentials (e.g. ansible_ssh_host, ansible_ssh_private_key_file) should be placed in the
+#       hosts file.
+#
+# Example invocation:
+# $ ansible-playbook -i host_files/docker_hosts docker_host.plbk
+#
+# ansible-playbook -i host_files/sandbox_hosts docker_host.plbk -e update_docker_version=True -e update_docker_compose_version=True
+
+
+---
+
+  # deploy and start containers
+- hosts: docker_hosts
+  roles:
+    - agave_host
+    - docker_host

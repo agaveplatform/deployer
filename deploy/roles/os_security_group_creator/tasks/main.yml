@@ -1,0 +1,145 @@
+---
+################################################################################
+#
+#   REQUIRED VARIABLES
+#
+#   os_authurl (https://rodeo.tacc.utexas.edu/dashboard/auth/login/)
+#   domain_name
+#   project_name
+#   username (<rodeo_login>)
+#   password (<rodeo_password>)
+#
+#   namespace
+#
+################################################################################
+
+- name: Make Agave Security Groups
+  os_security_group:
+    auth_type: password
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    name: "{{item}}"
+    state: present
+  with_items:
+    - "{{os_auth_security_group}}"
+    - "{{os_core_security_group}}"
+    - "{{os_db_security_group}}"
+
+- name: Set Auth Remote IP Rules
+  os_security_group_rule:
+    auth_type: password
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    security_group: "{{os_auth_security_group}}"
+    state: present
+    direction: "{{item.direction}}"
+    ethertype: "{{item.ethertype}}"
+    protocol: "{{item.protocol}}"
+    port_range_min: "{{item.port_range_min}}"
+    port_range_max: "{{item.port_range_max}}"
+    remote_ip_prefix: "{{item.remote_ip_prefix}}"
+  with_items:
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 22 , port_range_max: 22 , remote_ip_prefix: 0.0.0.0/0 }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 80 , port_range_max: 80 , remote_ip_prefix: 0.0.0.0/0 }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 443 , port_range_max: 443 , remote_ip_prefix: 0.0.0.0/0 }
+
+- name: Set Core Remote IP Rules
+  os_security_group_rule:
+    auth_type: password
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    security_group: "{{os_core_security_group}}"
+    state: present
+    direction: "{{item.direction}}"
+    ethertype: "{{item.ethertype}}"
+    protocol: "{{item.protocol}}"
+    port_range_min: "{{item.port_range_min}}"
+    port_range_max: "{{item.port_range_max}}"
+    remote_ip_prefix: "{{item.remote_ip_prefix}}"
+  with_items:
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 22 , port_range_max: 22 , remote_ip_prefix: 0.0.0.0/0 }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 80 , port_range_max: 80 , remote_ip_prefix: 0.0.0.0/0 }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 443 , port_range_max: 443 , remote_ip_prefix: 0.0.0.0/0 }
+
+- name: Set Core Remote Group Rules
+  os_security_group_rule:
+    auth_type: password
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    security_group: "{{os_core_security_group}}"
+    state: present
+    direction: "{{item.direction}}"
+    ethertype: "{{item.ethertype}}"
+    protocol: "{{item.protocol}}"
+    port_range_min: "{{item.port_range_min}}"
+    port_range_max: "{{item.port_range_max}}"
+    remote_group: "{{item.remote_group}}"
+  with_items:
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 80 , port_range_max: 80 , remote_group: "{{os_auth_security_group}}" }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 443 , port_range_max: 443 , remote_group: "{{os_auth_security_group}}" }
+
+- name: Set DB Remote IP Rules
+  os_security_group_rule:
+    auth_type: password
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    security_group: "{{os_db_security_group}}"
+    state: present
+    direction: "{{item.direction}}"
+    ethertype: "{{item.ethertype}}"
+    protocol: "{{item.protocol}}"
+    port_range_min: "{{item.port_range_min}}"
+    port_range_max: "{{item.port_range_max}}"
+    remote_ip_prefix: "{{item.remote_ip_prefix}}"
+  with_items:
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 22 , port_range_max: 22 , remote_ip_prefix: 0.0.0.0/0 }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 389 , port_range_max: 389 , remote_ip_prefix: 0.0.0.0/0 }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 3301 , port_range_max: 3301 , remote_ip_prefix: 0.0.0.0/0 }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 3306 , port_range_max: 3306 , remote_ip_prefix: 192.168.0.0/24 }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 11300 , port_range_max: 11300 , remote_ip_prefix: 0.0.0.0/0 }
+
+- name: Set DB Remote Group Rules
+  os_security_group_rule:
+    auth_type: password
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    security_group: "{{os_db_security_group}}"
+    state: present
+    direction: "{{item.direction}}"
+    ethertype: "{{item.ethertype}}"
+    protocol: "{{item.protocol}}"
+    port_range_min: "{{item.port_range_min}}"
+    port_range_max: "{{item.port_range_max}}"
+    remote_group: "{{item.remote_group}}"
+  with_items:
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 389 , port_range_max: 389 , remote_group: "{{os_auth_security_group}}" }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 3301 , port_range_max: 3301 , remote_group: "{{os_core_security_group}}" }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 3306 , port_range_max: 3306 , remote_group: "{{os_auth_security_group}}" }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 9000 , port_range_max: 9000 , remote_group: "{{os_core_security_group}}" }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 11300 , port_range_max: 11300 , remote_group: "{{os_auth_security_group}}" }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 11300 , port_range_max: 11300 , remote_group: "{{os_core_security_group}}" }
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 27017 , port_range_max: 27017 , remote_group: "{{os_core_security_group}}" }

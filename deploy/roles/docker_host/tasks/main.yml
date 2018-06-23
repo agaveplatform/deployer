@@ -1,0 +1,120 @@
+# General purpose role for making the target server into a docker host.
+# Installs the latest docker binary as well as the latest docker compose binary.
+
+---
+
+- name: add docker group
+  group: name=docker state=present
+  become: yes
+  become_user: root
+  become_method: sudo
+
+- name: Add user to docker group
+  user: name={{ agave_linux_user_name }} generate_ssh_key=yes state=present groups=docker
+  become: yes
+  become_user: root
+  become_method: sudo
+
+#- name: Flush iptables INPUT Chain
+#  command: /usr/sbin/iptables -F INPUT
+#  sudo: yes
+#  when: "{{ update_docker_version }}"
+
+#- name: Flush iptables FORWARD Chain
+#  command: /usr/sbin/iptables -F FORWARD
+#  sudo: yes
+#  when: "{{ update_docker_version }}"
+
+- name: ensure docker is not running
+  service: name=docker state=stopped
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: update_docker_version or update_docker_compose_version
+  ignore_errors: yes
+
+- include_tasks: main-ubuntu.yml
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: ansible_os_family == "Debian"
+
+- include_tasks: main-centos.yml
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: ansible_os_family == "RedHat"
+
+- name: ensure docker is not running
+  service: name=docker state=stopped
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: update_docker_version or update_docker_compose_version
+
+- name: install docker compose
+  shell: curl -skL -o /usr/bin/docker-compose https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: update_docker_compose_version
+
+- name: set permissions on docker compose binary
+  acl: permissions="rx" name=/usr/bin/docker-compose state=present etype=user entity=apim
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: update_docker_compose_version
+
+# todo - need to check this
+- name: Flush iptables INPUT Chain
+  command: /usr/sbin/iptables -F INPUT
+#  ignore_errors: yes
+  become: yes
+  become_user: root
+  become_method: sudo
+
+- name: ensure docker is running
+  service: name=docker state=started enabled=yes
+  become: yes
+  become_user: root
+  become_method: sudo
+
+# Aliases, completion, helpers for docker and docker compose
+- name: install docker aliases into user's .bashrc.d directory
+  get_url:
+    url: https://bitbucket.org/!api/2.0/snippets/deardooley/9KL4X/8cda45426572de3ff43a8da07f12e5ee95f73b5d/files/docker.aliases
+    dest: /home/apim/.bashrc.d/docker.aliases
+    force: yes
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: add execute permission to docker aliases
+  file:
+    path: /home/apim/.bashrc.d/docker.aliases
+    owner: apim
+    group: docker
+    mode: 01755
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: install docker-compose bash completion
+  get_url:
+    url: https://raw.githubusercontent.com/docker/compose/1.21.2/contrib/completion/bash/docker-compose
+    dest: /etc/bash_completion.d/docker-compose
+    force: yes
+  become: yes
+  become_user: root
+  become_method: sudo
+
+- name: add execute permission to docker-compose bash completion
+  file:
+    path: /etc/bash_completion.d/docker-compose
+    owner: root
+    group: root
+    mode: 01755
+  become: yes
+  become_user: root
+  become_method: sudo

@@ -1,0 +1,66 @@
+mysql_core:
+  image: mysql:5.6
+  restart: always
+{% if mysql_mem_limit %}   
+  mem_limit: {{ mysql_mem_limit }}
+{% endif %}
+  ports:
+    - '3301:3306'
+  volumes:
+    - /home/apim/my.cnf:/etc/mysql/my.cnf
+    - /home/apim/mysql_core_data:/var/lib/mysql
+  environment:
+    MYSQL_DATABASE: agave-api
+    MYSQL_USER: {{ mysql_core_user }}
+    MYSQL_ROOT_PASSWORD: {{ mysql_root_password }}
+    MYSQL_PASSWORD: {{ mysql_core_password }}
+
+mysql_auth:
+  image: mysql:5.6
+  restart: always
+{% if mysql_mem_limit %}
+  mem_limit: {{ mysql_mem_limit }}
+{% endif %}
+  ports:
+    - '3306:3306'
+  volumes:
+    - /home/apim/my.cnf:/etc/mysql/my.cnf
+    - /home/apim/mysql_auth_data:/var/lib/mysql
+  environment:
+    MYSQL_USER: agaveapi
+    MYSQL_ROOT_PASSWORD: {{ mysql_root_password }}
+    MYSQL_PASSWORD: {{ mysql_core_password }}
+
+mongo:
+  image: agaveapi/mongodb:2.6
+  restart: always
+{% if mongo_mem_limit %}
+  mem_limit: {{ mongo_mem_limit }}
+{% endif %}
+  ports:
+    - '27017:27017'
+  volumes:
+    - /home/apim/mongo_data:/data
+  environment:
+    MONGODB_USERNAME: {{ agave_core_metadata_user }}
+    MONGODB_PASSWORD: {{ agave_core_metadata_password }}
+
+beanstalk:
+  image: agaveapi/beanstalkd
+  restart: always
+  ports:
+    - '11300:11300'
+  volumes:
+    - /home/apim/beanstalkd_data:/var/log/beanstalkd
+
+slapd:
+  image: jstubbs/slapd
+  restart: always
+  ports:
+    - "389:389"
+  environment:
+      LDAP_DOMAIN: agaveapi
+      LDAP_ORGANISATION: "Agave"
+      LDAP_ROOTPASS: {{ auth_ldap_bind_password }}
+  volumes:
+   - /home/apim/slapd_data:/data/ldap

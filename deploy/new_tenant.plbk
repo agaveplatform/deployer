@@ -1,0 +1,59 @@
+# Run this playbook to deploy a new tenant to either staging or production, creating the necessary databases in the
+# database server.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+# 1. tenant_id: used to determine which Docker images to deploy.
+# 2. hosts file: should be either 'prod_hosts' or 'staging_hosts' (passed using -i)
+# 3. env: the Agave environment (either 'staging' or 'prod', all lower case). This selects the correct group_vars to use.
+# 4. mysql_user and mysql_password: credentials used to authenticate to the mysql server. This account should have admin
+#    privileges on the entire MySQL instance: in particular, it should have the necessary privileges to create databases
+#    and update user privileges. It is NOT the set of credentials used by the tenant - those are configured in the
+#    passwords file.
+# 5. mysql_login_host & mysql_login_port (OPTIONAL) - set these if the root user doesn't have direct access to mysql
+#    *NOTE: these need to be set for staging since root does not have access via maxscale.
+# Note: SSH credentials (e.g. ansible_ssh_host, ansible_ssh_user, ansible_ssh_private_key_file) should be placed in the
+#       hosts file.
+#
+# Example invocation:
+# $ ansible-playbook -i host_files/staging_hosts new_tenant.plbk -e env=staging -e tenant_id=dev_staging -e mysql_root_user=root -e mysql_root_password=<get_from_stache> -e mysql_login_host=172.17.42.1 -e mysql_login_port=3307
+# To create a production tenant.
+# $ ansible-playbook -i host_files/sgci_hosts new_tenant.plbk -e env=prod -e tenant_id=sgci -e mysql_root_user=root -e mysql_root_password=<get_from_stache> -e mysql_login_host=localhost
+
+---
+
+  # update database server first so that apim container can start correctly
+- hosts: db
+  vars:
+      - ldap_host_ip: "{{ hostvars[groups['db'][0]]['ansible_eth0']['ipv4']['address'] }}"
+      - auth_mysql_host: "{{ hostvars[groups['db'][0]]['ansible_ssh_host'] }}"
+      - auth_beanstalk_server: "{{ hostvars[groups['db'][0]]['ansible_ssh_host'] }}"
+      - core_host: "{{ hostvars[groups['core'][0]]['ansible_ssh_host'] }}"
+  roles:
+    - mysql_apim
+
+  # deploy and start containers
+- hosts: auth
+  vars:
+      - ldap_host_ip: "{{ hostvars[groups['db'][0]]['ansible_eth0']['ipv4']['address'] }}"
+      - auth_mysql_host: "{{ hostvars[groups['db'][0]]['ansible_ssh_host'] }}"
+      - auth_beanstalk_server: "{{ hostvars[groups['db'][0]]['ansible_ssh_host'] }}"
+      - core_host: "{{ hostvars[groups['core'][0]]['ansible_ssh_host'] }}"
+      - update_docker_version: True
+      - update_docker_compose_version: True
+      - deploy_core_api_templates: True
+      - remove_apim_dir: True
+  roles:
+    - agave_host
+    - docker_host
+    - agave_auth
+    - auth_rolling_deploy
+    - ldap_apim
+
+# add log rotation and boutique apis
+- hosts: auth
+  roles:
+    - logrotate
+    - boutique_apis
+

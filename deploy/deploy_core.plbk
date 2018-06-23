@@ -1,0 +1,44 @@
+# Run this playbook to deploy an instance of the core services. The defaults replicate the staging environment.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+# 1. host: determines VM to use from the hosts file; e.g. "rodeo-db-staging-centos"
+
+# Example invocation:
+# $ ansible-playbook -i host_files/staging_hosts deploy_core.plbk
+
+
+---
+
+- name: gather all hosts information
+  hosts: all
+
+  # prep hosts
+- hosts: core
+  roles:
+    - agave_host
+    - docker_host
+
+  # prep hosts
+- hosts: core
+  roles:
+    - { role: agave_core_compose_repo, when: deploy_core_default_templates == false }
+
+
+  # deploy and start containers
+- hosts: core
+
+  roles:
+    - role: agave_core
+      tags: core_services
+
+
+# run initial migrations
+- hosts: core
+
+  roles:
+    - role: agave_core_sql_migrations
+      tags: db
+  vars:
+    - core_migrations_command: "migrate"

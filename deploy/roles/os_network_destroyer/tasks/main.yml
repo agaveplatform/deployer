@@ -1,0 +1,58 @@
+---
+################################################################################
+#
+#   REQUIRED VARIABLES
+#
+#   os_username
+#   os_password
+#   os_authurl
+#   os_domain
+#   os_project
+#
+################################################################################
+
+- name: Delete OpenStack Router
+  os_router:
+    name: "{{agave_namespace}}_router"
+    state: absent
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+
+- name: Delete OpenStack Subnet
+  os_subnet:
+    name: "{{agave_namespace}}_subnet"
+    network_name: "{{agave_namespace}}_net"
+    state: absent
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+
+- name: Delete OpenStack Network
+  os_network:
+    name: "{{agave_namespace}}_net"
+    state: absent
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+
+- name: Delete VM Keys
+  os_keypair:
+    name: "{{os_keyname}}"
+    state: absent
+    auth_type: password
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"

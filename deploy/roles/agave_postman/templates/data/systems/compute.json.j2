@@ -1,0 +1,54 @@
+#jinja2:variable_start_string:'[%' , variable_end_string:'%]', trim_blocks: False
+{
+  "id": "postman-test-compute-mp-{{TEST_DATE}}",
+  "name": "System Sandbox Configured as Execution System",
+  "status": "UP",
+  "type": "EXECUTION",
+  "description": "Testing Execution System",
+  "site": "agaveapi.co",
+  "executionType": "CLI",
+  "scratchDir": null,
+  "workDir": null,
+  "queues": [
+    {
+      "name": "debug",
+      "maxJobs": 100,
+      "maxUserJobs": 10,
+      "maxNodes": 128,
+      "maxMemoryPerNode": "2GB",
+      "maxProcessorsPerNode": 128,
+      "maxRequestedTime": "24:00:00",
+      "customDirectives": "",
+      "default": true
+    }
+  ],
+  "login": {
+    "host": "[%newman_agave_test_system_host%]",
+    "port": [%newman_agave_test_system_port%],
+    "protocol": "SSH",
+    "auth": {
+      "username": "[%newman_agave_test_system_username%]",
+      "publicKey": "[%newman_agave_test_system_public_key%]",
+      "privateKey": "[%newman_agave_test_system_private_key%]",
+      "type": "SSHKEYS"
+    }
+  },
+  "storage": {
+    "host": "[%newman_agave_test_system_host%]",
+    "port": [%newman_agave_test_system_port%],
+    "protocol": "SFTP",
+    "rootDir": "/",
+    "homeDir": "[%newman_agave_test_system_homedir%]",
+    "auth": {
+      "username": "[%newman_agave_test_system_username%]",
+      "publicKey": "[%newman_agave_test_system_public_key%]",
+      "privateKey": "[%newman_agave_test_system_private_key%]",
+      "type": "SSHKEYS"
+    }
+  },
+  "maxSystemJobs": 100,
+  "maxSystemJobsPerUser": 10,
+  "scheduler": "FORK",
+  "environment": "",
+  "startupScript": null
+}

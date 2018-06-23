@@ -1,0 +1,16 @@
+*.pyc
+.project
+.pydevproject
+.idea/
+*passwords
+apim.priv.key
+*.key
+*.crt
+*.cer
+*.vagrant
+*.iml
+build/
+tmp/
+deploy/inventory
+deployer-validation.bash
+jupyterhub-swarm.bash

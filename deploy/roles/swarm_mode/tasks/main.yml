@@ -1,0 +1,27 @@
+---
+
+- name: update docker with latest rc
+  command: curl -fsSL https://test.docker.com/ | sh
+  sudo: yes
+  sudo_user: apim
+  when: use_docker_rc and update_docker
+
+- name: initialize swam cluster
+  command: docker swarm init --listen-addr {{ swarm_master_ip }} > /home/apim/swarm_init_stdout.txt
+  sudo: yes
+  sudo_user: apim
+  when: swarm_master
+
+- name: parse swarm_init_stdout
+  command:
+
+- set_fact:
+    swarm_secret: "{{ swarm_init.stdout
+
+- name: join swarm cluster
+  command: docker swarm join --secret {{ swarm_secret }} --ca-hash {{ swarm_hash }} {{ swarm_master_ip }}:2377
+  sudo: yes
+  sudo_user: apim
+  when: swarm_worker
+
+

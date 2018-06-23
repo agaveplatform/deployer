@@ -1,0 +1,21 @@
+# Remove all containers and start fresh copies of the containers from a docker-compose file within the /home/apim directory.
+# Usage: ansible-playbook -i host_files/staging_hosts rebuild_containers.plbk -e group=auth -e compose_file=docker-compose-noserf.yml
+
+
+- hosts: "{{ group }}"
+  tasks:
+      - name: ensure docker is running
+        service: name=docker state=started
+        sudo: yes
+
+      - name: remove all existing containers
+        shell: docker rm -f `docker ps -aq`
+        sudo: yes
+        sudo_user: apim
+        ignore_errors: yes
+
+      - name: start the containers with docker compose
+        shell: docker-compose -f {{ compose_file }} up -d chdir=/home/apim
+        sudo: yes
+        sudo_user: apim
+

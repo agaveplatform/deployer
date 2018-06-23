@@ -1,0 +1,28 @@
+# Checkout the agave core compose files from a git repo.
+
+- include_vars: agave_core_configs/{{ core_config_file }}.yml
+- include_vars: agave_core_configs/{{ core_config_file }}_passwords
+
+
+- name: ensure repo key deployed
+  copy:
+      src: "{{ core_compose_repo_key_file }}"
+      dest: "/home/apim/.ssh/{{ core_compose_repo_key_file }}"
+#      dest: /home/apim/.ssh/id_rsa
+      mode: 0600
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: checkout the git repo
+  git:
+      repo: "{{ core_compose_repo_uri }}"
+      dest: "/home/apim/repos/{{ core_compose_repo_name }}"
+#      key_file: /home/apim/.ssh/id_rsa
+      key_file: "/home/apim/.ssh/{{ core_compose_repo_key_file }}"
+      accept_hostkey: True
+      clone: yes
+      force: yes
+  become: yes
+  become_user: apim
+  become_method: sudo

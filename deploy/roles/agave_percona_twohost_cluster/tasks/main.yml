@@ -1,0 +1,105 @@
+# This playbook builds a percona cluster with replication on two hosts.
+---
+
+- include: main-ubuntu.yml
+  when: ansible_os_family == "Debian"
+
+- include: main-centos.yml
+  when: ansible_os_family == "RedHat"
+
+- name: ensure db_compose directory present
+  file: path=/home/apim/db_cluster state=directory
+  sudo: yes
+  sudo_user: apim
+
+- name: remove the galera dat file
+  file: path=/mnt/data/ubuntu-pxc56/mysql/grastate.dat state=absent
+  sudo: yes
+
+# ignore errors here since this call will fail if there are no containers running
+- name: remove existing containers
+  shell: docker rm -f `docker ps -aq`
+  sudo: yes
+  sudo_user: apim
+  ignore_errors: yes
+
+- name: copy clustering files
+  copy: src=scripts/ dest=/home/apim/db_cluster
+  sudo: yes
+  sudo_user: apim
+
+- name: compile percona compose template
+  template: src=docker-compose-percona.yml.j2 dest=/home/apim/db_cluster/docker-compose-percona.yml
+  sudo: yes
+  sudo_user: apim
+
+- name: compile initial my.cnf template
+  template: src=my.cnf1.j2 dest=/home/apim/db_cluster/my.cnf
+  sudo: yes
+  sudo_user: apim
+
+- name: compile final my.cnf template
+  template: src=my.cnf2.j2 dest=/home/apim/db_cluster/my2.cnf
+  sudo: yes
+  sudo_user: apim
+
+- name: add executable permission to scripts
+  command: chmod +x /home/apim/db_cluster/{{ item }}
+  sudo: yes
+  with_items:
+    - build.sh
+    - init.sh
+
+- name: build the images
+  shell: ./build.sh chdir=/home/apim/db_cluster
+  sudo: yes
+  sudo_user: apim
+
+- name: create host data directories
+  file: path=/mnt/data/ubuntu-pxc56/mysql state=directory
+  sudo: yes
+
+- name: start percona containers via docker-compose
+  shell: docker-compose -f docker-compose-percona.yml up -d chdir=/home/apim/db_cluster
+  sudo: yes
+  sudo_user: apim
+
+- pause: seconds=25
+
+- name: stop mysql 1
+  shell: docker exec dbcluster_galera_1 service mysql stop
+  sudo: yes
+  sudo_user: apim
+  delegate_to: '{{ percona_ip_1 }}'
+
+- name: stop mysql 2
+  shell: docker exec dbcluster_galera_1 service mysql stop
+  sudo: yes
+  sudo_user: apim
+  delegate_to: '{{ percona_ip_2 }}'
+
+- pause: seconds=25
+
+- name: remove the galera dat file
+  shell: rm /mnt/data/ubuntu-pxc56/mysql/grastate.dat
+  sudo: yes
+
+- name: copy the my2.cnf file within the container
+  shell: docker exec dbcluster_galera_1 cp /etc/mysql/my2.cnf /etc/mysql/my.cnf
+  sudo: yes
+  sudo_user: apim
+
+- name: restart mysql 1 instance with clustering setup
+  shell: docker exec dbcluster_galera_1 service mysql bootstrap-pxc
+  sudo: yes
+  sudo_user: apim
+  delegate_to: '{{ percona_ip_1 }}'
+
+- pause: seconds=25
+
+- name: restart mysql 2 instance with clustering setup
+  shell: docker exec dbcluster_galera_1 service mysql start
+  sudo: yes
+  sudo_user: apim
+  delegate_to: '{{ percona_ip_2 }}'
+

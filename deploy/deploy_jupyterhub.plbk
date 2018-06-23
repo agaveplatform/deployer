@@ -1,0 +1,68 @@
+# Deploy an instance of the TACC multi-tenant JupyterHub.
+#
+# This playbook relied on a configuration directory with the following structure:
+#  - jupyterhub_config.py
+#  - jupyterhub_tenants.yml
+#  - login.html
+#  - volume_mounts
+#  o nginx
+#    - ssl_cert1.cer
+#    - ssl_key1.key
+#    - ssl_cert2.cer
+#    - ssl_key2.key
+#    . . .
+#
+# The tenants that should be supported by the instance are defined in the jupyterhub_tenants.yml file. Each
+# tenant will get its own hub container. All hub containers for the instance are fronted by a single nginx container and
+# separate SSL certificates can be used for each tenant. These should be provided in the nginx folder and specified in
+# the corresponding tenant stanza within the jupyterhub_tenants.yml
+#
+# Hub configurations such as which docker image to use for the user containers are specified in the jupyterhub_config.py
+# Note that these configurations applied to all tenants, though it would be straight-forward to extend the existing role
+# to support a jupyterhub_config.py for each tenant.
+#
+# By default, this playbook will use the roles/jupyterhub/ directory as the configuration directory. This will mean
+# deploying Agave's "public" Jupyterhub instance. It can be changed by setting the jupyterhub_conf_dir environmental
+# variable to a path relative to the deploy directory. Note that this path MUST end in a trailing slash.
+#
+# Example invocations:
+# Deploy Agave's "public" instance:
+#     ansible-playbook -i host_files/jupyter_hosts deploy_jupyterhub.plbk
+#
+# Deploy DesignSafe's instance:
+#     ansible-playbook -i host_files/jupyter_hosts deploy_jupyterhub.plbk -e jupyterhub_conf_dir=tenants/designsafe/jupyterhub/
+#
+#
+# NOTE: BY DEFAULT ALL USER NOTEBOOK SERVERS WILL BE REMOVED WHEN DEPLOYING/UPDATING JUPYTERHUB!
+# To prevent this, set remove_notebook_servers=False
+
+---
+
+- include_vars: roles/jupyterhub/files/jupyterhub_tenants.yml
+  when: jupyterhub_conf_dir == ""
+
+- include_vars: "{{ jupyterhub_conf_dir }}/jupyterhub_tenants.yml"
+  when: not jupyterhub_conf_dir == ""
+
+- hosts: hub
+  vars:
+      - update_docker_version: True
+      - update_docker_compose_version: True
+  roles:
+      - agave_host
+      - docker_host
+
+- hosts: hub
+  roles:
+      - { role: nfs_server, when: "use_stock_nfs == true" }
+      - nfs_server
+
+- hosts: hub
+  roles:
+      - jupyterhub
+
+# Get workers ready by pre-downloading user notebook image
+- hosts: worker
+  roles:
+      - jupyterhub_worker
+

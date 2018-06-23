@@ -1,0 +1,11 @@
+---
+
+- name: Compile docker_compose template
+  template: src=docker-compose-websocket-relay.yml dest=/home/apim/docker-compose-websocket-relay.yml
+  sudo: yes
+  sudo_user: apim
+
+- name: start the containers with docker compose
+  shell: docker-compose -f docker-compose-websocket-relay.yml up -d  chdir=/home/apim
+  sudo: yes
+  sudo_user: apim

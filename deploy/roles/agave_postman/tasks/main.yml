@@ -1,0 +1,287 @@
+# This role runs Agave's default Postman test collection against an instance of the Agave Platform.
+# The Postman tests are run using Postman's Newman test runner and results are written both to
+# standard out as well as machine readable files in xml, json, and html format.
+#
+# This suite is run against both production and development tenants to validate expected behavior and
+# provide some simple monitoring and benchmarking calls. As such, it should be run after updating
+# either the auth, core, worker, or db components in the platform.
+#
+# In order for these tests to run successfully, a system must be registered with Agave for all
+# compute and data operations. The system is configured to use SFTP and SSH for connectivity.
+# All other connectivity parameters are configurable through variables. It is recommended that
+# the VM where this role is run be used provided it has a public IP address. If not, then
+# any publicly accessible Linux server or container will do. A VM fitting within EC2's free tier
+# will be more than sufficient. 1core, 512MB memory, 10GB disk should be sufficient.
+#
+
+---
+
+# handle argument generation for node debug output
+- name: Conditionally set --debug flag to print output of wire trafic from NODE_DEBUG in newman
+  set_fact:
+    newman_debug_arg: "{{ '--debug' if newman_debug else '' }}"
+
+- debug:
+    var: newman_debug_arg
+  when: not(newman_debug_arg|trim == '')
+
+
+# handle argument generation for verbose output
+- name: Conditionally set --verbose flag to print verbose setup output
+  set_fact:
+    newman_verbose_arg: "{{ '--verbose' if newman_verbose else '' }}"
+
+- debug:
+    var: newman_verbose_arg
+  when: not(newman_verbose_arg|trim == '')
+
+
+
+# handle argument generation for dry runs
+- name: Conditionally set --dry-run flag to stop before invoking newman
+  set_fact:
+    newman_dry_run_arg: "{{ '--dry-run' if newman_dry_run else '' }}"
+
+- debug:
+    var: newman_dry_run_arg
+  when: not(newman_dry_run_arg|trim == '')
+
+# handle argument generation for backend tests
+- name: Conditionally set --skip-frontend flag to run against backend tests
+  set_fact:
+    newman_skip_frontend_arg: "{{ '--skip-frontend' if newman_skip_frontend else '' }}"
+
+- debug:
+    var: newman_skip_frontend_arg
+  when: not(newman_skip_frontend_arg|trim == '')
+
+
+# handle argument generation for single service tests
+- name: Conditionally set --service flag to restrict tests to a single service
+  set_fact:
+    newman_single_service_name_arg: "{{ '-s ' + newman_single_service_name if not((newman_single_service_name is undefined) or (newman_single_service_name is none) or (newman_single_service_name|trim == '')) else '' }}"
+#  when: newman_single_service_name is defined
+
+- debug:
+    var: newman_single_service_name_arg
+  when: not(newman_single_service_name_arg|trim == '')
+
+
+# Set Slack webhook arg if defined
+- name: Conditionally set --notify-slack argument to send tests to slack if desired
+  set_fact:
+    newman_slack_webhook_arg: "{{ '--notify-slack ' + newman_slack_webhook_url if not((newman_slack_webhook_url is undefined) or (newman_slack_webhook_url is none) or (newman_slack_webhook_url|trim == '')) else '' }}"
+  #when: newman_slack_webhook_url is defined and newman_slack_webhook_url
+
+#- name: Clear slack notification argument
+#  set_fact:
+#    newman_slack_webhook_arg: ""
+#  when: newman_slack_webhook_url is not defined or not newman_slack_webhook_url
+
+- debug:
+    var: newman_slack_webhook_arg
+  when: not(newman_slack_webhook_arg|trim == '')
+
+
+# if no newman_agave_tenant_host was set, ensure the right host is picked from the hosts file
+# based on whether the tests run against the frontend or backend
+#- name: Verify IP address of Agave tenant
+#  set_fact:
+#    newman_agave_tenant_base_ip: "{{ newman_agave_tenant_base_ip|default(hostvars[ groups['auth'][0] ]['ansible_ssh_host']) }}"
+#  when: not newman_skip_frontend
+#
+#- name: Verify IP address of Agave core host
+#  set_fact:
+#    newman_agave_tenant_base_ip: "{{ newman_agave_tenant_base_ip|default(hostvars[ groups['core'][0] ]['ansible_ssh_host']) }}"
+#  when: newman_skip_frontend
+
+# if no newman_agave_tenant_host was set, ensure the right host is picked from the hosts file
+# Conditionally add the server's dns entry to the container running the postman tests
+- name: Set --add-host argument to override DNS within the test container
+  set_fact:
+    newman_agave_tenant_add_host_args: "{{ '--add-host ' + newman_agave_tenant_base_hostname + ':' + newman_agave_tenant_base_ip if not((newman_agave_tenant_base_ip is undefined) or (newman_agave_tenant_base_ip is none) or (newman_agave_tenant_base_ip|trim == '')) else ''}}"
+#  when: newman_agave_tenant_base_ip is defined && newman_agave_tenant_base_ip is not False
+
+
+- debug:
+    var: not(newman_agave_tenant_add_host_args|trim == '')
+
+
+
+## Pull Newman image used to run the Postman collection
+#- name: Fetch Newman Image
+#  command: docker pull postman/newman_ubuntu1404:3.2.0
+
+
+# Clean up previous test data and reports
+- name: Find previous test directories
+  find:
+    paths: tmp
+    #{{ lookup('env', 'HOME') }}/
+    patterns: "agave_postman_tester*"
+    file_type: directory
+  register: previous_postman_test_results
+  when: newman_clean_tests
+
+
+- name: Remove previous test directories
+  file:
+    path: "{{ item['path'] }}"
+    state: absent
+  with_items: "{{ previous_postman_test_results['files'] }}"
+  when: newman_clean_tests
+
+- name: Create test directory
+  tempfile:
+    state: directory
+    prefix: agave_postman_tester
+    path: tmp
+  register: agave_postman_tempdir
+
+- name: Record test directory path
+  set_fact:
+    agave_postman_testdir: "{{agave_postman_tempdir.path}}"
+
+- debug: msg="Test directory defined at {{agave_postman_testdir}}"
+
+
+# move the Postman collection and test data into place.
+- name: Moving postman test collection and test data into place
+  synchronize:
+    src=../files/
+    dest={{agave_postman_testdir}}/
+
+# ensure execute permissions on scripts
+- name: Ensure execute permission on postman test scripts
+  file:
+    path: "{{agave_postman_testdir}}/{{item}}"
+    mode: 0755
+  with_items:
+    - "newman.sh"
+    - "lib/newman-to-slack.sh"
+    - "lib/jsonpki"
+
+- name: escape private key file contents
+  shell: lib/jsonpki --private {{newman_agave_test_system_private_key_file}}
+  args:
+    chdir: "{{playbook_dir}}/{{agave_postman_testdir}}"
+    executable: /bin/bash
+  when: newman_agave_test_system_private_key_file is defined
+  register: jsonpki_private_key_file
+
+- debug:
+    var=jsonpki_private_key_file
+
+- name: escape private key file contents
+  shell: echo {{ newman_agave_test_system_private_key | quote }} | lib/jsonpki --private
+  args:
+    chdir: "{{playbook_dir}}/{{agave_postman_testdir}}"
+    executable: /bin/bash
+  when: newman_agave_test_system_private_key_file is not defined
+  register: jsonpki_private_key
+
+- debug:
+    var=jsonpki_private_key
+
+- name: Reassign escaped private key values
+  set_fact:
+    newman_agave_test_system_private_key: '{{ jsonpki_private_key_file.stdout if newman_agave_test_system_private_key_file is defined else jsonpki_private_key.stdout }}'
+    #newman_agave_test_system_private_key: "{{ newman_agave_test_system_private_key | replace('\\n', '\\\\n') | replace('\\/', '\\\\/') }}"
+
+
+- name: escape public key file contents
+  shell: lib/jsonpki --public {{newman_agave_test_system_public_key_file}}
+  args:
+    chdir: "{{playbook_dir}}/{{agave_postman_testdir}}"
+    executable: /bin/bash
+  when: newman_agave_test_system_public_key_file is defined
+  register: jsonpki_public_key_file
+
+
+- debug:
+    var=jsonpki_public_key_file
+
+- name: escape public key file contents
+  shell: echo {{ newman_agave_test_system_public_key | quote }} | lib/jsonpki --public
+  args:
+    chdir: "{{playbook_dir}}/{{agave_postman_testdir}}"
+    executable: /bin/bash
+  when: newman_agave_test_system_public_key_file is not defined
+  register: jsonpki_public_key
+#- debug:
+#   var: newman_agave_test_system_private_key
+
+- debug:
+    var=jsonpki_public_key
+
+
+- name: Reassign escaped public key values
+  set_fact:
+    newman_agave_test_system_public_key: '{{ jsonpki_public_key_file.stdout if newman_agave_test_system_public_key_file is defined else jsonpki_public_key.stdout }}'
+    #newman_agave_test_system_public_key: "{{ newman_agave_test_system_public_key | replace('\\n', '\\\\n') | replace('\\/', '\\\\/') | replace('&', '\\\\&') }}"
+
+#- debug:
+#   var: newman_agave_test_system_public_key
+
+
+# Compiles templates for system definitions, etc needed to configure postman tests at runtime.
+# These tell Agave what system(s) to connect to for data and compute tests.
+- name: Compile postman test templates
+  template:
+    src={{item}}
+    dest={{agave_postman_testdir}}/{{ (item|splitext)[0]}}
+  with_items:
+    - data/systems/compute.json.j2
+    - data/systems/storage.json.j2
+    - config/newman_data.json.j2
+
+# Compile Postman environment template containing the Agave user account, client, and tenant values.
+# These tell the frontend tests where to point
+- name: Compile Postman oauth test environment templates
+  template:
+    src=environments/oauth.postman_environment.j2
+    dest={{agave_postman_testdir}}/environments/{{tenant_id}}.postman_environment
+  when: not newman_skip_frontend
+
+
+# Compile the custom jwt attributes for the test tenant and store as a variable. This will be
+# base64 encoded and injected into a JWT when the  {{tenant_id}.jwt.postman_environment.j2
+# template is compiled.
+- name: Construct jwt for backend Postman tests
+  set_fact:
+    jwt_attributes: "{{ lookup('template', './environments/jwt_attributes.json.j2')  }}"
+  when: newman_skip_frontend
+
+- debug:
+    var: jwt_attributes
+  when: newman_skip_frontend
+
+# Compile Postman environment template containing the Agave user account, tenant values, and
+# which tests to disable when no identity service is present.
+# These tell the backend tests where to point
+- name: Compile Postman jwt test environment templates. Tests will run against the backend
+  template:
+    src=./environments/jwt.postman_environment.j2
+    dest={{agave_postman_testdir}}/environments/{{tenant_id}}.jwt.postman_environment
+  when: newman_skip_frontend
+
+- debug: msg="{{agave_postman_testdir}}/newman.sh {{newman_dry_run_arg}} {{newman_skip_frontend_arg}} {{newman_verbose_arg}} {{newman_debug_arg}} {{ newman_agave_tenant_add_host_args }} {{ newman_slack_webhook_arg }} {{ newman_single_service_name_arg}} {{tenant_id}} | tee postman.log"
+
+
+# Kick off the Postman collection using newman.sh.
+- name: Run the Postman test collection using Newman
+  shell: ./newman.sh {{newman_dry_run_arg}} {{newman_skip_frontend_arg}} {{newman_verbose_arg}} {{newman_debug_arg}} {{ newman_agave_tenant_add_host_args }} {{ newman_slack_webhook_arg }} {{ newman_single_service_name_arg}} {{tenant_id}} | tee postman.log
+  args:
+    chdir: "{{playbook_dir}}/{{agave_postman_testdir}}"
+    executable: /bin/bash
+  register: testout
+
+- debug:
+    var=testout.stdout_lines
+  when: testout|success
+
+- debug:
+    var: testout.stderr_lines
+  when: not(testout|success)
+
+

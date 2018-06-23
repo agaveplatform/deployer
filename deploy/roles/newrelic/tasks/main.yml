@@ -1,0 +1,37 @@
+
+- name: add newrelic software package (yum)
+  yum: name='{{ item }}' state=present update_cache=yes
+  become: yes
+  become_method: sudo
+  when: ansible_os_family == "RedHat"
+  with_items:
+      - https://download.newrelic.com/pub/newrelic/el5/i386/newrelic-repo-5-3.noarch.rpm
+
+- name: add newrelic newrelic-sysmond package (yum)
+  yum: name=newrelic-sysmond state=present update_cache=yes
+  become: yes
+  become_method: sudo
+  when: ansible_os_family == "RedHat"
+
+- name: configure newrelic license key
+  shell: nrsysmond-config --set license_key={{ newrelic_license_key }}
+  become: yes
+  become_method: sudo
+  when: ansible_os_family == "RedHat"
+
+- name: configure newrelic nrsysmond.cfg with docker_connection
+  replace: dest=/etc/newrelic/nrsysmond.cfg regexp='#docker_connection=.*' replace='docker_connection=/var/run/docker.sock'
+  become: yes
+  become_method: sudo
+  when: ansible_os_family == "RedHat"
+
+- name: add newrelic to docker group
+  user: name=newrelic groups=docker append=yes
+  become: yes
+  become_method: sudo
+
+- name: ensure newrelic service enabled and running
+  service: name=newrelic-sysmond.service state=started enabled=yes
+  become: yes
+  become_method: sudo
+  when: ansible_os_family == "RedHat"

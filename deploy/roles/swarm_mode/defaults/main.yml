@@ -1,0 +1,7 @@
+
+# whether to update the system docker (will cause any running containers to be lost)
+update_docker: true
+
+# whether to use the latest release-candidate of docker (only applicable when update_docker: true)
+use_docker_rc: true
+

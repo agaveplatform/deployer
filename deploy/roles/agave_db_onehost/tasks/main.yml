@@ -1,0 +1,46 @@
+---
+
+- include_vars: tenants/{{ tenant_id }}/{{ tenant_id }}.yml
+- include_vars: tenants/{{ tenant_id }}/{{ tenant_id }}_passwords
+- include_vars: agave_core_configs/{{ tenant_id }}.yml
+- include_vars: agave_core_configs/{{ tenant_id }}_passwords
+
+- name: Compile docker_compose template
+  template: src=docker-compose-dbs-onehost.yml.j2 dest=/home/apim/docker-compose-dbs-onehost.yml
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: Create ansible Mysql configuration file
+  template: src=my.cnf.j2 dest=/home/apim/my.cnf
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: stop the old containers
+  shell: docker-compose -f docker-compose-dbs-onehost.yml stop  chdir=/home/apim
+  become: yes
+  become_user: apim
+  become_method: sudo
+  ignore_errors: yes
+  environment:
+      COMPOSE_HTTP_TIMEOUT: 2000
+
+- name: remove the old containers
+  shell: docker-compose -f docker-compose-dbs-onehost.yml rm -f chdir=/home/apim
+  become: yes
+  become_user: apim
+  become_method: sudo
+  ignore_errors: yes
+  environment:
+      COMPOSE_HTTP_TIMEOUT: 2000
+
+- pause: seconds=15
+
+- name: start the containers with docker compose
+  shell: docker-compose -f docker-compose-dbs-onehost.yml up -d  chdir=/home/apim
+  become: yes
+  become_user: apim
+  become_method: sudo
+  environment:
+      COMPOSE_HTTP_TIMEOUT: 2000

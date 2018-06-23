@@ -1,0 +1,200 @@
+# Run this playbook to deploy the entire Agave stack, including auth, core and db. This playbook should not be used
+# to update an existing deployment as initial database loads will be redone resulting in data loss.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+# 1. db_remote_user, core_remote_user, auth_remote_user - the linux user account used for connecting via ssh.
+# 2. tenant_id: determines which tenant to deploy; an existing directory within the tenants directory must already exist.
+# 3. load_auth_sql_data - (true/false). This should be set to true the first time and false after since, attemping to
+#    reload the sql data will delete all previous data
+# 3. core_version (OPTIONAL): version (branch) to deploy; default is 2.2.6
+#
+# Example invocation:
+# $ ansible-playbook -i host_files/ec2_hosts deploy_agave.plbk -e tenant_id=dev_sandbox -e core_config_file=dev_sandbox -e deploy_core_default_templates=True
+# deployer -i /deploy/host_files/slt_sandbox_hosts /deploy/deploy_agave.plbk -e tenant_id=dev_sandbox -e core_config_file=dev_sandbox -e docker_version=1.12.6-1.el7.centos -e docker_compose_version=1.11.1 -e deploy_core_default_templates=True
+
+---
+
+########################################################################
+#
+#   Common Host Setup
+#
+########################################################################
+
+#
+#- name: determine if this is a multihost deployment of the core science APIs.
+#  hosts: 127.0.0.1
+#  connection: local
+#  gather_facts: no
+#
+#  vars:
+#      - CORE_HOST_COUNT: "{{groups['core'] | length |int}}"
+#
+#  tasks:
+#    - debug:
+#        msg="This is a multihost deployment of the core services. APIs and workers will be split up."
+#      when: (CORE_HOST_COUNT|int) > 1
+#      tags: corehostcount
+#
+
+- name: setup the hosts on which we will deploy the platform
+  hosts: docker_hosts
+  roles:
+      - agave_host
+      - docker_host
+      - logrotate
+  vars:
+      - update_docker_version: True
+      - update_docker_compose_version: True
+      - clean_host: True
+
+
+########################################################################
+#
+#   Database Stack
+#
+########################################################################
+
+
+# first, deploy databases
+- name: deploy the database containers in a single host configuration
+  hosts: db
+  gather_facts: no
+
+  roles:
+      - agave_db_onehost
+  vars:
+      - update_docker_version: True
+      - update_docker_compose_version: True
+      - clean_host: True
+
+# load auth data
+- name: init the database accounts, schemas, collections, queues, and startup data
+  hosts: db
+  roles:
+      - mysql_apim
+  vars:
+      - env: sandbox
+      - mysql_root_user: root
+      - mysql_root_password: password
+      - create_tenant_mysql_user: true
+
+
+########################################################################
+#
+#   Core API Stack
+#
+########################################################################
+
+# deploy single host core services and run migrations
+- name: deploy core compose files if we are managing configurations from git
+  hosts: core
+  gather_facts: no
+
+  roles:
+    - role: agave_core_compose_repo
+      when: deploy_core_default_templates is defined and deploy_core_default_templates == false
+      tags:
+        - apis
+        - core
+
+# deploy single host core services and run migrations
+- name: deploy core science api containers
+  hosts: core
+  gather_facts: no
+
+  roles:
+    - role: agave_core
+#      when: (groups['core'] | length) == 1
+      tags:
+        - apis
+        - core
+#
+#  # deploy and start containers
+#- name: deploy core science api containers without workers as part of a multihost deployment
+#  hosts: core_api
+#  gather_facts: no
+#
+#  roles:
+#    - role: agave_core
+#      when: (groups['core'] | length) > 1
+#      tags:
+#          - apis
+#          - core
+#  vars:
+#    - agave_core_api_only: true
+#
+#
+## deploy and start containers
+#- name: deploy headless core science api worker containers as part of a multihost deployment
+#  hosts: core_workers
+#  gather_facts: no
+#
+#  roles:
+#    - role: agave_core
+#      when: (groups['core'] | length) > 1
+#
+#  vars:
+#    - agave_core_workers_only: true
+#
+#
+#- name: initialize core science api database and run migrations on a single core host
+#  hosts: core[0]
+#
+#  roles:
+#      - role: agave_core_sql_migrations
+#        tags:
+#          - db
+#          - migrations
+#
+#  vars:
+#    - core_migrations_command: migrate
+
+
+########################################################################
+#
+#   APIM Stack
+#
+########################################################################
+
+# deploy the auth services
+- name: deploy the apim, auth, and identity services on a single host
+  hosts: auth
+  gather_facts: no
+
+  roles:
+      - agave_auth
+      - auth_rolling_deploy
+      - ldap_apim
+
+  vars:
+      - env: sandbox
+      - mysql_root_user: root
+      - mysql_root_password: password
+      - clean_host: True
+      - remove_all_auth_containers: True
+
+# add boutique apis
+- name: register all boutique APIs with the APIM
+  hosts: auth
+  gather_facts: no
+
+  roles:
+      - role: boutique_apis
+        tags: boutique
+
+######
+# run test suite
+#- hosts: postman
+#
+#  roles:
+#      - role: admin_service_tests
+#        tags:
+#          - admin
+#          - tests
+#      - role: agave_postman
+#        tags:
+#          - postman
+#          - tests
+######

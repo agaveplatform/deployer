@@ -1,0 +1,35 @@
+---
+################################################################################
+#
+#   REQUIRED VARIABLES
+#
+#   os_authurl
+#   domain_name
+#   project_name
+#   username
+#   password
+#
+#   os_vm_name
+#   os_region
+#   os_flavor
+#   os_zone
+#   os_image
+#   os_keyname
+#
+################################################################################
+
+- name: Delete OpenStack VM
+  os_server:
+    state: absent
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    name: "{{os_vm_name}}"
+    region_name: "{{os_region}}"
+    flavor: "{{os_flavor}}"
+    availability_zone: "{{os_zone}}"
+    image: "{{os_image}}"
+    key_name: "{{os_keyname}}"

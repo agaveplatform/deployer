@@ -1,0 +1,27 @@
+api_user: jdoe
+api_password: abcde
+api_user_first_name: jdoe
+api_user_last_name: tester
+api_user_phone: 512-647-4813
+api_user_mobile_phone: 972-504-6270
+
+normal_access_user: testuser
+normal_access_password: testuser
+normal_access_user_first_name: test
+normal_access_user_last_name: user
+normal_access_user_phone: 512-647-4813
+normal_access_user_mobile_phone: 972-504-6270
+
+private_shared_user: testshareuser
+private_shared_password: testshareuser
+private_shared_user_first_name: test share
+private_shared_user_last_name: user
+private_shared_user_phone: 512-647-4813
+private_shared_user_mobile_phone: 972-504-6270
+
+other_user: testotheruser
+other_password: testotheruser
+other_user_first_name: test other
+other_user_last_name: user
+other_user_phone: 512-647-4813
+other_user_mobile_phone: 972-504-6270

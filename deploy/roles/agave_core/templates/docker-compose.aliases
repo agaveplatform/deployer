@@ -1,0 +1,29 @@
+#!/bin/bash
+
+export LOGDIR=/var/log/splunk
+
+alias cdw='cd $HOME/core-apis'
+
+alias dc='docker-compose -p apim -f $HOME/core-apis/docker-compose.yml'
+alias dcp='docker-compose -p apim -f $HOME/core-apis/proxy.yml'
+
+function log() {
+    if [ -e "$1" ]; then
+        if [ -e "$LOGDIR/$1/http_access" ]; then
+            tail -f "$LOGDIR/$1/http_access"
+        else
+            tail -f $LOGDIR/$1/$1-api.log
+        fi
+    elif [ -e "$LOGDIR/proxy/http_access" ]; then
+         tail -f "$LOGDIR/proxy/http_access"
+    else
+        echo "No log file found at $LOGDIR/$1/$1-api.log" 1>&2
+        die 1
+    fi
+}
+
+function dcbounce() {
+  docker-compose kill $1
+  docker-compose rm -f $1
+  docker-compose up -d $1
+}

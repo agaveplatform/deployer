@@ -1,0 +1,114 @@
+
+- name: check if A_deployed
+  stat: path=/home/apim/A_deployed
+  register: A
+
+- name: msg
+  debug: msg="A containers are not deployed (A_deployed path doesn't exist)"
+  when: A.stat.exists == False
+
+- name: check if B_deployed
+  stat: path=/home/apim/B_deployed
+  register: B
+
+- name: msg
+  debug: msg="B containers are not deployed (B_deployed path doesn't exist)"
+  when: B.stat.exists == False
+
+
+# ------------
+# A deployment
+# -------------
+
+# if A is not deployed, always deploy it
+- name: deploy A
+  shell: docker-compose -f /home/apim/A/docker-compose-noserf.yml up -d chdir=/home/apim/A
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: A.stat.exists == false
+
+- name: ensure the A_deployed file exists
+  file: path=/home/apim/A_deployed state=touch
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: A.stat.exists == false
+
+- pause: minutes=2 prompt="Pausing while A containers start up before removing B containers."
+  when: A.stat.exists == false and B.stat.exists
+
+# stop & remove B containers when they are defined
+- name: stop B containers
+  shell: docker-compose -f /home/apim/B/docker-compose-noserf.yml stop chdir=/home/apim/B
+  environment:
+      COMPOSE_HTTP_TIMEOUT: 120
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: B.stat.exists
+
+- name: remove B containers
+  shell: docker-compose -f /home/apim/B/docker-compose-noserf.yml rm -f chdir=/home/apim/B
+  environment:
+      COMPOSE_HTTP_TIMEOUT: 120
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: B.stat.exists
+
+- name: remove the B_deployed file
+  file: path=/home/apim/B_deployed state=absent
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: B.stat.exists
+
+
+# ------------
+# B deployment
+# -------------
+
+# deploy B when A is defined
+- name: deploy B
+  shell: docker-compose -f /home/apim/B/docker-compose-noserf.yml up -d chdir=/home/apim/B
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: A.stat.exists
+
+- name: ensure the B_deployed file exists
+  file: path=/home/apim/B_deployed state=touch
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: A.stat.exists
+
+- pause: minutes=2 prompt="Pausing while B containers start up before removing A containers."
+  when: A.stat.exists and B.stat.exists == false
+
+# stop & remove A containers when they are defined
+- name: stop A containers
+  shell: docker-compose -f /home/apim/A/docker-compose-noserf.yml stop chdir=/home/apim/A
+  environment:
+      COMPOSE_HTTP_TIMEOUT: 120
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: A.stat.exists
+
+- name: remove A containers
+  shell: docker-compose -f /home/apim/A/docker-compose-noserf.yml rm -f chdir=/home/apim/A
+  environment:
+      COMPOSE_HTTP_TIMEOUT: 120
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: A.stat.exists
+
+- name: remove the A_deployed file
+  file: path=/home/apim/A_deployed state=absent
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: A.stat.exists

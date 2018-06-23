@@ -1,0 +1,36 @@
+---
+
+- include_vars: agave_core_configs/{{ core_config_file }}.yml
+- include_vars: agave_core_configs/{{ core_config_file }}_passwords
+
+- name: ensure migrations directory present
+  file: name=/home/apim/core-migrations state=directory
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: compile compose templates
+  template: src=migrations.yml.j2 dest=/home/apim/core-migrations/migrations.yml
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: compile flyway.conf templates
+  template: src=flyway.conf.j2 dest=/home/apim/core-migrations/flyway.conf
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: run the migration
+  shell: docker run -i --rm -v $(pwd)/flyway.conf:/source/flyway-4.1.1/conf/flyway.conf --entrypoint="/source/flyway-4.1.1/flyway" agaveapi/agave-migrations:{{ agave_core_version }} {{ core_migrations_command }} chdir=/home/apim/core-migrations
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: update tenant definition in the core db
+  shell: docker run -i --rm mysql:5.6 mysql -A -u{{ mysql_core_user }} -p{{ mysql_core_password }} -h{{ mysql_core_host }} -P{{ mysql_core_port }} -e  "UPDATE \`tenants\` SET \`base_url\` = 'https://{{ host }}/', \`name\` = 'Agave {{ tenant_id }} Tenant',  \`tenant_id\` = '{{ tenant_id }}' WHERE \`id\` = '1';" agave-api chdir=/home/apim/core-migrations
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+

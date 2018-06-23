@@ -1,0 +1,71 @@
+# This is the jinja2 template used to generate the core configuration
+# file used when managing dynamic inventory
+
+
+# #######################
+# general playbook config
+# #######################
+host: sandbox.agaveplatform.org
+deploy_core_apis: true
+deploy_core_apis_a_deployment: true
+deploy_core_apis_b_deployment: false
+agave_core_workers_only: false
+kill_core_containers: true
+core_deploy_stats: false
+core_deploy_ssl_certs: false
+core_docker_private_registry:
+core_docker_registry_account: agaveapi
+
+
+# ######################
+# general service config
+# ######################
+agave_proxy_core_ip: {{sandbox_core | default()}}
+agave_core_hostname: api.sandbox.agaveplatform.org
+agave_core_log_service: http://{{sandbox_core}}/logging
+agave_core_version: 2.2.6
+agave_core_iplant_proxy_service: http://{{sandbox_core}}
+
+core_deploy_ssl_certs: false
+
+# ################
+# realtime service
+# ################
+agave_core_realtime_service_type: pushpin
+agave_core_realtime_service: http://{{sandbox_core}}/pushpin
+#agave_core_realtime_service_realm_id:
+#agave_core_realtime_service_realm_key:
+
+
+# ################
+# monitors service
+# ################
+agave_core_monitor_min_check_interval: 0
+
+
+# #####################
+# databases & messaging
+# #####################
+mysql_core_host: {{sandbox_db}}
+mysql_core_port: 3301
+mysql_core_user: agaveapi
+
+agave_core_metadata_host: {{sandbox_db}}
+agave_core_metadata_port: 27017
+agave_core_metadata_user: wcs
+
+agave_core_notification_queue: {{tenant_id}}.notifications.queue
+agave_core_notification_topic: {{tenant_id}}.notifications.topic
+
+agave_core_messaging_host: {{sandbox_db}}
+agave_core_messaging_port: 11300
+
+
+# ####
+# smtp
+# ####
+agave_core_smtps_provider: sendgrid
+agave_core_smtps_host: smtp.sendgrid.net
+agave_core_smtps_auth: true
+agave_core_smtps_port: 587
+agave_core_smtps_user: agavedev

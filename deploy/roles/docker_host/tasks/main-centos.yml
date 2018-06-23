@@ -1,0 +1,42 @@
+---
+
+# override default ubuntu docker packages when not explicitly overridden by user.
+- name: default the docker version for centos
+  set_fact:
+    docker_version: 1.9.1-1.el7.centos
+  when: docker_version | search('trusty')
+
+- name: disable selinux
+  selinux: state=disabled
+
+- debug: msg="Uninstalling existing docker versions "
+
+- name: Remove previous docker installation
+  yum:
+    name: "{{ item.package }}"
+    state: absent
+  with_items: "{{ docker_cleanup_packages_EL }}"
+  when: update_docker_version
+
+- name: Remove Docker CE repository
+  file:
+    path: /etc/yum.repos.d/docker-ce.repo
+    state: absent
+  when:  update_docker_version
+
+
+- name: Add docker yum repo
+  copy: src=docker.repo.centos dest=/etc/yum.repos.d/docker.repo
+  
+- name: install common packages
+  yum: name='{{ item }}' state=present update_cache=yes
+  with_items:
+    - libselinux-python
+    - git
+    - cronie
+  
+- debug: msg="Installing docker version {{ docker_version }}"
+
+- name: install docker engine
+  yum: name=docker-engine-{{ docker_version }} state=present
+  when: update_docker_version

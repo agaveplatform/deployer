@@ -1,0 +1,78 @@
+
+
+
+
+# #######################
+# general playbook config
+# #######################
+host: "{{tenant_id}}.agaveplatform.org"
+deploy_core_apis: true
+deploy_core_apis_a_deployment: true
+deploy_core_apis_b_deployment: false
+agave_core_workers_only: false
+kill_core_containers: true
+core_deploy_stats: false
+core_docker_private_registry:
+core_docker_registry_account: agaveapi
+
+
+# ######################
+# general service config
+# ######################
+agave_proxy_core_ip: "{{ hostvars[ groups['core'][0] ]['ansible_ssh_host'] }}"
+agave_core_hostname: "api.{{tenant_id}}.agaveplatform.org"
+agave_core_log_service: "http://{{ hostvars[ groups['core'][0] ]['ansible_ssh_host'] }}/logging"
+agave_core_version: 2.2.6
+agave_core_iplant_proxy_service: "http://{{ hostvars[ groups['core'][0] ]['ansible_ssh_host'] }}" #needs to differ from the hostname of the core host so postits resolve
+agave_core_java_mem_limit: 2048m
+agave_core_allow_relay_transfer: false
+agave_core_max_relay_transfer_size: 1
+agave_core_max_page_size: 250
+agave_core_default_page_size: 100
+
+core_deploy_ssl_certs: true
+agave_core_ssl_cert: /ssl/api.sandbox.agaveplatform.org.crt
+agave_core_ssl_key: /ssl/api.sandbox.agaveplatform.org.key
+agave_core_ca_cert: false
+
+# ################
+# realtime service
+# ################
+agave_core_realtime_service_type: pushpin
+agave_core_realtime_service: "https://{{ hostvars[ groups['auth'][0] ]['ansible_ssh_host'] }}/pushpin"
+#agave_core_realtime_service_realm_id:
+#agave_core_realtime_service_realm_key:
+
+
+# ################
+# monitors service
+# ################
+agave_core_monitor_min_check_interval: 0
+
+
+# #####################
+# databases & messaging
+# #####################
+mysql_core_host: "{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
+mysql_core_port: 3301
+mysql_core_user: agaveapi
+
+agave_core_metadata_host: "{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
+agave_core_metadata_port: 27017
+agave_core_metadata_user: wcs
+
+agave_core_notification_queue: sandbox.notifications.queue
+agave_core_notification_topic: sandbox.notifications.topic
+
+agave_core_messaging_host: "{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
+agave_core_messaging_port: 11300
+
+
+# ####
+# smtp
+# ####
+agave_core_smtps_provider: sendgrid
+agave_core_smtps_host: smtp.sendgrid.net
+agave_core_smtps_auth: true
+agave_core_smtps_port: 587
+agave_core_smtps_user: agavedev

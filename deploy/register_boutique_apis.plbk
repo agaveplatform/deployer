@@ -1,0 +1,16 @@
+# Ensures the the boutique APIs listed in the tenant's boutique_apis config are registered and published
+# and creates any required service roles needed to properly restrict the APIs.
+#
+# This playbook is idempotent.
+
+# Example invocation:
+# $ deployer -i /deploy/host_files/staging_hosts /deploy/register_boutique_apis.plbk
+
+---
+
+- name: gather all hosts information
+  hosts: all
+
+- hosts: auth
+  roles:
+    - boutique_apis

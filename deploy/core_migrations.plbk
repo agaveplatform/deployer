@@ -1,0 +1,22 @@
+# Run this playbook to run the core mql migrations on an instance of the core datavase.
+# Multiple commands are supported. The default is to simply run 'info', but this can be overwritten with the
+# variable core_migrations_command.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# Example default invocation:
+# $ ansible-playbook -i host_files/staging_hosts core_migrations.plbk
+#
+# Example invocation to run migrations:
+# $ ansible-playbook -i host_files/staging_hosts core_migrations.plbk -e core_migrations_command=migrate
+
+
+---
+
+- name: gather all hosts information
+  hosts: all
+
+  # run sql migrations
+- hosts: core
+  roles:
+    - agave_core_sql_migrations

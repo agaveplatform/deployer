@@ -1,0 +1,59 @@
+---
+
+- set_fact:
+    agave_togo_static_url: "{{ host|default('togo.agaveplatform.org') }}"
+  when: agave_togo_static_url is undefined
+
+- name: ensure directories are present
+  file: path={{ item }} state=directory
+  become: yes
+  become_user: apim
+  become_method: sudo
+  with_items:
+      - /home/apim/togo
+
+- name: Compile implicit.js template with tenant and oauth2 configurations
+  template: src=docker-compose.yml.j2 dest=/home/apim/togo/docker-compose.yml
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+
+- name: Compile docker_compose template
+  template: src=docker-compose.yml.j2 dest=/home/apim/togo/docker-compose.yml
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+  # note: this should almost never be used; exception is when wanting to competely start from scratch.
+- name: pull the latest images
+  shell: docker-compose -f /home/apim/togo/docker-compose.yml pull --ignore-pull-failures
+  ignore_errors: yes
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: remove_all_togo_containers
+  environment:
+      COMPOSE_HTTP_TIMEOUT: 2000
+
+- name: Remove all existing togo containers
+  shell: docker-compose -f /home/apim/togo/docker-compose.yml down
+  ignore_errors: yes
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: remove_all_togo_containers
+  environment:
+      COMPOSE_HTTP_TIMEOUT: 2000
+
+- pause: seconds=30
+  when: remove_all_togo_containers
+
+
+- name: Start ToGo stack
+  shell: docker-compose -f /home/apim/togo/docker-compose.yml up -d
+  become: yes
+  become_user: apim
+  become_method: sudo
+  environment:
+      COMPOSE_HTTP_TIMEOUT: 2000

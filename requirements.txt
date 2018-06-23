@@ -1,0 +1,10 @@
+paramiko
+PyYAML
+Jinja2
+httplib2
+six
+pycrypto
+pytz
+cryptography
+shade
+ansible

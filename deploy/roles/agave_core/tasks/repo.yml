@@ -1,0 +1,48 @@
+
+---
+
+- name: Compile pull_images.sh template to repos dir
+  template: src=pull_images.sh.j2 dest=/home/apim/repos/{{ core_compose_repo_name }}/{{ core_compose_repo_path }}/pull_images.sh
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+# Pull images first to minimize downtime. For the case where we are deploying the default templates, the latest changes
+# are already in deplpy/. However, in the git repo case, we need to take down the containers with the old compose files
+# so they haven't been moved to deploy/ yet.
+- name: Pull latest docker images from templates
+  shell: sh pull_images.sh {{ agave_core_version }} chdir="/home/apim/repos/{{ core_compose_repo_name }}/{{ core_compose_repo_path }}"
+  become: yes
+  become_user: apim
+  become_method: sudo
+  ignore_errors: True
+  when: deploy_core_default_templates == False
+
+# ignore errors here since this call will fail if there are no containers running
+- name: remove existing containers
+  shell: docker-compose -p apim -f docker-compose.yml down chdir=/home/apim/core-apis/
+  become: yes
+  become_user: apim
+  become_method: sudo
+  ignore_errors: yes
+  environment:
+      AGAVE_VERSION: '{{ agave_core_version }}'
+      COMPOSE_HTTP_TIMEOUT: 2000
+
+- pause: seconds=30
+
+- name: start the core-apis proxy container with docker compose
+  shell: docker-compose -p apim -f proxy.yml up -d chdir=/home/apim/core-apis/
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: deploy_core_apis
+  environment:
+      AGAVE_VERSION: '{{ agave_core_version }}'
+      COMPOSE_HTTP_TIMEOUT: 2000
+
+- name: copy compose files from repos to deploy
+  shell: "cp -R /home/apim/repos/{{ core_compose_repo_name }}/{{ core_compose_repo_path }}/* /home/apim/core-apis"
+  become: yes
+  become_user: apim
+  become_method: sudo

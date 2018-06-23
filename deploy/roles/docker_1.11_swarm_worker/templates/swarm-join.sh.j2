@@ -1,0 +1,3 @@
+#!/bin/bash
+docker pull swarm
+docker run -d swarm join --advertise={{ private_ip }}:2375 consul://{{ swarm_manager_ip }}:8500

@@ -1,0 +1,89 @@
+# username of test user within tenant.
+newman_agave_test_user_username: testuser
+
+# password of test user within tenant.
+newman_agave_test_user_password: testuser
+
+# first name of test user within tenant.
+newman_agave_test_user_first_name: ""
+
+# last name of test user within tenant.
+newman_agave_test_user_last_name: testuser
+
+# full name of test user within tenant.
+newman_agave_test_user_full_name: testuser
+
+# email address of test user within tenant.
+newman_agave_test_user_email: testuser@test.com
+
+# if true, run through the newman.sh script and set up the test data and collection,
+# but do not run the actual collection.
+newman_dry_run: False
+
+# If true, print verbose output from the test script
+newman_verbose: False
+
+# if true, print verbose debug info from wire traffic resulting from newman's execution.
+# Beware! This can be huge.
+newman_debug: False
+
+# Whether to clean up prior test runs before running the new tests
+newman_clean_tests: True
+
+# Whether to skip the api management layer and make requests against the backend directly using a custom
+# JWT header
+newman_skip_frontend: False
+
+# The hostname of the auth server. This should be the auth service host if `newman_skip_frontend` is
+# False, and the core api proxy hostname if `newman_skip_frontend` is True
+newman_agave_tenant_base_hostname: "{{ host | default('sandbox.agaveplatform.org') }}"
+#newman_agave_tenant_base_hostname: api.sandbox.agaveplatform.org
+
+# The ip address corresponding to `newman_agave_tenant_base_hostname`. This is only needed if Agave's auth server does
+# not have a publicly resolvable hostname. When set, this will be inejcted into the Docker container running the
+# tests and added to the container's /etc/hosts file for proper resolution.
+newman_agave_tenant_base_ip: "{{ hostvars[ groups['auth'][0] ]['ansible_ssh_host'] }}"
+
+
+# The hostname or ip of the linux server the newman tests will register with Agave and use to run all data and
+# compute tests
+newman_agave_test_system_host: "{{ hostvars[ groups['auth'][0] ]['ansible_ssh_host'] }}"
+
+# The sftp port on which Agave should connect to `newman_agave_test_system_host` during the tests
+newman_agave_test_system_port: 22
+
+# The username with which Agave should connect to `newman_agave_test_system_host` during the tests
+newman_agave_test_system_username: "{{ hostvars[ groups['auth'][0] ]['ansible_ssh_user'] }}"
+
+# The virtual home directory to use in the system definition when Agave interacts with `newman_agave_test_system_host`
+newman_agave_test_system_homedir: "/home/{{ hostvars[ groups['auth'][0] ]['ansible_ssh_user'] }}"
+
+# The public key allowing connections to `newman_agave_test_system_host`
+#newman_agave_test_system_public_key:
+
+# The private key Agave should use to connect to `newman_agave_test_system_host`
+#newman_agave_test_system_private_key:
+
+# URL to post summary test results to once completed
+newman_slack_webhook_url:
+
+# When set, only the tests for that service will be run. This is primarily for testing and debugging.
+# Valid alues are:
+#  - apps
+#  - files
+#  - jobs
+#  - metadata
+#  - monitors
+#  - notifications
+#  - postits
+#  - profiles
+#  - realtime
+#  - systems
+#  - tags
+#  - transforms
+#  - uuids
+newman_single_service_name:
+
+# The docker image to use when running the postman collections
+newman_newman_image: postman/newman_ubuntu1404:3.2.0
+

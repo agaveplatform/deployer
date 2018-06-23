@@ -1,0 +1,118 @@
+---
+################################################################################
+#
+#   REQUIRED VARIABLES
+#
+#   os_username
+#   os_password
+#   os_authurl (https://iu.jetstream-cloud.org/dashboard/auth/login/)
+#   os_domain
+#   os_project
+#
+################################################################################
+
+- name: Create OpenStack Network
+  os_network:
+    name: "{{agave_namespace}}_net"
+    state: present
+    admin_state_up: True
+    external: False
+    shared: False
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    wait: yes
+
+- name: Create OpenStack Subnet
+  os_subnet:
+    name: "{{agave_namespace}}_subnet"
+    network_name: "{{agave_namespace}}_net"
+    state: present
+    ip_version: 4
+    cidr: 10.10.10.0/24
+    allocation_pool_start: 10.10.10.2
+    allocation_pool_end: 10.10.10.254
+    gateway_ip: 10.10.10.1
+    enable_dhcp: True
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    wait: yes
+
+- name: Create OpenStack Router
+  os_router:
+    name: "{{agave_namespace}}_router"
+    state: present
+    network: public
+    admin_state_up: True
+    interfaces:
+        - "{{agave_namespace}}_subnet"
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    wait: yes
+
+- name: Query OpenStack Network
+  os_networks_facts:
+    name: "{{agave_namespace}}_net"
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    wait: yes
+
+- name: Query OpenStack Subnet
+  os_subnets_facts:
+    name: "{{agave_namespace}}_subnet"
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    wait: yes
+
+- name: Create Basic Firewall Rules
+  os_security_group_rule:
+    auth_type: password
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    security_group: default
+    state: present
+    direction: "{{item.direction}}"
+    ethertype: "{{item.ethertype}}"
+    protocol: "{{item.protocol}}"
+    port_range_min: "{{item.port_range_min}}"
+    port_range_max: "{{item.port_range_max}}"
+    remote_ip_prefix: "{{item.remote_ip_prefix}}"
+  with_items:
+    - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 22 , port_range_max: 22 , remote_ip_prefix: 0.0.0.0/0 }
+
+- name: Create VM Keys
+  os_keypair:
+    name: "{{os_keyname}}"
+    public_key_file: "{{os_key_file}}"
+    state: present
+    auth_type: password
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    

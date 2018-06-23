@@ -1,0 +1,32 @@
+#
+# deploy_awx.plbk
+#
+# Starts up a vanilla containerized AWX server on the target host.
+# This should not be used for production.
+#
+---
+
+- name: Start the AWX stack as a standard user
+  hosts: localhost
+
+  roles:
+    - awx
+
+#- name: Start a native AWX statck on a remote host
+#  hosts: awx
+#
+#  vars:
+#    nodejs_version: "6.x"
+#    pip_install_packages:
+#      - name: docker-py
+#
+#  roles:
+#    - awx
+#    - agave_host
+#    - geerlingguy.repo-epel
+#    - geerlingguy.git
+#    - geerlingguy.ansible
+#    - geerlingguy.docker
+#    - geerlingguy.pip
+#    - geerlingguy.nodejs
+#    - geerlingguy.awx

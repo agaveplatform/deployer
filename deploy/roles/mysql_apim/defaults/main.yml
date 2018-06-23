@@ -1,0 +1,14 @@
+# these credentials need to have sufficient privileges to create databases and tables on the server. They are NOT the
+# the credentials that will be used by the tenant/APIM to access and update the db tables. That account will be created
+# once the databases are populated.
+
+# These defaults are simply placeholders for sandbox deployments. The actual values should be passed in at the command
+# line when executing the relevant playbook.
+
+mysql_root_user: root
+mysql_root_password: password
+mysql_login_host: 172.17.0.1
+mysql_login_port: 3306
+apim_version: 19
+load_auth_sql_data: true
+create_tenant_mysql_user: false

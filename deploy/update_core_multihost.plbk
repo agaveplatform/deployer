@@ -1,0 +1,94 @@
+# Run this playbook to deploy an instance of the core services. The defaults replicate the staging environment.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+# 1. host: determines VM to use from the hosts file; e.g. "rodeo-db-staging-centos"
+
+# Example invocation:
+# $ ansible-playbook -i host_files/staging_hosts deploy_core.plbk
+
+
+---
+
+- name: gather all hosts information
+  hosts: core
+
+# fetch compose files from git if needed
+- name: deploy core compose files if we are managing configurations from git
+  hosts: core
+  gather_facts: no
+
+  roles:
+    - role: agave_core_compose_repo
+      when: deploy_core_default_templates is defined and deploy_core_default_templates == false
+      tags:
+        - apis
+        - core
+
+# single host: full stack
+- name: deploy core science api containers with embedded workers on a single host
+  hosts: core
+  gather_facts: no
+
+  roles:
+    - role: agave_core
+      when: (groups['core'] | length) == 1
+      tags:
+        - apis
+        - core
+
+# multihost: apis
+- name: deploy core science api containers without workers as part of a multihost deployment
+  hosts: core_api
+  gather_facts: no
+
+  roles:
+    - role: agave_core
+      when: (groups['core'] | length) > 1
+      tags:
+          - apis
+          - core
+  vars:
+    - deploy_core_default_templates: true
+    - agave_core_workers_only: false
+    - agave_core_drain_all_queues: false
+    - agave_core_api_only: true
+    - agave_core_job_max_staging_tasks: 0
+    - agave_core_job_max_archiving_tasks: 0
+    - agave_core_job_max_monitoring_tasks: 0
+    - agave_core_job_max_submission_tasks: 0
+
+
+# multihost: workers
+- name: deploy headless core science api worker containers as part of a multihost deployment
+  hosts: core_workers
+  gather_facts: no
+
+  roles:
+    - role: agave_core
+      when: (groups['core'] | length) > 1
+
+  vars:
+    - deploy_core_default_templates: true
+    - agave_core_workers_only: true
+    - agave_core_api_only: false
+    - agave_core_drain_all_queues: false
+    - agave_core_job_max_staging_tasks: 5
+    - agave_core_job_max_archiving_tasks: 5
+    - agave_core_job_max_monitoring_tasks: 2
+    - agave_core_job_max_submission_tasks: 1
+
+
+# migrations
+- name: initialize core science api database and run migrations on a single core host
+  hosts: core[0]
+
+  roles:
+      - role: agave_core_sql_migrations
+        tags:
+          - db
+          - migrations
+
+  vars:
+    - core_migrations_command: migrate

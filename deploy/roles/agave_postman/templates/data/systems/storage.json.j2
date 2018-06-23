@@ -1,0 +1,22 @@
+#jinja2:variable_start_string:'[%' , variable_end_string:'%]', trim_blocks: False
+{
+  "id": "postman-test-storage-mp-{{TEST_DATE}}",
+  "name": "System Sandbox Configured as Storage System",
+  "status": "UP",
+  "type": "STORAGE",
+  "description": "Testing Storage System",
+  "site": "agaveapi.co",
+  "storage": {
+    "host": "[%newman_agave_test_system_host%]",
+    "port": [%newman_agave_test_system_port%],
+    "protocol": "SFTP",
+    "rootDir": "/",
+    "homeDir": "[%newman_agave_test_system_homedir%]",
+    "auth": {
+      "username": "[%newman_agave_test_system_username%]",
+      "publicKey": "[%newman_agave_test_system_public_key%]",
+      "privateKey": "[%newman_agave_test_system_private_key%]",
+      "type": "SSHKEYS"
+    }
+  }
+}

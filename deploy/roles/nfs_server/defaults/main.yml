@@ -1,0 +1,7 @@
+exports:
+    tokens:
+        dir: /tokens
+        range: "*"
+    data:
+        dir: /home/apim
+        range: "*"

@@ -1,0 +1,20 @@
+logrotate_conf_dir: "/etc/logrotate.d/"
+logrotate_scripts:
+    - name: splunk
+      path: /var/log/splunk/*
+      options:
+        - wdaily
+        - size 25M
+        - rotate 0
+        - missingok
+        - copytruncate
+        - maxage 4
+    - name: apim
+      path: /home/apim/logs/*
+      options:
+        - wdaily
+        - size 25M
+        - rotate 0
+        - missingok
+        - copytruncate
+        - maxage 4

@@ -1,0 +1,24 @@
+# Add nodes to a docker (version 1.11) swarm cluster. Requires all nodes to have the private_ip attribute set, as well as
+# a swarm_manager_ip for the entire playbook. The swarm_manager_ip should be the private IP of one of the cluster
+# members.
+
+# Example use:
+#
+# deployer -i /deploy/host_files/swarm_1.11_hosts /deploy/swarm_1.11_worker.plbk -e swarm_manager_ip=10.10.10.14
+
+---
+
+# ensure docker 1.11 installed on all hosts
+- hosts: swarm_worker
+  roles:
+      - agave_host
+      - docker_host
+  vars:
+      - update_docker_version: True
+      - update_docker_compose_version: True
+      - docker_version: 1.11.2-1.el7.centos
+
+# start the swarm workers
+- hosts: swarm_worker
+  roles:
+      - docker_1.11_swarm_worker

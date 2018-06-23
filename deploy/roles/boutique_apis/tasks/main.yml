@@ -1,0 +1,48 @@
+---
+
+- include_vars: tenants/{{ tenant_id }}/{{ tenant_id }}.yml
+
+- name: check if A_deployed
+  stat: path=/home/apim/A_deployed
+  register: A
+
+- name: msg
+  debug: msg="A containers are not deployed (A_deployed path doesn't exist)"
+  when: A.stat.exists == False
+
+- name: check if B_deployed
+  stat: path=/home/apim/B_deployed
+  register: B
+
+- name: msg
+  debug: msg="B containers are not deployed (B_deployed path doesn't exist)"
+  when: B.stat.exists == False
+
+- name: ensure api directory present
+  file: path=/home/apim/boutique_apis state=directory
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: compile api.json templates
+  template: src={{ item }}.json.j2 dest=/home/apim/boutique_apis/{{ item }}.json
+  with_items: "{{ boutique_apis }}"
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: A stack -- ensure each api is registered and published and any necessary roles exist
+  shell: docker run --rm -i --link a_adminnginx_1 -e base_url=http://a_adminnginx_1:80 -v /home/apim/boutique_apis/{{ item }}.json:/api.json agaveapi/flask_admin_utils
+  with_items: "{{ boutique_apis }}"
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: A.stat.exists == True
+
+- name: B stack -- ensure each api is registered and published and any necessary roles exist
+  shell: docker run --rm -i --link b_adminnginx_1 -e base_url=http://b_adminnginx_1:80 -v /home/apim/boutique_apis/{{ item }}.json:/api.json agaveapi/flask_admin_utils
+  with_items: "{{ boutique_apis }}"
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: B.stat.exists == True

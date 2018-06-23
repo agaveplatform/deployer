@@ -1,0 +1,21 @@
+# Run this playbook to create MySQL schema and user for a new tenant. This playbook should not be used
+# to update an existing tenant as initial database loads will be redone resulting in data loss.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+#
+# Example invocation:
+# ansible-playbook -i host_files/sandbox_hosts create_tenant_schema.plbk -e tenant_id=sgwi -e mysql_root_user=root -e mysql_root_password=<from_stache> -e mysql_login_host=localhost -e mysql_login_port=3306
+# deployer -i /deploy/host_files/sandbox_hosts /deploy/create_tenant_schema.plbk
+
+
+---
+
+# load auth data
+- hosts: db
+  roles:
+      - mysql_apim
+  vars:
+      - create_tenant_mysql_user: true
+      - load_auth_sql_data: true

@@ -1,0 +1,186 @@
+# ------------------------
+# SPECIFIC SANDBOX CONFIGS
+# ------------------------
+# Uncomment one of the following sections
+# ------------------------
+host: {{sandbox_base}}
+core_host: {{sandbox_core}}
+mysql_host: {{sandbox_db}}
+mysql_port: 3306
+ldap_name: ldap://{{sandbox_auth}}:389
+agave_id_app_base: https://{{sandbox_base}}
+beanstalk_server: {{sandbox_db}}
+
+
+#--------
+# GENERAL
+# -------
+
+# Whether to load the dn values of the persistence layer in the auth compose file using --extra-hosts
+update_auth_dns: False
+
+# ----
+# APIM
+# ----
+tenant_id: sandbox
+agave_env: sandbox
+apim19_base_version: 0.3
+apim_httpd_version: 0.4
+
+# NOTE - also change agave_id_app_base below.
+tenant_admin_role: Internal/sandbox-services-admin
+
+# the url registered in APIM for the profiles API. For tenants using the django service, the
+# profiles container will have role: profiles.sandbox.agave.tacc.utexas.edu
+# For tenants like ldap, the URL will need to point to a different service (e.g. the PHP service).
+agave_profiles_url: profiles.sandbox.agave.tacc.utexas.edu/profiles
+
+deploy_admin_services: True
+deploy_admin_password_grant: True
+
+access_token_validity_time: 14400
+deploy_custom_oauth_app: False
+update_apim_core_dns: True
+apim_increase_global_timeout: False
+
+core_frontend_base_url_or_ip: {{sandbox_core}}
+core_api_protocol: http
+
+# ------------------
+# IDENTITY & CLIENTS
+# ------------------
+
+# whether or not to deploy the agave_id service container.
+use_hosted_id: true
+
+# When true, the services will not make any updates.
+agave_id_read_only: False
+
+# unigue id for the "domain name" of the userstore in APIM
+hosted_id_domain_name: agavedev
+
+# URL or service discovery token for the hosted LDAP instance (including port)
+##ldap_name: ldap://10.10.10.3:389
+
+# account to bind to the LDAP db
+auth_ldap_bind_dn: cn=admin,dc=agaveapi
+
+# base search directory for user accounts
+ldap_base_search_dn: dc=agaveapi
+remote_group_search_base: ou
+
+# Whether or not to check the JWT; When this is False, certain features will not be available such as the
+# "me" lookup feature since these features rely on profile information in the JWT.
+agave_id_check_jwt: True
+
+# Actual header name that will show up in request.META; value depends on APIM configuration, in particular
+# the tenant id specified in api-manager.xml
+jwt_header:  HTTP_X_JWT_ASSERTION_SANDBOX
+
+# Absolute path to the public key of the APIM instance; used for verifying the signature of the JWT.
+agave_id_apim_pub_key: /home/apim/public_keys/apim_default.pub
+
+# APIM Role required to make updates to the LDAP database
+agave_id_user_admin_role: Internal/user-account-manager
+
+# Whether or not the USER_ADMIN_ROLE before allowing updates to the LDAP db (/users service)
+agave_id_check_user_admin_role: True
+
+# Set USE_CUSTOM_LDAP = True to use a database with a different schema than the traditional Agave ldap (e.g. TACC
+# tenant). Some specific fields will still be required, for example the uid field as the primary key.
+use_custom_ldap: False
+
+# Base URL of this instance of the service. Used to populate the hyperlinks in the responses.
+# Should be https:// + _host_ but have to copy it twice because there is no way to have ansible read it from above.
+##agave_id_app_base: https://dev1.tenants.sandbox.agaveapi.co
+
+# DEBUG = True turns up logging and causes Django to generate excpetion pages with stack traces and
+# additional information. Should be False in production.
+# Updated -- 8/2015: Due to a bug in django, we currently set this to true so that the ALLOWED_HOSTS filtering is
+# not activated.
+agave_id_debug: True
+
+# Beanstalk connection info
+##beanstalk_server: 10.10.10.3
+beanstalk_port: 11300
+beanstalk_tube: {{tenant_id}}.notifications.queue
+beanstalk_srv_code: 0001-001
+tenant_uuid: 0001411570898814
+
+# list of additional APIs to automatically subscribe clients to
+#agave_clients_additional_apis:
+#    - name: Realtime
+#      version: v2
+#      provider: admin
+#    - name: Tags
+#      version: v2
+#      provider: admin
+#    - name: UUIDs
+#      version: v2
+#      provider: admin
+# -------------
+
+
+abaco_api_protocol: http
+abaco_frontend_base_url_or_ip: abaco
+
+# These settings are only used when deploying the account sign up web application:
+# SMTP - used for the email loop account verification:
+# mail_server:
+# mail_server_port:
+# email_base_url:
+
+deploy_webapp: True
+use_sendgrid: True
+email_base_url: https://{{sandbox_base}}
+
+# -----
+# Boutique APIs
+# -----
+# default list of APIs to add to a deployment. Note, this will register the API,
+# but will not deploy the APIs themselves. They need to be deployed separately,
+# either as part of the core services, or through another role/playbook
+boutique_apis:
+    - realtime_staging
+    - tags_staging
+    - admin_services
+    - uuids_staging
+    - tenants_staging
+
+# -----
+# HTTPD
+# -----
+# cert file - should be a path relative to the httpd directory contained within the tenant directory for this tenant
+# inside the tenants directory: e.g. deploy/tenants/sanbox/httpd
+cert_file: apache.crt
+
+# cert key file - should be a path relative to the httpd directory contained within the tenant directory for this tenant
+# inside the tenants directory: e.g. deploy/tenants/sanbox/httpd
+cert_key_file: apache.key
+
+# add when mounting in a CA cert (not used for self-signed certs) - should be a path relative to the httpd directory contained within the tenant directory for this tenant
+# inside the tenants directory: e.g. deploy/tenants/sanbox/httpd
+# ssl_ca_cert_file:
+
+
+# --------
+# HA Proxy
+# --------
+ha_deployment: True
+hap_servers:
+    - name: auth1a
+      ip: 172.17.0.1
+      port: 4080
+      ssl_port: 40443
+    - name: auth1b
+      ip: 172.17.42.1
+      port: 4080
+      ssl_port: 40443
+    - name: auth2a
+      ip: 172.17.0.1
+      port: 5080
+      ssl_port: 50443
+    - name: auth2b
+      ip: 172.17.42.1
+      port: 5080
+      ssl_port: 50443

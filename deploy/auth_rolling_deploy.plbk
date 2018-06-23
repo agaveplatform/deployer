@@ -1,0 +1,29 @@
+# Run this playbook to toggle A/B deployment on an auth server. Note: this playbook does NOT update the tenant config or
+# pull the latest container images. Because of that, you almost always will want to use update_tenant.plbk instead
+# (which is a zero-downtime deployment now), but this can be used to simply get fresh auth containers from the existing
+# images without pulling images or updating configs.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are (all set in the hosts file):
+# 1. tenant_id: used to determine which Docker images to deploy.
+# 2. hosts file: should be either 'prod_hosts' or 'staging_hosts' (passed using -i)
+# 3. auth_remote_user - the linux user account that should be used for connecting via ssh.
+# 4. tenant_group: determines auth VMs to use from the hosts file; e.g. 'tacc-prod' or 'dev-staging'.
+# 5. env: the Agave environment (either 'staging' or 'prod', all lower case). This selects the correct group_vars to use.
+#
+# Example invocation:
+# $ ansible-playbook -i host_files/staging_hosts auth_rolling_update.plbk
+
+---
+
+  # deploy and start containers
+
+- name: gather all hosts information
+  hosts: all
+
+- hosts: auth
+  environment:
+     COMPOSE_HTTP_TIMEOUT: 300
+  roles:
+    - auth_rolling_deploy

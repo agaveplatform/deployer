@@ -1,0 +1,23 @@
+#
+# postman_host.plbk
+#
+# Configures a new Agave Docker host and manages the science api containerized compute and
+# storage containers. This is sufficient to start up a disposable test environment to run
+# the agave_postman role.
+#
+# Usage:
+#
+# Start the containers:
+# $ ansible-playbook -i host_files/sandbox_hosts postman_host.plbk -e start_containers=true
+#
+# Stop the containers:
+# $ ansible-playbook -i host_files/sandbox_hosts postman_host.plbk -e stop_containers=true
+
+- name: gather all hosts information
+  hosts: postman
+
+- hosts: systems
+  roles:
+    - agave_host
+    - docker_host
+    - systems_host

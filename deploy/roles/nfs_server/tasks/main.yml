@@ -1,0 +1,33 @@
+---
+
+- name: packages
+  yum: pkg={{item}} state=present update_cache=yes
+  with_items:
+      - nfs-utils
+      - rpcbind
+  sudo: yes
+
+- name: update /etc/sysconfig/nfs
+  lineinfile: dest=/etc/sysconfig/nfs line='RPCNFSDARGS="-N 4"'
+  notify:
+       - restart nfs-server
+  sudo: yes
+
+- name: ensure directories are present
+  file: path={{ item.value.dir }} state=directory owner=apim
+  with_dict: "{{ exports }}"
+  sudo: yes
+
+- name: update /etc/exports
+  template: src=exports.j2 dest=/etc/exports
+  notify:
+      - restart nfs-server
+  sudo: yes
+
+- name: ensure rpcbind started and enabled
+  service: name=rpcbind state=started enabled=yes
+  sudo: yes
+
+- name: ensure nfs started and enabled
+  service: name=nfs-server state=started enabled=yes
+  sudo: yes

@@ -1,0 +1,180 @@
+---
+
+httpd.{{ tenant_id }}.agave.tacc.utexas.edu:
+    image: agaveapi/apim_httpd:{{ apim_httpd_version }}
+    links:
+        - apim.{{ tenant_id }}.agave.tacc.utexas.edu
+        - clients.{{ tenant_id }}.agave.tacc.utexas.edu
+{% if use_hosted_id or use_remote_userstore %}
+        - profiles.{{ tenant_id }}.agave.tacc.utexas.edu
+{% endif %}
+    volumes:
+        - /home/apim/{{ tenant_id }}/{{ tenant_id }}.yml:/values.yml
+        - /home/apim/{{ tenant_id }}/passwords:/passwords
+        - /home/apim/logs/httpd-access-logs:/var/log/apache2/access.log
+        - /home/apim/logs/httpd-error-logs:/var/log/apache2/error.log
+        - /home/apim/{{ tenant_id }}/docs:/var/www/html/docs
+        - /home/apim/{{ tenant_id }}/publickey:/var/www/html/apim/v2/publickey
+{% if virtualhosts is defined %}
+{% for vhost in virtualhosts %}
+        - /home/apim/{{ tenant_id }}/httpd/{{ vhost.cert_file }}:/etc/apache2/ssl/certs/{{ vhost.base_cert_path }}/{{ vhost.cert_file }}
+        - /home/apim/{{ tenant_id }}/httpd/{{ vhost.cert_key_file }}:/etc/apache2/ssl/private/{{ vhost.base_cert_path }}/{{ vhost.cert_key_file }}
+{% if vhost.ssl_ca_cert_file is defined %}
+        - /home/apim/{{ tenant_id }}/httpd/{{ vhost.ssl_ca_cert_file }}:/etc/apache2/ssl/certs/{{ vhost.base_cert_path }}/{{ vhost.ssl_ca_cert_file }}
+{% endif %}
+{% if vhost.ssl_ca_chain_file is defined %}
+        - /home/apim/{{ tenant_id }}/httpd/{{ vhost.ssl_ca_chain_file }}:/etc/apache2/ssl/certs/{{ vhost.base_cert_path }}/{{ vhost.ssl_ca_chain_file }}
+{% endif %}
+{% endfor %}
+{% else %}
+        - /home/apim/{{ tenant_id }}/httpd/{{ cert_file }}:/etc/apache2/ssl/certs/{{ cert_file }}
+        - /home/apim/{{ tenant_id }}/httpd/{{ cert_key_file }}:/etc/apache2/ssl/private/{{ cert_key_file }}
+{% if ssl_ca_cert_file is defined %}
+        - /home/apim/{{ tenant_id }}/httpd/{{ ssl_ca_cert_file }}:/etc/apache2/ssl/certs/{{ ssl_ca_cert_file }}
+{% endif %}
+{% if ssl_ca_chain_file is defined %}
+        - /home/apim/{{ tenant_id }}/httpd/{{ ssl_ca_chain_file }}:/etc/apache2/ssl/certs/{{ ssl_ca_chain_file }}
+{% endif %}
+{% endif %}
+{% if update_apim_core_dns %}
+    extra_hosts:
+        - "{{ tenant_id }}.api.{{ agave_env }}.agaveapi.co:{{ core_host }}"
+{% endif %}
+{% if ha_deployment %}
+{% if primary_auth_compose %}
+    ports:
+        - "4080:80"
+        - "40443:443"
+{% else %}
+    ports:
+        - "5080:80"
+        - "50443:443"
+{% endif %}
+{% else %}
+    ports:
+        - "80:80"
+        - "443:443"
+{% endif %}
+    restart: unless-stopped
+
+apim.{{ tenant_id }}.agave.tacc.utexas.edu:
+    image: agaveapi/apim19_base:{{ apim19_base_version }}
+{% if deploy_admin_services or use_hosted_id or use_remote_userstore %}
+    links:
+{% if deploy_admin_services %}
+        - adminnginx
+{% endif %}
+{% if use_hosted_id or use_remote_userstore %}
+        - profiles.{{ tenant_id }}.agave.tacc.utexas.edu
+{% endif %}
+{% endif %}
+    ports:
+{% if primary_auth_compose %}
+        - "9443:9443"
+{% else %}
+        - "9453:9443"
+{% endif %}
+        - "8243"
+        - "6284"
+{% if update_auth_dns or update_apim_core_dns %}
+    extra_hosts:
+{% if update_apim_core_dns %}
+        - "{{ tenant_id }}.api.{{ agave_env }}.agaveapi.co:{{ core_host }}"
+{% endif %}
+{% if update_auth_dns %}
+        - "{{ mysql_host }}:{{ auth_mysql_host }}"
+{% endif %}
+{% endif %}
+    volumes:
+        - /home/apim/{{ tenant_id }}/{{ tenant_id }}.yml:/values.yml
+        - /home/apim/{{ tenant_id }}/passwords:/passwords
+        - /home/apim/logs/apim-logs:/wso2am-1.9.0/nohup.out
+        - /home/apim/{{ tenant_id }}/apis:/wso2am-1.9.0/repository/deployment/server/synapse-configs/default/api/
+{% if deploy_custom_oauth_app %}
+        - /home/apim/{{ tenant_id }}/authenticationendpoint:/wso2am-1.9.0/repository/deployment/server/webapps/authenticationendpoint
+{% endif %}
+    restart: unless-stopped
+    # uncomment to pass a profile to APIM container; e.g.
+    # command: api-key-manager
+
+clients.{{ tenant_id }}.agave.tacc.utexas.edu:
+    image: agaveapi/agave_clients_dedicated:{{ agave_clients_dedicated_version }}
+    links:
+        - apim.{{ tenant_id }}.agave.tacc.utexas.edu
+    ports:
+        - "80"
+{% if update_auth_dns %}
+    extra_hosts:
+        - "{{ mysql_host }}:{{ auth_mysql_host }}"
+{% endif %}
+    volumes:
+        - /home/apim/{{ tenant_id }}/{{ tenant_id }}.yml:/values.yml
+        - /home/apim/{{ tenant_id }}/passwords:/passwords
+    restart: unless-stopped
+
+{% if use_hosted_id or use_remote_userstore %}
+profiles.{{ tenant_id }}.agave.tacc.utexas.edu:
+    image: {{ agave_id_image }}:{{ agave_id_dedicated_version }}
+    ports:
+        - "80"
+{% if update_auth_dns %}
+    extra_hosts:
+        - "{{ mysql_host }}:{{ auth_mysql_host }}"
+{% endif %}
+    volumes:
+        - /home/apim/{{ tenant_id }}/{{ tenant_id }}.yml:/values.yml
+        - /home/apim/{{ tenant_id }}/passwords:/passwords
+    restart: unless-stopped
+
+id_admin:
+    image: agaveapi/agave_id_dedicated:{{ agave_id_dedicated_version }}
+    ports:
+        - "80"
+{% if update_auth_dns %}
+    extra_hosts:
+        - "{{ mysql_host }}:{{ auth_mysql_host }}"
+{% endif %}
+    volumes:
+        - /home/apim/{{ tenant_id }}/{{ tenant_id }}.yml:/values.yml
+        - /home/apim/{{ tenant_id }}/passwords:/passwords
+        - /home/apim/update_id_admin_settings.sh:/update_id_admin_settings.sh
+    restart: unless-stopped
+
+{% endif %}
+
+{% if deploy_admin_services %}
+adminnginx:
+    image: agaveapi/admin_services_nginx:{{ admin_services_nginx_version }}
+    links:
+        - adminjwt
+        - adminaccounts
+    ports:
+        - "80"
+    command: /bin/bash -c "env && envsubst < /etc/nginx/sites-enabled/flask-project.template > /etc/nginx/sites-enabled/flask-project && rm -f /etc/nginx/sites-enabled/flask-project.template && nginx -g 'daemon off;'"
+
+adminjwt:
+    image: agaveapi/flask_admin_services:{{ flask_admin_services_version }}
+    ports:
+        - "5000"
+    environment:
+        package: /services/jwt
+
+adminaccounts:
+    image: agaveapi/flask_admin_services:{{ flask_admin_services_version }}
+    ports:
+        - "5000"
+{% if update_auth_admin_dns %}
+    extra_hosts:
+        - "{{ host }}: {{ auth_gateway_ip }}"
+{% endif %}
+    environment:
+        package: /services/accounts
+        wso2admin_username: admin
+        wso2admin_password: {{ apim_admin_pass }}
+        base_url: {{ host }}
+{% if primary_auth_compose %}
+        port: 9443
+{% else %}
+        port: 9453
+{% endif %}
+{% endif %}

@@ -1,0 +1,43 @@
+# Run this playbook to deploy a swarm cluster across a set of VMs. Will also create an NFS and mount directories to be
+# shared across the swarm cluster.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+# 1. swarm_master_ip - (private) IP address of the swarm master. Should be accessible to the clients via port 111 and 2049.
+#                      Should be set in the hosts file group vars.
+# 2. nfs_server_ip (optional) - (private) IP address of the server to mount from. Should be accessible to the clients
+#    via port 111 and 2049. Defaults to using the swarm_master_ip.
+# 3. exports (optional)- YAML collection (dictionary) of directories to mount via NFS. The default provides for
+# Note: SSH credentials (e.g. ansible_ssh_host, ansible_ssh_private_key_file) should be placed in the
+#       hosts file.
+#
+# Example invocation:
+# $ ansible-playbook -i host_files/nfs_hosts nfs_cluster.plbk
+#
+
+
+---
+
+# install docker and apim
+- hosts: all
+  roles:
+    - agave_host
+    - docker_host
+
+# deploy the master server host
+- hosts: master
+  roles:
+      - nfs_server
+#      - swarm_mode
+  vars:
+      - swarm_master: True
+
+# deploy the workers
+- hosts: worker
+  roles:
+      - nfs_client
+#      - swarm_mode
+  vars:
+      - nfs_server_ip: "{{ swarm_master_ip }}"
+      - swarm_worker: True

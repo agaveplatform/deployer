@@ -1,0 +1,55 @@
+###############################################################
+# Core Science APIs - Sandbox
+# docker-compose.yml
+#
+# This is the orchestration file to start Agave's Core Science
+# APIs. The APIs are accessible behind a proxy container which
+# shields them from the outside world. Containers are assigned
+# static ports to enable rolling updates of each API as needed.
+# Containers performing data operations are assigned a partition
+# of the default GridFTP and FTP port ranges to enable proper
+# operation of the protocol from within each container.
+#
+# Make sure to start your containers
+# with $AGAVE_VERSION defined in your environment. You should
+# also have the following /etc/hosts entries defined for your
+# hosting environment. (These are appropriate for docker-machine
+# on OSX.) In a production environment, these should resolve
+# to the appropriate hosts and/or dns entries.
+#
+#
+###############################################################
+
+proxy:
+{% if core_deploy_httpd_balancer %}
+  image: agaveapi/apache-api-proxy:balancer
+{% else %}
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/apache-api-proxy:alpine-dev
+{% endif %}
+  hostname: {{ agave_core_hostname }}
+  ports:
+    - '80:80'
+    - '443:443'
+  extra_hosts:
+{% if core_deploy_httpd_balancer %}
+    - "a.proxy.host:{{ agave_proxy_core_ip }}"
+    - "b.proxy.host:{{ agave_proxy_core_ip }}"
+{% else %}
+    - "proxy.host:{{ agave_proxy_core_ip }}"
+{% endif%}
+  environment:
+    - 'BALANCER_WHITELIST=129.114'
+    - 'STATUS_WHITELIST=129.114'
+    - 'LOG_LEVEL_INFO=1'
+{% if core_deploy_ssl_certs %}
+    - 'SSL_CERT={{ agave_core_ssl_cert }}'
+    - 'SSL_KEY={{ agave_core_ssl_key }}'
+{% if agave_core_ca_cert %}
+    - 'SSL_CA_CERT={{ agave_core_ca_cert }}'
+{% endif %}
+{% endif %}
+  volumes:
+    - '/var/log/splunk/proxy:/var/log/apache2'
+{% if core_deploy_ssl_certs %}
+    - './ssl:/ssl:ro'
+{% endif %}

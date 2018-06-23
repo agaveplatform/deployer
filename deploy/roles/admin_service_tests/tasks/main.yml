@@ -1,0 +1,19 @@
+---
+
+- name: ensure admin dir
+  file: path=/home/apim/admin_services state=directory
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: compile run_tests.sh
+  template: src=run_tests.sh.j2 dest=/home/apim/admin_services/run_tests.sh mode="a+x"
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: run tests
+  shell: sh /home/apim/admin_services/run_tests.sh
+  become: yes
+  become_user: apim
+  become_method: sudo

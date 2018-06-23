@@ -1,0 +1,12 @@
+---
+
+galera:
+  image: agaveapi/ubuntu:pxc56
+  ports:
+      - "3306:{{ percona_port }}"
+      - "4567:{{ percona_repl_port }}"
+      - "4444:4444"
+  volumes:
+      - /mnt/data/ubuntu-pxc56/mysql:/var/lib/mysql
+      - /home/apim/db_cluster/my.cnf:/etc/mysql/my.cnf
+      - /home/apim/db_cluster/my2.cnf:/etc/mysql/my2.cnf

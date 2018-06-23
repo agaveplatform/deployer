@@ -1,0 +1,19 @@
+# Run this playbook to load the tenant service accounts and test users into the ldap database.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+#
+# Example invocation:
+# $ ansible-playbook -i host_files/dev_staging load_ldap_users.plbk
+
+
+---
+
+
+- hosts: auth
+  vars:
+      - env: sandbox
+  roles:
+      - ldap_apim
+

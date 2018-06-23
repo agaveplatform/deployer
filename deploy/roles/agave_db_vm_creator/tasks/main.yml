@@ -1,0 +1,75 @@
+---
+################################################################################
+#
+#   REQUIRED VARIABLES
+#
+#   os_authurl (https://rodeo.tacc.utexas.edu/dashboard/auth/login/)
+#   domain_name
+#   project_name
+#   username (<rodeo_login>)
+#   password (<rodeo_password>)
+#
+#   os_auth_vmname
+#   os_region
+#   os_flavor
+#   os_zone
+#   os_image
+#   os_keyname
+#   os_securitygroup
+#   os_network
+#
+################################################################################
+
+- name: Create OpenStack DB VM
+  os_server:
+    state: present
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    name: "{{os_db_vm_name}}"
+    region_name: "{{os_region}}"
+    flavor: "{{os_flavor}}"
+    availability_zone: "{{os_zone}}"
+    image: "{{os_image}}"
+    key_name: "{{os_keyname}}"
+    security_groups: "{{os_db_security_group}},default"
+    network: "{{os_network}}"
+    auto_ip: no
+    wait: yes
+    timeout: 300
+
+- name: Get DB VM Floating IP from existing pool
+  os_floating_ip:
+    state: present
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    server: "{{os_db_vm_name}}"
+    region_name: "{{os_region}}"
+    reuse: yes
+    wait: yes
+    timeout: 300
+  when: os_db_ip_address is undefined and os_skip_floating_ip
+
+- name: Assign the provided Floating IP address to the DB VM
+  os_floating_ip:
+    state: present
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    server: "{{os_db_vm_name}}"
+    region_name: "{{os_region}}"
+    floating_ip_address: {{os_auth_vm_ip_address}}
+    reuse: yes
+    wait: yes
+    timeout: 300
+  when: os_db_ip_address is defined and os_skip_floating_ip is not true

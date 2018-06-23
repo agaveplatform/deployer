@@ -1,0 +1,14 @@
+# Execute the admin test suite on an auth server. Assumes the admin containers have already been deployed.
+#
+
+# Example invocation:
+# $ deployer -i /deploy/host_files/sandbox_hosts /deploy/run_admin_tests.plbk
+
+---
+
+- name: gather all hosts information
+  hosts: all
+
+- hosts: auth
+  roles:
+    - admin_service_tests

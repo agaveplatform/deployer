@@ -1,0 +1,14 @@
+---
+
+- name: compile cleanup script
+  template: src=cleanup.sh.j2 dest=/home/apim/cleanup.sh mode="a+x"
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+
+- name: run docker cleanup script
+  shell: sh /home/apim/cleanup.sh
+  become: yes
+  become_user: apim
+  become_method: sudo

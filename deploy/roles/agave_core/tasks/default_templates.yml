@@ -1,0 +1,65 @@
+
+---
+
+- name: compile compose templates
+  template: src={{ item }} dest=/home/apim/core-apis/{{ item | replace('.j2','') }}
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: deploy_core_default_templates
+  with_items:
+      - docker-compose.yml.j2
+      - common.yml.j2
+      - service-defs.yml.j2
+      - proxy.yml.j2
+      - pull_images.sh.j2
+
+#- name: list core-apis-ssl cert directory
+#  command: ls "{{playbook_dir}}/core-apis-ssl"
+#  register: sslcerts
+#  when: core_deploy_ssl_certs
+#
+#- name: check certs were found in core-apis-ssl exist
+#  fail:
+#    msg: "No core api SSL certs found in {{playbook_dir}}/core-apis-ssl"
+#  when: core_deploy_ssl_certs and sslcerts.stdout == ""
+
+- name: Copy core-apis ssl files
+  copy: src=core-apis-ssl/ dest=/home/apim/core-apis/ssl mode=0755
+  when: core_deploy_ssl_certs
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: Pull latest docker images from templates
+  shell: sh pull_images.sh chdir=/home/apim/core-apis/
+  become: yes
+  become_user: apim
+  become_method: sudo
+  ignore_errors: True
+  when: not deploy_core_default_templates
+
+
+# ignore errors here since this call will fail if there are no containers running
+- name: remove existing containers
+  shell: docker rm -f `docker ps -aq` chdir=/home/apim/core-apis/
+  become: yes
+  become_user: apim
+  become_method: sudo
+  ignore_errors: yes
+  when: kill_core_containers
+
+- pause: seconds=30
+
+- name: start the core-apis proxy container with docker compose
+  shell: docker-compose -p apim -f docker-compose.yml up -d chdir=/home/apim/core-apis/
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: deploy_core_apis
+  environment:
+      AGAVE_VERSION: '{{ agave_core_version }}'
+      COMPOSE_HTTP_TIMEOUT: 2000
+
+
+

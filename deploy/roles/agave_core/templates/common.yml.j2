@@ -1,0 +1,141 @@
+###############################################################
+# Core Science APIs - Common Service Definitions
+# common.yml
+#
+# These are the common service definition configurations for
+# the core science apis. The docker-compose.yml file inherits
+# from this file by default.
+#
+###############################################################
+
+###############################################################
+#   Java APIs
+###############################################################
+
+java_api:
+  hostname: {{ agave_core_hostname }}
+  restart: "always"
+  mem_limit: {{ agave_core_java_mem_limit }}
+  command: catalina.sh jpda run 2>&1
+  environment:
+    - 'AGAVE_VERSION={{core_version}}'
+    - 'ENABLE_REMOTE_DEBUG=1'
+    - 'IPLANT_SLAVE_MODE={{agave_core_workers_only}}'
+    - 'IPLANT_DEDICATED_TENANT_ID={{agave_core_dedicated_tenant_id}}'
+    - 'IPLANT_DEDICATED_SYSTEM_ID={{agave_core_dedicated_system_ids}}'
+    - 'IPLANT_DEDICATED_USER_ID={{agave_core_dedicated_user_ids}}'
+    - 'IPLANT_ZOMBIE_CLEANUP_INTERVAL={{agave_zombie_cleanup_interval}}'
+    - 'IPLANT_ENABLE_ZOMBIE_CLEANUP={{agave_zombie_cleanup_enabled}}'
+    - 'IPLANT_ZOMBIE_TASK_LIFETIME={{agave_zombie_task_lifetime}}'
+    - 'IPLANT_ZOMBIE_CLEANUP_BATCH_SIZE={{agave_zombie_cleanup_batch_size}}'
+    - 'IPLANT_DRAIN_ALL_QUEUES={{agave_core_drain_all_queues}}'
+    - 'IPLANT_ALLOW_RELAY_TRANSFERS={{ agave_core_allow_relay_transfer }}'
+    - 'IPLANT_MAX_RELAY_TRANSFER_SIZE={{ agave_core_max_relay_transfer_size }}'
+    - 'IPLANT_MAX_PAGE_SIZE={{ agave_core_max_page_size }}'
+    - 'IPLANT_DEFAULT_PAGE_SIZE={{ agave_core_default_page_size }}'
+    - 'MYSQL_HOST={{ mysql_core_host }}'
+    - 'MYSQL_PORT={{ mysql_core_port }}'
+    - 'MYSQL_USERNAME={{ mysql_core_user }}'
+    - 'MYSQL_PASSWORD={{ mysql_core_password }}'
+    - 'MYSQL_DATABASE=agave-api'
+    - 'IPLANT_METADATA_DB_HOST={{ agave_core_metadata_host }}'
+    - 'IPLANT_METADATA_DB_PORT={{ agave_core_metadata_port }}'
+    - 'IPLANT_METADATA_DB_USER={{ agave_core_metadata_user }}'
+    - 'IPLANT_METADATA_DB_PWD={{ agave_core_metadata_password }}'
+    - 'IPLANT_LOG_SERVICE={{ agave_core_log_service }}'
+    - 'IPLANT_NOTIFICATION_SERVICE_QUEUE={{ agave_core_notification_queue }}'
+    - 'IPLANT_NOTIFICATION_SERVICE_TOPIC={{ agave_core_notification_topic }}'
+    - 'IPLANT_NOTIFICATION_FAILED_DB_HOST={{ agave_core_notification_failed_db_host }}'
+    - 'IPLANT_NOTIFICATION_FAILED_DB_PORT={{ agave_core_notification_failed_db_port }}'
+    - 'IPLANT_NOTIFICATION_FAILED_DB_USER={{ agave_core_notification_failed_db_user }}'
+    - 'IPLANT_NOTIFICATION_FAILED_DB_PWD={{ agave_core_notification_failed_db_pwd }}'
+    - 'IPLANT_NOTIFICATION_FAILED_DB_SCHEME={{ agave_core_notification_failed_db_scheme }}'
+    - 'IPLANT_MESSAGING_HOST={{ agave_core_messaging_host }}'
+    - 'IPLANT_MESSAGING_PORT={{ agave_core_messaging_port }}'
+    - 'REALTIME_PROVIDER={{ agave_core_realtime_service_type }}'
+    - 'REALTIME_URL={{ agave_core_realtime_service }}'
+    - 'REALTIME_REALM_ID={{ agave_core_realtime_service_realm_id }}'
+    - 'REALTIME_REALM_KEY={{ agave_core_realtime_service_realm_key }}'
+    - 'MAIL_SMTPS_FROM_NAME="Agave Staging Notification Service"'
+    - 'MAIL_SMTPS_FROM_ADDRESS="noreply@agaveapi.co"'
+    - 'MAIL_SMTPS_PROVIDER={{ agave_core_smtps_provider }}'
+    - 'MAIL_SMTPS_HOST={{ agave_core_smtps_host }}'
+    - 'MAIL_SMTPS_AUTH={{ agave_core_smtps_auth }}'
+    - 'MAIL_SMTPS_PORT={{ agave_core_smtps_port }}'
+    - 'MAIL_SMTPS_USER={{ agave_core_smtps_user }}'
+    - 'MAIL_SMTPS_PASSWD={{ agave_core_smtps_password }}'
+    - 'IPLANT_INTERNAL_ACCOUNT_SERVICE_KEY={{ agave_core_iplant_internal_account_service_key|default('') }}'
+    - 'IPLANT_INTERNAL_ACCOUNT_SERVICE_SECRET={{ agave_core_iplant_internal_account_service_secret|default('') }}'
+    - 'IPLANT_INTERNAL_ACCOUNT_SERVICE={{ agave_core_iplant_internal_account_service|default('') }}'
+#    - 'LOG_TARGET_STDOUT=0'
+    - 'IPLANT_MIN_MONITOR_REPEAT_INTERVAL={{ agave_core_monitor_min_check_interval }}'
+{% if core_deploy_ssl_certs %}
+    - 'CATALINA_TMPDIR=/scratch'
+    - 'SSL_CERT={{ agave_core_ssl_cert }}'
+    - 'SSL_KEY={{ agave_core_ssl_key }}'
+    - 'SSL_CA_CERT={{ agave_core_ca_cert }}'
+{% endif %}
+#     - 'CATALINA_OPTS="-Duser.timezone=America/Chicago -Djsse.enableCBCProtection=false -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms512m -Xmx1024m -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"'
+  volumes:
+{% if core_deploy_ssl_certs %}
+    - './ssl:/ssl:ro'
+{% endif %}
+    - './scratch:/scratch'
+
+php_api:
+  hostname: {{ agave_core_hostname }}
+  mem_limit: {{agave_core_php_mem_limit}}
+  restart: "always"
+  environment:
+    - 'AGAVE_VERSION={{core_version}}'
+    - 'IPLANT_SLAVE_MODE={{agave_core_workers_only}}'
+    - 'IPLANT_DEDICATED_TENANT_ID={{agave_core_dedicated_tenant_id}}'
+    - 'IPLANT_DEDICATED_SYSTEM_ID={{agave_core_dedicated_system_ids}}'
+    - 'IPLANT_DEDICATED_USER_ID={{agave_core_dedicated_user_ids}}'
+    - 'IPLANT_DRAIN_ALL_QUEUES={{agave_core_drain_all_queues}}'
+    - 'IPLANT_ALLOW_RELAY_TRANSFERS={{ agave_core_allow_relay_transfer }}'
+    - 'IPLANT_MAX_RELAY_TRANSFER_SIZE={{ agave_core_max_relay_transfer_size }}'
+    - 'IPLANT_MAX_PAGE_SIZE={{ agave_core_max_page_size }}'
+    - 'IPLANT_DEFAULT_PAGE_SIZE={{ agave_core_default_page_size }}'
+    - 'MYSQL_HOST={{ mysql_core_host }}:{{ mysql_core_port }}'
+    - 'MYSQL_PORT={{ mysql_core_port }}'
+    - 'MYSQL_USERNAME={{ mysql_core_user }}'
+    - 'MYSQL_PASSWORD={{ mysql_core_password }}'
+    - 'MYSQL_DATABASE=agave-api'
+    - 'IPLANT_METADATA_DB_HOST={{ agave_core_metadata_host }}'
+    - 'IPLANT_METADATA_DB_PORT={{ agave_core_metadata_port }}'
+    - 'IPLANT_METADATA_DB_USER={{ agave_core_metadata_user }}'
+    - 'IPLANT_METADATA_DB_PWD={{ agave_core_metadata_password }}'
+    - 'IPLANT_NOTIFICATION_SERVICE_QUEUE={{ agave_core_notification_queue }}'
+    - 'IPLANT_NOTIFICATION_SERVICE_TOPIC={{ agave_core_notification_topic }}'
+    - 'IPLANT_NOTIFICATION_FAILED_DB_HOST={{ agave_core_notification_failed_db_host }}'
+    - 'IPLANT_NOTIFICATION_FAILED_DB_PORT={{ agave_core_notification_failed_db_port }}'
+    - 'IPLANT_NOTIFICATION_FAILED_DB_USER={{ agave_core_notification_failed_db_user }}'
+    - 'IPLANT_NOTIFICATION_FAILED_DB_PWD={{ agave_core_notification_failed_db_pwd }}'
+    - 'IPLANT_NOTIFICATION_FAILED_DB_SCHEME={{ agave_core_notification_failed_db_scheme }}'
+    - 'IPLANT_MESSAGING_HOST={{ agave_core_messaging_host }}'
+    - 'IPLANT_MESSAGING_PORT={{ agave_core_messaging_port }}'
+    - 'REALTIME_PROVIDER={{ agave_core_realtime_service_type }}'
+    - 'REALTIME_URL={{ agave_core_realtime_service }}'
+    - 'REALTIME_REALM_ID={{ agave_core_realtime_service_realm_id }}'
+    - 'REALTIME_REALM_KEY={{ agave_core_realtime_service_realm_key }}'
+    - 'MAIL_SMTPS_PROVIDER={{ agave_core_smtps_provider }}'
+    - 'MAIL_SMTPS_HOST={{ agave_core_smtps_host }}'
+    - 'MAIL_SMTPS_AUTH={{ agave_core_smtps_auth }}'
+    - 'MAIL_SMTPS_PORT={{ agave_core_smtps_port }}'
+    - 'MAIL_SMTPS_USER={{ agave_core_smtps_user }}'
+    - 'MAIL_SMTPS_PASSWD={{ agave_core_smtps_password }}'
+    - 'MAIL_SMTPS_FROM_NAME="Agave Staging Notification Service"'
+    - 'MAIL_SMTPS_FROM_ADDRESS="noreply@agaveapi.co"'
+#    - 'LOG_TARGET_STDOUT=0'
+    - 'IPLANT_MIN_MONITOR_REPEAT_INTERVAL={{ agave_core_monitor_min_check_interval }}'
+{% if core_deploy_ssl_certs %}
+    - 'SSL_CERT={{ agave_core_ssl_cert }}'
+    - 'SSL_KEY={{ agave_core_ssl_key }}'
+    - 'SSL_CA_CERT={{ agave_core_ca_cert }}'
+{% endif %}
+  volumes:
+{% if core_deploy_ssl_certs %}
+    - './ssl:/ssl:ro'
+{% endif %}
+    - './scratch:/scratch'

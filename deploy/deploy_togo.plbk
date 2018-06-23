@@ -1,0 +1,22 @@
+# Use this playbook to deploy the Agave ToGo webapps on a shared host.
+# Required parameters:
+#   - newrelic license key.
+#
+# Example invocation:
+# ansible-playbook -i host_files/ipt_hosts deploy_ipt.plbk -e newrelic_license_key=abc123
+# deployer -i /deploy/host_files/ipt_hosts /deploy/deploy_ipt.plbk -e newrelic_license_key=abc123
+
+---
+
+
+- hosts: togo
+  roles:
+      - agave_host
+      - docker_host
+      - newrelic
+      - splunk_host
+      - logrotate
+      - togo_static
+  vars:
+      - update_docker_version: True
+      - update_docker_compose_version: True

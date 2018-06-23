@@ -1,0 +1,13 @@
+# Run this playbook to install splunk forwarder on a host.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# Example invocation:
+# $ ansible-playbook -i host_files/splunk_hosts install_splunk.plbk
+
+---
+
+  # deploy and start containers
+- hosts: splunk
+  roles:
+    - splunk_host

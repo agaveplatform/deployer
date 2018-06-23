@@ -1,0 +1,15 @@
+
+# location of the cloud volume.
+volume_device: /dev/vdb
+
+# file system type for the volume
+fs_type: ext4
+
+# the directory on the cloud storage instance to mount the volume to.
+dir_mount: /datamnt
+
+# directories within the dir_mount to create
+storage_dirs:
+  - agave/tenants
+  - agave/deployer
+  - agave/jupyter

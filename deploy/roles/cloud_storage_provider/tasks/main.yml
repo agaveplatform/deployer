@@ -1,0 +1,25 @@
+---
+
+- name: build the volume file system
+  filesystem:
+      fstype: "{{ fs_type }}"
+      dev: "{{ volume_device }}"
+  sudo: yes
+
+- name: ensure directory for mount exists
+  file: path="{{ dir_mount }}" state=directory
+  sudo: yes
+
+- name: mount the volume fs to the mount directory
+  mount:
+      name: "{{ dir_mount }}"
+      src: "{{ volume_device }}"
+      fstype: "{{ fs_type }}"
+      state: present
+  sudo: yes
+
+- name: ensure storage directories are present
+  file: path={{ dir_mount }}/{{ item }} state=directory owner=apim
+  with_items: "{{ storage_dirs }}"
+  sudo: yes
+

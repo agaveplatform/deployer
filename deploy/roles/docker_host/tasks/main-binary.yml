@@ -1,0 +1,23 @@
+---
+
+- name: copy docker-init file
+  file: src=docker-init dest=/etc/init.d/docker
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: "{{ update_docker_version }} or {{ update_docker_compose_version }}"
+
+- name: download docker binary
+  get_url: url=https://get.docker.com/builds/Linux/x86_64/docker-{{ docker_version }}.tgz dest=/usr/bin/docker
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: "{{ update_docker_version }}"
+
+- name: set permissions on docker binary
+  acl: permissions="rx" name=/usr/bin/docker state=present etype=user entity=apim
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: "{{ update_docker_version }}"
+

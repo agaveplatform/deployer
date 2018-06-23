@@ -1,0 +1,113 @@
+# Updates an existing mysql server with the databses needed for an APIM instance. Installs three new dbs:
+# apimgtdb, regdb, and userdb and runs a sql load script to populate the dbs with initial data.
+
+- include_vars: tenants/{{ tenant_id }}/{{ tenant_id }}.yml
+- include_vars: tenants/{{ tenant_id }}/{{ tenant_id }}_passwords
+
+- name: install python mysqldb module - debian
+  apt: name=python-mysqldb state=present
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: ansible_os_family == "Debian"
+
+- name: install mysql client package - debian
+  apt: name=mysql-client state=present
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: ansible_os_family == "Debian"
+
+- name: install python mysqldb module - centos
+  yum: name=MySQL-python state=installed
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: ansible_os_family == "RedHat"
+
+- name: install mysql client package - centos
+  yum: name=mysql state=present
+  become: yes
+  become_user: root
+  become_method: sudo
+  when: ansible_os_family == "RedHat"
+
+- name: Create ansible Mysql configuration file
+  template: src=.my.cnf.j2 dest=/home/apim/.my.cnf
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: create templates dir for apim
+  file: path=/home/apim/apim_mysql_scripts/{{ tenant_id }} state=directory
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: compile mysql load script
+  # template: src=am{{ apim_version }}-amdbs.sql.j2 dest=/home/apim/apim_mysql_scripts/{{ tenant_id }}/am{{ apim_version }}-amdbs.sql
+  template: src=mysql_alldbs_am19.sql.j2 dest=/home/apim/apim_mysql_scripts/{{ tenant_id }}/am{{ apim_version }}-amdbs.sql
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- debug: msg="The mysql root user is {{ mysql_root_user }}"
+
+- debug: msg="The mysql root password is {{ mysql_root_password }}"
+
+- debug: msg="The mysql login host is {{ mysql_login_host }}"
+
+- debug: msg="The mysql login port is {{ mysql_login_port }}"
+
+#- name: ensure dbs are presesnt
+#  mysql_db: name={{ item }} state=present login_host={{ mysql_login_host }} login_port={{ mysql_login_port }} login_user={{ mysql_root_user }} login_password={{ mysql_root_password }}
+#  become: yes
+#  become_user: apim
+#  become_method: sudo
+#  with_items:
+#    - apimgtdb_{{ tenant_id }}
+#    - regdb_{{ tenant_id }}
+#    - userdb_{{ tenant_id }}
+
+
+#- name: execute sql script
+#  mysql_db: name=all state=import target=/home/apim/apim_mysql_scripts/{{ tenant_id }}/am{{ apim_version }}-amdbs.sql login_host={{ mysql_login_host }} login_port={{ mysql_login_port }}
+#  become: yes
+#  become_user: apim
+#  become_method: sudo
+#  when: load_auth_sql_data
+
+- name: wait for servers to start up
+  shell: sleep 20
+
+- name: execute sql script
+  shell: mysql -u{{ mysql_root_user }} -h {{ mysql_login_host }} -P {{ mysql_login_port }} -p{{ mysql_root_password }} < /home/apim/apim_mysql_scripts/{{ tenant_id }}/am{{ apim_version }}-amdbs.sql
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- debug: msg="The tenant mysql user is {{ mysql_tenant_user }}"
+
+- debug: msg="The tenant mysql password is {{ mysql_tenant_pass }}"
+
+- name: register db variables
+  shell: echo apimgtdb_{{ tenant_id }}
+  register: apimgtdb
+
+- name: register db variables
+  shell: echo userdb_{{ tenant_id }}
+  register: userdb
+
+- name: register db variables
+  shell: echo regdb_{{ tenant_id }}
+  register: regdb
+
+- name: create tenant mysql user
+  mysql_user: name={{ mysql_tenant_user }} password={{ mysql_tenant_pass }} priv={{ apimgtdb.stdout }}.*:ALL/{{ regdb.stdout }}.*:ALL/{{ userdb.stdout }}.*:ALL state=present login_host={{ mysql_login_host }} login_port={{ mysql_login_port }} host={{ item }}
+  become: yes
+  become_user: apim
+  become_method: sudo
+  with_items:
+    - "%"
+    - "localhost"
+  when: load_auth_sql_data and create_tenant_mysql_user

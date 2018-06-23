@@ -1,0 +1,24 @@
+agave_linux_user_name: apim
+
+# NOTE: This is the default for Debian-based distros.
+#       The default for Centos is set in the main-centos.yml task file
+docker_version: 1.9.1-0~trusty
+
+# docker-compose installs as a single binary:
+docker_compose_version: 1.6.2
+
+update_docker_compose_version: False
+update_docker_version: False
+
+docker_cleanup_packages_EL:
+  - {package: "docker"}
+  - {package: "docker-common"}
+  - {package: "docker-client"}
+  - {package: "docker-client-latest"}
+  - {package: "docker-engine"}
+
+docker_cleanup_packages_Ubuntu:
+  - {package: "docker.io"}
+  - {package: "docker-engine"}
+  - {package: "containerd"}
+

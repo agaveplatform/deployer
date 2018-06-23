@@ -1,0 +1,351 @@
+---
+################################################################################
+#
+#   VALIDATE_DEPLOYER.YML
+#   Kulisics, Joseph D.
+#   2016 June 30
+#
+#   REQUIRED VARIABLES:
+#
+################################################################################
+
+- name: Setup Major Variables in Local Host's Facts
+  hosts: local
+
+  vars:
+
+    agave_namespace: agave
+    agave_security_group_namespace: agave
+
+    os_key_file_src: ~/.ssh/apitest_postman.key.pub
+    os_authur: "{{ lookup('env', 'OS_AUTH_URL') }}"
+    os_domain: "{{ lookup('env', 'OS_USER_DOMAIN_NAME') }}"
+    os_project: "{{ lookup('env', 'OS_PROJECT_NAME') }}"
+    os_username: "{{lookup('env', 'OS_USERNAME')}}"
+    os_password: "{{lookup('env', 'OS_PASSWORD')}}"
+    os_region: "{{ lookup('env', 'OS_REGION_NAME') }}"
+    os_flavor: m1.large
+    os_image: 9b8bfe7b-ec03-4448-9f7a-c8f5818c2431
+
+
+  tasks:
+
+    - name: Set Facts Collected from Prompts
+
+      set_fact:
+
+        agave_namespace: "{{agave_namespace}}"
+        agave_security_group_namespace: "{{agave_security_group_namespace}}"
+
+        os_authurl: {{os_authurl}}
+        os_domain: "{{os_domain}}"
+        os_project: "{{os_project}}"
+        os_username: "{{os_username}}"
+        os_password: "{{os_password}}"
+
+        os_region: "{{os_region}}"
+        os_flavor: "{{os_flavor}}"
+        os_zone: "{{os_zone}}"
+        os_image: "{{os_image}}"
+        os_network: "{{agave_namespace}}_net"
+        os_keyname: "{{agave_namespace}}-key"
+        os_key_file: "/tmp/{{agave_namespace}}-key.pub"
+        os_key_file_src: "{{os_key_file_src}}"
+
+- name: Put Key File on VM Manager
+  hosts: deployer
+  remote_user: root
+  become: yes
+  become_user: root
+  become_method: sudo
+
+  vars:
+
+    os_key_file: "{{hostvars[groups['local'][0]]['os_key_file']}}"
+    os_key_file_src: "{{hostvars[groups['local'][0]]['os_key_file_src']}}"
+
+  tasks:
+
+    - name: Copy Key File to VM Creator
+
+      copy:
+
+        src: "{{os_key_file_src}}"
+        dest: "{{os_key_file}}"
+
+
+- name: Use Singleton Deployer Group System to Create VMs 
+  hosts: deployer
+  remote_user: root
+  become: yes
+  become_user: root
+  become_method: sudo
+
+  vars:
+
+    agave_namespace: "{{hostvars[groups['local'][0]]['agave_namespace']}}"
+    agave_security_group_namespace: "{{hostvars[groups['local'][0]]['agave_security_group_namespace']}}"
+
+    os_auth_vm_name: "{{agave_namespace}}.auth"
+    os_core_vm_name: "{{agave_namespace}}.core"
+    os_db_vm_name: "{{agave_namespace}}.db"
+
+    os_auth_security_group: "{{agave_security_group_namespace}}.auth"
+    os_core_security_group: "{{agave_security_group_namespace}}.core"
+    os_db_security_group: "{{agave_security_group_namespace}}.db"
+
+
+    os_authurl: "{{hostvars[groups['local'][0]]['os_authurl']}}"
+    os_domain: "{{hostvars[groups['local'][0]]['os_domain']}}"
+    os_project: "{{hostvars[groups['local'][0]]['os_project']}}"
+    os_username: "{{hostvars[groups['local'][0]]['os_username']}}"
+    os_password: "{{hostvars[groups['local'][0]]['os_password']}}"
+
+    os_region: "{{hostvars[groups['local'][0]]['os_region']}}"
+    os_flavor: "{{hostvars[groups['local'][0]]['os_flavor']}}"
+    os_zone: "{{hostvars[groups['local'][0]]['os_zone']}}"
+    os_image: "{{hostvars[groups['local'][0]]['os_image']}}"
+    os_network: "{{hostvars[groups['local'][0]]['os_network']}}"
+    os_keyname: "{{hostvars[groups['local'][0]]['os_keyname']}}"
+    os_key_file: "{{hostvars[groups['local'][0]]['os_key_file']}}"
+
+  roles:
+
+    - agave_vm_manager
+    - agave_vm_creator
+    - agave_vm_security_group_creator
+    - agave_db_vm_creator
+    - agave_core_vm_creator
+    - agave_auth_vm_creator
+
+
+- name: Set up Created Inventory and Check VM Readiness
+  hosts: local
+
+  tasks:
+
+    - debug:
+        var: agave_namespace
+        verbosity: 0
+
+
+    - name: Collect Facts on Created VMs
+      os_server_facts:
+        auth:
+            auth_url: "{{os_authurl}}"
+            domain_name: "{{os_domain}}"
+            project_name: "{{os_project}}"
+            username: "{{os_username}}"
+            password: "{{os_password}}"
+        region_name: "{{os_region}}"
+        availability_zone: "{{os_zone}}"
+        server: "{{agave_namespace}}.*"
+
+
+    - name: Add Created DB VM to In-Memory Inventory
+      with_items: "{{openstack_servers}}"
+      add_host:
+        name: "{{item.public_v4}}"
+        group: "db"
+        ansible_ssh_private_key_file: "{{agave_ssh_private_key}}"
+      when: item.name == "{{agave_namespace}}.db"
+
+    - with_items: "{{openstack_servers}}"
+      set_fact:
+#        sandbox_db: "{{item.public_v4}}"
+        sandbox_db: "{{item.private_v4}}"
+      when: item.name == "{{agave_namespace}}.db"
+
+    - name: Add Created Core VM to In-Memory Inventory
+      with_items: "{{openstack_servers}}"
+      add_host:
+        name: "{{item.public_v4}}"
+        group: "core"
+        ansible_ssh_private_key_file: "{{agave_ssh_private_key}}"
+      when: item.name == "{{agave_namespace}}.core"
+
+    - with_items: "{{openstack_servers}}"
+      set_fact:
+#        sandbox_core: "{{item.public_v4}}"
+        sandbox_core: "{{item.private_v4}}"
+      when: item.name == "{{agave_namespace}}.core"
+
+    - name: Add Created Auth VM to In-Memory Inventory
+      with_items: "{{openstack_servers}}"
+      add_host:
+        name: "{{item.public_v4}}"
+        group: "auth"
+        ansible_ssh_private_key_file: "{{agave_ssh_private_key}}"
+      when: item.name == "{{agave_namespace}}.auth"
+
+    - with_items: "{{openstack_servers}}"
+      set_fact:
+#        sandbox_auth: "{{item.public_v4}}"
+        sandbox_auth: "{{item.private_v4}}"
+      when: item.name == "{{agave_namespace}}.auth"
+
+    - debug:
+        var: sandbox_auth
+        verbosity: 0
+    - debug:
+        var: sandbox_core
+        verbosity: 0
+    - debug:
+        var: sandbox_db
+        verbosity: 0
+    - with_items: "{{openstack_servers}}"
+      debug:
+        var: item.public_v4
+        verbosity: 0
+
+    - name: Wait for SSH
+      with_items: "{{openstack_servers}}"
+      wait_for:
+        host: "{{item.public_v4}}"
+        port: 22
+        state: started
+        connect_timeout: 10
+        delay: 15
+        timeout: 300
+
+    - name: Set Facts For Resources
+      set_fact:
+        sandbox_auth_external: "{{groups['auth'][0]}}"
+
+    - name: Template agave_core_configs File
+      template:
+        src: "agave_core_configs/{{tenant_id}}.yml.j2"
+        dest: "agave_core_configs/{{tenant_id}}.yml"
+
+    - name: Template tenants/sandbox File
+      template:
+        src: "tenants/{{tenant_id}}/{{tenant_id}}.yml.j2"
+        dest: "tenants/{{tenant_id}}/{{tenant_id}}.yml"
+
+
+############################################################
+#
+#   UPDATE COMMON HOST LIBS AND SETTINGS
+#
+############################################################
+
+- name: Install common dependencies and configure hosts
+  hosts: all
+  remote_user: root
+
+  roles:
+    - agave_host
+    - docker_host
+    - logrotate
+
+  vars:
+    - update_docker_version: True
+    - update_docker_compose_version: True
+
+
+############################################################
+#
+#   LOAD AUTH DATA
+#
+############################################################
+
+- name: Deploy the Agave Supporting Databases
+  hosts: db
+  remote_user: root
+
+  roles:
+    - agave_db_onehost
+
+
+############################################################
+#
+#   LOAD AUTH DATA
+#
+############################################################
+
+- name: Load Auth DB Schema
+  hosts: db
+  remote_user: root
+
+  roles:
+
+    - { role: mysql_apim, when: load_auth_sql_data }
+
+  vars:
+    - env: sandbox
+    - mysql_root_user: root
+    - mysql_root_password: password
+    - create_tenant_mysql_user: true
+    
+
+############################################################
+#
+#   DEPLOY THE CORE SERVICES
+#
+############################################################
+
+- name: Deploy the Core Services
+  hosts: core
+  remote_user: root
+
+  roles:
+
+    - agave_core_sql_migrations
+    - agave_core
+
+  vars:
+  
+    - update_docker_version: True
+    - update_docker_compose_version: True
+    - core_migrations_command: migrate
+
+
+############################################################
+#
+#   DEPLOY THE AUTH SERVICES
+#
+############################################################
+
+- name: Deploy the Auth Services
+  hosts: auth
+  remote_user: root
+
+  roles:
+
+    - agave_auth
+    - ldap_apim
+    - auth_rolling_deploy
+
+  vars:
+  
+    - env: True
+    - mysql_root_user: root
+    - mysql_root_password: password
+    - update_docker_version: True
+    - update_docker_compose_version: True
+    - other_user: apitest
+    - other_password: abcde
+
+
+############################################################
+#
+#   NEWMAN TESTING OF SERVICES
+#
+############################################################
+
+- name: Execute Newman Tests
+  hosts: deployer
+
+  vars:
+
+    newman_agave_tenant_base_url: "{{sandbox_auth}}"
+
+  roles:
+
+    - agave_newman_tester
+
+  tasks:
+  
+    - debug:
+        var: hostvars['ansible_docker_container']
+        verbosity: 0

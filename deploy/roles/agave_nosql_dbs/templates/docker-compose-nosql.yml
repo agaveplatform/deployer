@@ -1,0 +1,51 @@
+ ---
+ 
+##############################################################
+# MongoDB - NoSQL document store
+##############################################################
+mongo:
+ image: agaveapi/mongo:2.6
+ name: nosql.staging.agaveapi.co
+ restart: always
+ ports:
+  - '27017:27017'
+ environment:
+  - 'MONGODB_USERNAME=agaveapi'
+  - 'MONGODB_PASSWORD=d3f@ult\$'
+  - 'MONGODB_DATABASE=api'
+ 
+##############################################################
+# Beanstalkd - light and fast messaging
+##############################################################
+beanstalk:
+  hostname: queue.staging.agaveapi.co
+  image: agaveapi/beanstalkd
+  restart: always
+  ports:
+    - "11300:11300"
+ 
+##############################################################
+# LDAP - APIM & IaaS
+##############################################################
+slapd:
+  image: jstubbs/slapd
+  ports:
+    - "389:389"
+  environment:
+    LDAP_DOMAIN: agaveapi
+    LDAP_ORGANISATION: "Agave"
+    LDAP_ROOTPASS: p@ssword
+
+##############################################################
+# Redis - persistent journaled
+##############################################################
+redis:
+  image: redis:3.0.6-alpine
+  command: redis-server --appendonly yes
+  hostname: redis.staging.agaveapi.co
+  mem_limit: 512m
+  restart: always
+  ports:
+    - '6379:6379'
+  volumes:
+    - /home/apim/cache/redis:/data

@@ -1,0 +1,33 @@
+#jinja2:variable_start_string:'[%' , variable_end_string:'%]', trim_blocks: False
+[
+        {
+                "username":             "[%newman_agave_test_user_username%]",
+                "email":                "[%newman_agave_test_user_email%]",
+                "partial_email":        "[%newman_agave_test_user_username%]",
+                "first_name":           "[%newman_agave_test_user_first_name%]",
+                "last_name":            "[%newman_agave_test_user_last_name%]",
+                "full_name":            "[%newman_agave_test_user_full_name%]",
+                "status":               "Active",
+                "username2":            "testshareuser",
+                "clientName":           "newman-client",
+                "clientDescription":    "A temporary client for testing",
+                "filesNewDir":          "tempdir",
+                "fileName":             "compress.data",
+                "type":                 "STORAGE",
+                "defaultOnly":          false,
+                "publicOnly":           false,
+                "privateOnly":          false,
+                "transformId" :         "BZIP2-0",
+                "tag":                  "compressed",
+                "storageSystemId":      "storage-postman-new.systems-sandbox.agaveplatform.org",
+                "executionSystemId":    "compute-postman-new.systems-sandbox.agaveplatform.org",
+                "authSystemId":         "auth-postman-new.systems-sandbox.tacc.utexas.edu",
+                "q1":                   "{\"value.properties.species\":\"arabidopsis\"}",
+                "systemusername":       "[%newman_agave_test_system_username%]",
+                "systemhomedir":        "[%newman_agave_test_system_homedir%]",
+                "systemPort":           [%newman_agave_test_system_port%],
+                "testSystem":           "[%newman_agave_test_system_host%]",
+                "publicKey":            "[% newman_agave_test_system_public_key | replace('\\n', '\\\\n') | replace('\\/', '\\\\/') | replace('&', '\\\\&') %]",
+                "privateKey":           "[% newman_agave_test_system_private_key | replace('\\n', '\\\\n') | replace('\\/', '\\\\/') %]"
+        }
+]

@@ -1,0 +1,11 @@
+# restart APIM for a specific tenant
+# Usage: ansible-playbook -i host_files/staging_hosts restart_apim.plbk -e tenant_id=sandbox
+
+
+- hosts: auth
+  tasks:
+      - name: restart apim
+        shell: docker exec a_apim.{{ tenant_id }}.agave.tacc.utexas.edu_1 /etc/init.d/apim restart
+        become: yes
+        become_method: sudo
+        become_user: apim

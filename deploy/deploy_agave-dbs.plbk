@@ -1,0 +1,42 @@
+# Run this playbook to just deploy the Agave databases on a single host. This playbook should not be used
+# to update an existing deployment as initial database loads will be redone resulting in data loss.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+# 1. db_remote_user, core_remote_user, auth_remote_user - the linux user account used for connecting via ssh.
+# 2. mysql_root_user, mysql_root_password - the root user and password for mysql dbs.
+#
+# Example invocation:
+# $ ansible-playbook -i host_files/dev_staging deploy_agave-dbs.plbk
+
+
+---
+
+# first, deploy databases
+- hosts: db
+  roles:
+      - agave_host
+      - docker_host
+      - agave_db_onehost
+  vars:
+      - update_docker_version: True
+      - update_docker_compose_version: True
+      - mysql_core_password: password
+
+# load auth data
+- hosts: db
+  roles:
+      - mysql_apim
+  vars:
+      # - env: sandbox
+      - mysql_root_user: root
+      - mysql_root_password: password
+      - create_tenant_mysql_user: true
+
+# run initial migrations
+- hosts: core
+  roles:
+    - agave_core_sql_migrations
+  vars:
+    - core_migrations_command: migrate

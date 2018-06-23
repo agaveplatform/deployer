@@ -1,0 +1,26 @@
+# Run this playbook to deploy an nfs server and clients across a cluster.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+# 1. exports - YAML collection (dictionary) of directories to
+# 2. nfs_server_ip - (private) IP address of the server to mount from. Should be accessible to the clients via port 111 and 2049.
+# Note: SSH credentials (e.g. ansible_ssh_host, ansible_ssh_private_key_file) should be placed in the
+#       hosts file.
+#
+# Example invocation:
+# $ ansible-playbook -i host_files/nfs_hosts nfs_cluster.plbk -e nfs_server_ip=10.10.10.9
+#
+
+
+---
+
+# deploy the server host
+- hosts: nfs_server
+  roles:
+    - nfs_server
+
+# deploy the clients
+- hosts: nfs_client
+  roles:
+    - nfs_client

@@ -1,0 +1,30 @@
+---
+################################################################################
+#
+#   REQUIRED VARIABLES
+#
+#   os_authurl (https://rodeo.tacc.utexas.edu/dashboard/auth/login/)
+#   domain_name
+#   project_name
+#   username (<rodeo_login>)
+#   password (<rodeo_password>)
+#
+#   namespace
+#
+################################################################################
+
+- name: Remove Agave Security Groups
+  os_security_group:
+    auth_type: password
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    name: "{{item}}"
+    state: absent
+  with_items:
+    - "{{os_auth_security_group}}"
+    - "{{os_core_security_group}}"
+    - "{{os_db_security_group}}"

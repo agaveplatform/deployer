@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export AGAVE_VERSION={{core_version}}
+
+docker-compose -f proxy.yml pull --ignore-pull-failures
+docker-compose -f docker-compose.yml pull --ignore-pull-failures

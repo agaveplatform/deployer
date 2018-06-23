@@ -1,0 +1,41 @@
+[all:vars]
+# General settings to apply to all playbooks. This simply maps a common ssh key and disable host checking. This should
+# be disabled in prod, however, when overriding dns from a deployment host, this is handy as it prevents the prompt
+
+# the name of your tenant.
+tenant_id=sandbox
+
+# The name of the core service config file to read in.
+core_config_file=sandbox
+
+# Set an ip address for the tenant if dns needs to be overridden
+newman_agave_tenant_base_ip=192.168.205.10
+
+# Vagrant db host is undersized, so we cap the mysql size accordingly
+mysql_mem_limit=512m
+
+[docker_hosts:vars]
+
+ansible_ssh_common_args=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+ansible_ssh_user=vagrant
+
+# Leverage pipelining to speed up remote operations by reusing connections.
+pipelining=True
+
+[docker_hosts:children]
+
+auth
+core
+db
+
+
+[auth]
+vagrant.auth ansible_ssh_host=192.168.205.10 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key ansible_ssh_user=vagrant
+
+[core]
+vagrant.core ansible_ssh_host=192.168.205.11 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key ansible_ssh_user=vagrant
+
+[db]
+vagrant.db ansible_ssh_host=192.168.205.12 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key ansible_ssh_user=vagrant
+

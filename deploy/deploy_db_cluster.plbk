@@ -1,0 +1,24 @@
+# Run this playbook to deploy a cluster of percona containers on two hosts.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+# 1. remote_user - the linux user account that should be used for connecting via ssh.
+# 2. host_group: determines VMs to use from the hosts file; e.g. "rodeo-db-staging-centos"
+# 3. percona_ip_1 and percona_ip_2: The two IPs in the cluster; used to designate an IP as "primary".
+# 4. percona_port and percona_repl_port (OPTIONAL) - ports to use for queries and replication (defaults to 3306 and 4567).
+#
+# Example invocation: NOTE: using -f 1 for now to work around a race condition in Ansible; see:
+# https://groups.google.com/forum/#!topic/ansible-project/wMRlm3JtDeo
+# $ ansible-playbook -f 1 -i host_files/staging_hosts deploy_db_cluster.plbk -e remote_user=ubuntu -e host_group=dbs-core -e percona_ip_1=129.114.7.98 -e percona_ip_2=129.114.7.198
+
+
+---
+
+  # deploy and start containers
+- hosts: '{{ host_group }}'
+  remote_user: '{{ remote_user }}'
+  roles:
+    - agave_host
+    - docker_host
+    - agave_percona_twohost_cluster

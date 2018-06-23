@@ -1,0 +1,7 @@
+# default list of APIs to add to a deployment
+boutique_apis:
+    - realtime_staging
+    - tags_staging
+    - admin_services
+    - uuids_staging
+    - tenants_staging

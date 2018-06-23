@@ -1,0 +1,62 @@
+# Creates a Docker 1.11 swarm worker by joining an existing cluster. Requires CentOS on OpenStack.
+# NOTE: this role is not currently idempotent! We will eventually be moving to the latest Docker module within Ansible.
+#       All containers will first be REMOVED unless setting -e remove_conatiners=False
+#
+# Pre-requisites:
+# 1. Each node in the swarm cluster is on a private network with ports available. Private IPs must be provided for each node.
+# 2. Each node has the docker_host role (-e update_docker_version=True -e update_docker_compose_version=True -e docker_version=1.11.2-1.el7.centos)
+
+
+---
+
+- name: Ensure no containers are running
+  shell: docker rm -f `docker ps -aq` chdir=/home/apim
+  sudo: yes
+  sudo_user: apim
+  ignore_errors: yes
+  when: remove_containers
+
+- name: Shut down the docker daemon
+  service: name=docker  state=stopped
+  sudo: yes
+
+- name: add docker systemd drop-in file with custom daemon configs
+  copy:
+      src: docker.service
+      dest: /etc/systemd/system/docker.service
+  become: yes
+  become_user: root
+  become_method: sudo
+
+# todo: can remove this once when we upgrade to ansible 2.2 and the systemd module is available.
+- name: reload systemd units from disk
+  command: systemctl daemon-reload
+  become: yes
+  become_user: root
+  become_method: sudo
+
+- name: Start up the docker daemon
+  service: name=docker state=started enabled=yes
+# todo - replace with single call to systemd once upgraded to ansible 2.2
+#  systemd: state=restarted daemon_reload=yes name=docker enabled=yes
+  become: yes
+  become_user: root
+  become_method: sudo
+
+- name: Pull swarm image
+  shell: docker pull swarm chdir=/home/apim
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: Launch swarm container to join cluster
+  shell: docker run -d swarm join --advertise={{ private_ip }}:2375 consul://{{ swarm_manager_ip }}:8500 chdir=/home/apim
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: compile swarm-join.sh template (to ease future restarts)
+  template: src=swarm-join.sh.j2 dest=/home/apim/swarm-join.sh mode=0755
+  become: yes
+  become_user: apim
+  become_method: sudo

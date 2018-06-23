@@ -1,0 +1,5 @@
+start_awx_containers: True
+
+stop_awx_containers: False
+
+clear_awx_containers: False

@@ -1,0 +1,6 @@
+{
+    "title": "Test Multipart Upload Example Schema",
+    "type": "object",
+    "properties": { "species": { "type": "string" } },
+    "required": ["species"]
+}

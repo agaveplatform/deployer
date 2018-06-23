@@ -1,0 +1,28 @@
+# Run this playbook to install all base software needed for a production host. (Includes newrelic and splunk).
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+# 1. newrelic_license_key: valid license key for newreliv.
+#
+
+# Example invocation:
+# $ ansible-playbook -i host_files/prod_hosts production_base.plbk -e newrelic_license_key=abc123
+
+
+---
+
+- name: gather all hosts information
+  hosts: root
+
+  # deploy and start containers
+- hosts: root
+  roles:
+      - agave_host
+      - docker_host
+      - newrelic
+      - splunk_host
+      - logrotate
+  vars:
+      - update_docker_version: True
+      - update_docker_compose_version: True

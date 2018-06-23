@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api xmlns="http://ws.apache.org/ns/synapse"
+     name="admin--Transforms"
+     context="/transforms/v2"
+     version="v2"
+     version-type="context"
+     transports="https">
+   <resource methods="POST GET DELETE HEAD PUT"
+             url-mapping="/*"
+             faultSequence="fault">
+      <inSequence>
+         <filter source="$ctx:AM_KEY_TYPE" regex="PRODUCTION">
+            <then>
+               <property name="api.ut.backendRequestTime"
+                         expression="get-property('SYSTEM_TIME')"/>
+               <send>
+                  <endpoint name="admin--Transforms_APIproductionEndpoint_0">
+                     <http uri-template="http://sandbox.api.sandbox.agaveapi.co/transforms"/>
+                     <timeout>
+                          <duration>30000</duration>
+                          <responseAction>fault</responseAction>
+                     </timeout>
+                     <suspendOnFailure>
+                          <initialDuration>0</initialDuration>
+                          <progressionFactor>1.0</progressionFactor>
+                          <maximumDuration>0</maximumDuration>
+                     </suspendOnFailure>
+                  </endpoint>
+               </send>
+            </then>
+            <else>
+               <send>
+                  <endpoint name="admin--Transforms_APIsandboxEndpoint_0">
+                     <http uri-template="http://sandbox.api.sandbox.agaveapi.co/transforms"/>
+                     <timeout>
+                          <duration>120000</duration>
+                          <responseAction>fault</responseAction>
+                     </timeout>
+                     <suspendOnFailure>
+                          <initialDuration>0</initialDuration>
+                          <progressionFactor>1.0</progressionFactor>
+                          <maximumDuration>0</maximumDuration>
+                     </suspendOnFailure>
+                  </endpoint>
+               </send>
+            </else>
+         </filter>
+      </inSequence>
+      <outSequence>
+         <class name="org.wso2.carbon.apimgt.usage.publisher.APIMgtResponseHandler"/>
+         <send/>
+      </outSequence>
+   </resource>
+   <handlers>
+      <handler class="org.wso2.carbon.apimgt.gateway.handlers.security.CORSRequestHandler">
+         <property name="inline" value="ENDPOINT"/>
+      </handler>
+      <handler class="org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler"/>
+      <handler class="org.wso2.carbon.apimgt.gateway.handlers.throttling.APIThrottleHandler">
+         <property name="id" value="A"/>
+         <property name="policyKey" value="gov:/apimgt/applicationdata/tiers.xml"/>
+      </handler>
+      <handler class="org.wso2.carbon.apimgt.usage.publisher.APIMgtUsageHandler"/>
+      <handler class="org.wso2.carbon.apimgt.usage.publisher.APIMgtGoogleAnalyticsTrackingHandler">
+         <property name="configKey" value="gov:/apimgt/statistics/ga-config.xml"/>
+      </handler>
+      <handler class="org.wso2.carbon.apimgt.gateway.handlers.ext.APIManagerExtensionHandler"/>
+   </handlers>
+</api>

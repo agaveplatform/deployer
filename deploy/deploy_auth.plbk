@@ -1,0 +1,40 @@
+# Run this playbook to deploy the entire Agave stack, including auth, core and db. This playbook should not be used
+# to update an existing deployment as initial database loads will be redone resulting in data loss.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+# 1. db_remote_user, core_remote_user, auth_remote_user - the linux user account used for connecting via ssh.
+# 2. tenant_id: determines which tenant to deploy; an existing directory within the tenants directory must already exist.
+# 3. load_auth_sql_data - (true/false). This should be set to true the first time and false after since, attemping to
+#    reload the sql data
+# 3. core_version (OPTIONAL): version (branch) to deploy; default is 2.2.6
+#
+# Example invocation:
+# $ ansible-playbook -i host_files/ec2_hosts deploy_auth.plbk -e tenant_id=dev_sandbox -e core_config_file=sandbox
+# deployer -i /deploy/host_files/slt_sandbox_hosts /deploy/deploy_auth.plbk -e tenant_id=sandbox
+
+---
+
+# deploy the auth services
+- hosts: auth
+  roles:
+      - agave_auth
+      - auth_rolling_deploy
+      - ldap_apim
+  vars:
+      - env: sandbox
+      - mysql_root_user: root
+      - mysql_root_password: password
+      - clean_host: True
+      - update_docker_version: True
+      - update_docker_compose_version: True
+      - remove_all_auth_containers: True
+      - deploy_core_api_templates: True
+
+# add and boutique apis
+- hosts: auth
+
+  roles:
+      - role: boutique_apis
+        tags: boutique

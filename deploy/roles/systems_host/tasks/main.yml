@@ -1,0 +1,42 @@
+
+- name: download latest storage docker-compose file
+  get_url:
+      url: https://raw.githubusercontent.com/agaveplatform/science-apis/master/config/testbed/data.yml
+      dest: /home/apim/docker-compose-storage.yml
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: download latest execution docker-compose file
+  get_url:
+      url: https://raw.githubusercontent.com/agaveplatform/science-apis/master/config/testbed/compute.yml
+      dest: /home/apim/docker-compose-compute.yml
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: stop containers
+  shell: docker rm -f `docker ps -aq`
+  when: stop_containers
+  become: yes
+  become_user: apim
+  become_method: sudo
+  ignore_failure: true
+
+- name: wait for the systems containers to finish deleting
+  pause: seconds=30
+  when: stop_containers
+
+- name: start storage containers
+  shell: docker-compose -f docker-compose-storage.yml up -d chdir=/home/apim
+  when: start_containers
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: start compute containers
+  shell: docker-compose -f docker-compose-compute.yml up -d chdir=/home/apim
+  when: start_containers
+  become: yes
+  become_user: apim
+  become_method: sudo

@@ -1,0 +1,16 @@
+echo "pulling latest test suite image"
+docker pull agaveapi/flask_admin_testsuite
+
+echo "Starting test suite"
+
+# check if b containers running
+docker inspect b_adminnginx_1
+if [ $? -eq 0 ]; then
+    echo "Linking to b stack"
+    docker run --link b_adminnginx_1 -e base_url=http://b_adminnginx_1 -i --rm agaveapi/flask_admin_testsuite
+else
+   echo "Linking to a stack"
+   docker run --link a_adminnginx_1 -e base_url=http://a_adminnginx_1 -i --rm agaveapi/flask_admin_testsuite
+fi
+
+echo "test suite complete"

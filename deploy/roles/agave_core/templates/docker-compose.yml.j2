@@ -1,0 +1,248 @@
+###############################################################
+# Core Science APIs - A Instances
+# docker-compose.yml
+#
+# This contains the A instances of an A/B deployment. These
+# services start on a 8xxx port range and block a low range of
+# ports.
+#
+###############################################################
+
+###############################################################
+#   Agave Core Services (A instance)
+###############################################################
+
+{% if core_deploy_jobs %}
+jobs:
+  extends:
+    file: service-defs.yml
+    service: jobs
+  ports:
+    - "8081:80"
+    - "8444:443"
+    - "50007-50017:50007-50017"
+    - "52920:52911"
+  environment:
+    - 'GLOBUS_TCP_PORT_RANGE=50007,50017'
+{% endif %}
+
+{% if core_deploy_files %}
+files:
+  extends:
+    file: service-defs.yml
+    service: files
+  ports:
+    - "8082:80"
+    - "8445:443"
+    - "50301-50310:50301-50310"
+    - "52921:52911"
+  environment:
+    - 'GLOBUS_TCP_PORT_RANGE=50301,50310'
+{% endif %}
+
+{% if core_deploy_apps and not agave_core_workers_only %}
+apps:
+  extends:
+    file: service-defs.yml
+    service: apps
+  ports:
+    - "8083:80"
+    - "8446:443"
+    - "50901-50910:50901-50910"
+    - "52922:52911"
+  environment:
+    - 'GLOBUS_TCP_PORT_RANGE=50901,50910'
+{% endif %}
+
+{% if core_deploy_systems and not agave_core_workers_only %}
+systems:
+  extends:
+    file: service-defs.yml
+    service: systems
+  ports:
+    - "8084:80"
+    - "8447:443"
+    - "52923:52911"
+{% endif %}
+
+{% if core_deploy_monitors and not agave_core_workers_only %}
+monitors:
+  extends:
+    file: service-defs.yml
+    service: monitors
+  ports:
+    - "8085:80"
+    - "8448:443"
+    - "52924:52911"
+{% endif %}
+
+{% if core_deploy_metadata and not agave_core_workers_only %}
+metadata:
+  extends:
+    file: service-defs.yml
+    service: metadata
+  ports:
+    - "8087:80"
+    - "8450:443"
+    - "52926:52911"
+{% endif %}
+
+{% if core_deploy_notifications and not agave_core_workers_only %}
+notifications:
+  extends:
+    file: service-defs.yml
+    service: notifications
+  ports:
+    - "8088:80"
+    - "8451:443"
+    - "52927:52911"
+{% endif %}
+
+{% if core_deploy_transforms and not agave_core_workers_only %}
+transforms:
+  extends:
+    file: service-defs.yml
+    service: transforms
+  ports:
+    - "8098:80"
+    - "8461:443"
+    - "50601-50610:50601-50610"
+    - "52928:52911"
+  environment:
+    - 'GLOBUS_TCP_PORT_RANGE=50601,50610'
+{% endif %}
+
+{% if core_deploy_tags and not agave_core_workers_only %}
+tags:
+  extends:
+    file: service-defs.yml
+    service: tags
+  ports:
+    - "8077:80"
+    - "8460:443"
+    - "52929:52911"
+{% endif %}
+
+{% if core_deploy_uuids and not agave_core_workers_only %}
+uuids:
+  extends:
+    file: service-defs.yml
+    service: uuids
+  ports:
+    - "8078:80"
+    - "8459:443"
+    - "52930:52911"
+{% endif %}
+
+{% if core_deploy_postits and not agave_core_workers_only %}
+postits:
+  extends:
+    file: service-defs.yml
+    service: postits
+  ports:
+    - "8090:80"
+    - "8453:443"
+{% endif %}
+
+{% if core_deploy_realtime and not agave_core_workers_only %}
+realtime:
+  extends:
+    file: service-defs.yml
+    service: realtime
+  ports:
+    - "8076:80"
+    - "8458:443"
+    - "52931:52911"
+{% endif %}
+
+{% if core_deploy_usage and not agave_core_workers_only %}
+usage:
+  extends:
+    file: service-defs.yml
+    service: usage
+  ports:
+    - "8091:80"
+    - "8454:443"
+{% endif %}
+
+{% if core_deploy_tenants and not agave_core_workers_only %}
+tenants:
+  extends:
+    file: service-defs.yml
+    service: tenants
+  ports:
+    - "8092:80"
+    - "8455:443"
+{% endif %}
+
+{% if core_deploy_logging and not agave_core_workers_only %}
+logging:
+  extends:
+    file: service-defs.yml
+    service: logging
+  ports:
+    - "8093:80"
+    - "8456:443"
+{% endif %}
+
+{% if core_deploy_docs and not agave_core_workers_only %}
+docs:
+  extends:
+    file: service-defs.yml
+    service: docs
+  ports:
+    - "8094:80"
+    - "8457:443"
+{% endif %}
+
+{% if core_deploy_custom_profiles and not agave_core_workers_only %}
+profiles:
+  extends:
+    file: service-defs.yml
+    service: profiles
+  ports:
+    - "8086:80"
+    - "8449:443"
+{% endif %}
+
+{#{% if core_deploy_transfers %}#}
+{#transfers:#}
+{#  extends:#}
+{#    file: service-defs.yml#}
+{#    service: transfers#}
+{#  ports:#}
+{#    - "8079:80"#}
+{#    - "8460:443"#}
+{#{% endif %}#}
+
+{#{% if core_deploy_events %}#}
+{#events:#}
+{#  extends:#}
+{#    file: service-defs.yml#}
+{#    service: events#}
+{#  ports:#}
+{#    - "8078:80"#}
+{#    - "8440:443"#}
+{#{% endif %}#}
+
+{% if core_deploy_stats and not agave_core_workers_only %}
+stats:
+ extends:
+   file: service-defs.yml
+   service: stats
+ ports:
+   - "8099:80"
+   - "8447:443"
+
+reverseip:
+  extends:
+    file: service-defs.yml
+    service: reverseip
+
+redis:
+  extends:
+    file: service-defs.yml
+    service: redis
+  volumes:
+    - ./cache/redis_a:/data
+{% endif %}

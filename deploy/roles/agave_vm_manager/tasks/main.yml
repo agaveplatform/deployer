@@ -1,0 +1,33 @@
+---
+################################################################################
+#
+#   REQUIRED VARIABLES
+#
+################################################################################
+
+- name: Add Necessary Yum Repository
+  yum_repository:
+    name: epel
+    description: EPEL Yum Repo
+    baseurl: http://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+    gpgcheck: no
+
+- name: Install Basic Software
+  yum: name={{item}} state=present
+  with_items:
+    - gcc
+    - openssl-devel
+    - glibc
+    - git
+    - python
+    - python-devel
+    - python-pip
+
+- name: Upgrade Pip
+  pip: name=pip state=latest
+
+- name: Upgrade Python
+  pip: name=python state=latest
+
+- name: Install Shade
+  pip: name=shade state=present

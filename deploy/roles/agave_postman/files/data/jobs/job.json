@@ -1,0 +1,21 @@
+{
+  "name":"wc-{{TEST_DATE}}-mptest-short",
+  "appId":"wc-{{TEST_DATE}}-test-short-1.00",
+  "memoryPerNode":1,
+  "archive":true,
+  "archiveSystem":"{{STORAGE_SYSTEM_ID}}",
+  "archivePath":"{{USERNAME}}",
+  "notifications":[
+    {
+      "url":"{{USER_EMAIL}}",
+      "event":"FINISHED",
+      "policy":{
+          "retryStrategy":"NONE",
+          "saveOnFailure":true
+      }
+    }
+  ],
+  "inputs":{
+    "query1":"agave://{{STORAGE_SYSTEM_ID}}/{{TEST_DIR_ENCODED}}/apps/wc-1.00/wrapper.sh"
+  }
+}

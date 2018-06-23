@@ -1,0 +1,6 @@
+{
+    "name": "testmetadatamp",
+    "value": {"title": "Example Metadata", "properties": {"species": "arabidopsis", "description": "A model organism..."}},
+    "schemaId": null,
+    "associatedIds": []
+}

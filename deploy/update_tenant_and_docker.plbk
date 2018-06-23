@@ -1,0 +1,31 @@
+# Run this playbook to update a tenant's configurations, pull the latest images and perform a rolling
+# (i.e. zero-downtime) deployment to updated versions of the containers.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are (all set in the hosts file):
+# 1. tenant_id: used to determine which Docker images to deploy.
+# 2. hosts file: should be either 'prod_hosts' or 'staging_hosts' (passed using -i)
+# 3. auth_remote_user - the linux user account that should be used for connecting via ssh.
+# 4. tenant_group: determines auth VMs to use from the hosts file; e.g. 'tacc-prod' or 'dev-staging'.
+# 5. env: the Agave environment (either 'staging' or 'prod', all lower case). This selects the correct group_vars to use.
+#
+# Example invocation:
+# $ ansible-playbook -i host_files/staging_hosts update_tenant.plbk
+
+---
+
+  # deploy and start containers
+
+- name: gather all hosts information
+  hosts: all
+
+- hosts: auth
+  vars:
+      - update_docker_version: True
+      - update_docker_compose_version: True
+  roles:
+    - agave_host
+    - docker_host
+    - agave_auth
+    - auth_rolling_deploy

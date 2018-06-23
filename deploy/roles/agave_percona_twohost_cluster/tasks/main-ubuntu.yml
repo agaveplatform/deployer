@@ -1,0 +1,5 @@
+---
+
+- name: install mysql
+  apt: name=mysql-client state=present
+  sudo: yes

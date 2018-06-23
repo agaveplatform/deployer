@@ -1,0 +1,3 @@
+{% for key, value in exports.items() %}
+{{ value.dir }} {{ value.range }}(rw,no_root_squash)
+{% endfor %}

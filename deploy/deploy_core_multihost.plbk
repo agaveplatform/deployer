@@ -1,0 +1,69 @@
+# Run this playbook to deploy an instance of the core services. The defaults replicate the staging environment.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# The parameters for this playbook are:
+# 1. host: determines VM to use from the hosts file; e.g. "rodeo-db-staging-centos"
+
+# Example invocation:
+# $ ansible-playbook -i host_files/staging_hosts deploy_core.plbk
+
+
+---
+
+#- name: gather all hosts information
+#  hosts: all
+#
+#  # prep hosts
+#- hosts: core
+#  roles:
+#    - agave_host
+#    - docker_host
+#    - logrotate
+#  vars:
+#    - update_docker_version: True
+#    - update_docker_compose_version: True
+#    - clean_host: True
+#
+#
+#  # prep hosts
+#- hosts: core
+#  roles:
+#    - { role: agave_core_compose_repo, when: deploy_core_default_templates == false }
+#
+
+  # deploy and start containers
+- hosts: core_api
+  roles:
+    - agave_core
+  vars:
+    - deploy_core_default_templates: true
+    - agave_core_workers_only: false
+    - agave_core_drain_all_queues: false
+    - agave_core_api_only: true
+    - agave_core_job_max_staging_tasks: 0
+    - agave_core_job_max_archiving_tasks: 0
+    - agave_core_job_max_monitoring_tasks: 0
+    - agave_core_job_max_submission_tasks: 0
+
+  # deploy and start containers
+- hosts: core_workers
+  roles:
+    - agave_core
+  vars:
+    - deploy_core_default_templates: true
+    - agave_core_workers_only: true
+    - agave_core_drain_all_queues: false
+    - agave_core_api_only: false
+    - agave_core_job_max_staging_tasks: 5
+    - agave_core_job_max_archiving_tasks: 5
+    - agave_core_job_max_monitoring_tasks: 2
+    - agave_core_job_max_submission_tasks: 1
+
+
+# run initial migrations
+- hosts: core
+  roles:
+    - agave_core_sql_migrations
+  vars:
+    - core_migrations_command: "migrate"

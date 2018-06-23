@@ -1,0 +1,14 @@
+# Clean up dangling images, volumes, etc. on a docker host.
+#
+
+# Example invocation:
+# $ deployer -i /deploy/host_files/staging_hosts /deploy/docker_cleanup.plbk
+
+---
+
+- name: gather all hosts information
+  hosts: all
+
+- hosts: auth
+  roles:
+    - docker_cleanup

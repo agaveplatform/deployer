@@ -1,0 +1,363 @@
+###############################################################
+# Core Science APIs - Staging
+# docker-compose.yml
+#
+# This is the orchestration file to start Agave's Core Science
+# APIs. The APIs are accessible behind a proxy container which
+# shields them from the outside world. Containers are assigned
+# static ports to enable rolling updates of each API as needed.
+# Containers performing data operations are assigned a partition
+# of the default GridFTP and FTP port ranges to enable proper
+# operation of the protocol from within each container.
+#
+# You should also have the following /etc/hosts entries defined for your
+# hosting environment. (These are appropriate for docker-machine
+# on OSX.) In a production environment, these should resolve
+# to the appropriate hosts and/or dns entries.
+#
+#
+###############################################################
+#   Agave Core Services
+###############################################################
+
+{% if core_deploy_jobs %}
+jobs:
+  extends:
+    file: common.yml
+    service: java_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/jobs-api:{{ core_version }}
+{% if agave_core_jobs_mem_limit %}
+  mem_limit: {{  "4096m" if (agave_core_jobs_mem_limit|replace("m", "")|int) < 4096 else agave_core_jobs_mem_limit  }}
+{% endif %}
+  environment:
+    - 'IPLANT_MAX_STAGING_TASKS={{agave_core_job_max_staging_tasks if not agave_core_api_only else 0}}'
+    - 'IPLANT_MAX_ARCHIVE_TASKS={{agave_core_job_max_archiving_tasks if not agave_core_api_only else 0}}'
+    - 'IPLANT_MAX_SUBMISSION_TASKS={{ agave_core_job_max_submission_tasks if not agave_core_api_only else 0}}'
+    - 'IPLANT_MAX_MONITORING_TASKS={{agave_core_job_max_archiving_tasks if not agave_core_api_only else 0}}'
+    - 'GLOBUS_TCP_PORT_RANGE=50007,50017'
+    - 'CATALINA_OPTS="-Duser.timezone=America/Chicago -Djsse.enableCBCProtection=false -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms2048m -Xmx{{ "8192m" if (agave_core_jobs_mem_limit|replace("m", "")|int) > 8192 else "4096m" }} -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"'
+  volumes:
+    - '/var/log/splunk/jobs:/opt/tomcat/logs'
+    - './scratch/jobs:/scratch'
+{% endif %}
+
+{% if core_deploy_files %}
+files:
+  extends:
+    file: common.yml
+    service: java_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/files-api:{{ core_version }}
+{% if agave_core_files_mem_limit %}
+  mem_limit: {{ "4096m" if (agave_core_jobs_mem_limit|replace("m", "")|int) < 4096 else agave_core_jobs_mem_limit }}
+{% endif %}
+  environment:
+    - 'IPLANT_MAX_STAGING_TASKS={{agave_core_files_max_staging_tasks if not agave_core_api_only else 0}}'
+    - 'IPLANT_MAX_TRANSFORM_TASKS={{agave_core_files_max_transform_tasks if not agave_core_api_only else 0}}'
+    - 'GLOBUS_TCP_PORT_RANGE=50301,50310'
+    - 'CATALINA_OPTS="-Duser.timezone=America/Chicago -Djsse.enableCBCProtection=false -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms2048m -Xmx{{ "8192m" if (agave_core_files_mem_limit|replace("m", "")|int) > 8192 else "4096m" }} -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"'
+  volumes:
+    - '/var/log/splunk/files:/opt/tomcat/logs'
+    - './scratch/files:/scratch'
+{% endif %}
+
+{% if core_deploy_apps and not agave_core_workers_only %}
+apps:
+  extends:
+    file: common.yml
+    service: java_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/apps-api:{{ core_version }}
+{% if agave_core_apps_mem_limit %}
+  mem_limit: {{ agave_core_apps_mem_limit }}
+{% endif %}
+  environment:
+    - 'GLOBUS_TCP_PORT_RANGE=50901,50910'
+    - 'ALLOW_RELAY_FILE_TRANSFERS=false'
+    - 'IPLANT_MAX_APP_PUBLISHING_TASKS={{agave_core_apps_max_publishing_tasks if not agave_core_api_only else 0}}'
+    - 'IPLANT_MAX_APP_CLONING_TASKS={{agave_core_apps_max_cloning_tasks if not agave_core_api_only else 0}}'
+    - 'CATALINA_OPTS="-Duser.timezone=America/Chicago -Djsse.enableCBCProtection=false -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms1024m -Xmx2048 -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"'
+  volumes:
+    - '/var/log/splunk/apps:/opt/tomcat/logs'
+    - './scratch/apps:/scratch'
+{% endif %}
+
+{% if core_deploy_systems and not agave_core_workers_only %}
+systems:
+  extends:
+    file: common.yml
+    service: java_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/systems-api:{{ core_version }}
+{% if agave_core_systems_mem_limit %}
+  mem_limit: {{ agave_core_systems_mem_limit }}
+{% endif %}
+  volumes:
+    - '/var/log/splunk/systems:/opt/tomcat/logs'
+    - './scratch/systems:/scratch'
+{% endif %}
+
+{% if core_deploy_monitors and not agave_core_workers_only %}
+monitors:
+  extends:
+    file: common.yml
+    service: java_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/monitors-api:{{ core_version }}
+{% if agave_core_monitors_mem_limit %}
+  mem_limit: {{ agave_core_monitors_mem_limit }}
+{% endif %}
+  restart: "always"
+  environment:
+    - 'IPLANT_MAX_MONITOR_TASKS={{agave_core_monitors_max_tasks if not agave_core_api_only else 0}}'
+    - 'IPLANT_MAX_MONITOR_RETRIES={{agave_core_monitors_max_retries if not agave_core_api_only else 0}}'
+  volumes:
+    - '/var/log/splunk/monitors:/opt/tomcat/logs'
+    - './scratch/monitors:/scratch'
+{% endif %}
+
+{% if core_deploy_custom_profiles and not agave_core_workers_only %}
+profiles:
+  extends:
+    file: common.yml
+    service: java_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/profiles-api:{{ core_version }}
+{% if agave_core_profiles_mem_limit %}
+  mem_limit: {{ agave_core_profiles_mem_limit }}
+{% endif %}
+  volumes:
+    - '/var/log/splunk/profiles:/opt/tomcat/logs'
+    - './scratch/profiles:/scratch'
+{% endif %}
+
+{% if core_deploy_metadata and not agave_core_workers_only %}
+metadata:
+  extends:
+    file: common.yml
+    service: java_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/metadata-api:{{ core_version }}
+{% if agave_core_metadata_mem_limit %}
+  mem_limit: {{ agave_core_metadata_mem_limit }}
+{% endif %}
+  environment:
+    - 'CATALINA_OPTS="-Duser.timezone=America/Chicago -Djsse.enableCBCProtection=false -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms512m -Xmx2048 -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"'
+  volumes:
+    - '/var/log/splunk/metadata:/opt/tomcat/logs'
+    - './scratch/metadata:/scratch'
+{% endif %}
+
+{% if core_deploy_notifications and not agave_core_workers_only %}
+notifications:
+  extends:
+    file: common.yml
+    service: java_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/notifications-api:{{ core_version }}
+{% if agave_core_notifications_mem_limit %}
+  mem_limit: {{ agave_core_notifications_mem_limit }}
+{% endif %}
+  environment:
+    - 'IPLANT_MAX_NOTIFICATION_TASKS={{agave_core_notifications_max_notification_tasks if not agave_core_api_only else 0}}'
+  volumes:
+    - '/var/log/splunk/notifications:/opt/tomcat/logs'
+    - './scratch/notifications:/scratch'
+{% endif %}
+
+{% if core_deploy_transforms %}
+transforms:
+  extends:
+    file: common.yml
+    service: java_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/transforms-api:{{ core_version }}
+{% if agave_core_transforms_mem_limit %}
+  mem_limit: {{ agave_core_transforms_mem_limit }}
+{% endif %}
+  environment:
+    - 'IPLANT_MAX_STAGING_TASKS={{agave_core_transforms_max_staging_tasks if not agave_core_api_only else 0}}'
+    - 'IPLANT_MAX_TRANSFORM_TASKS={{agave_core_transforms_max_transform_tasks if not agave_core_api_only else 0}}'
+    - 'GLOBUS_TCP_PORT_RANGE=50601,50610'
+    #- 'IPLANT_MAX_ARCHIVE_TASKS={{agave_core_transforms_max_transform_tasks}}'
+    #- 'IPLANT_MAX_SUBMISSION_TASKS={{agave_core_transforms_max_transform_tasks}}'
+  volumes:
+    - '/var/log/splunk/transforms:/opt/tomcat/logs'
+    - './scratch/transforms:/scratch'
+{% endif %}
+
+{% if core_deploy_realtime and not agave_core_workers_only %}
+realtime:
+  extends:
+    file: common.yml
+    service: java_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/realtime-api:{{ core_version }}
+{% if agave_core_realtime_mem_limit %}
+  mem_limit: {{ agave_core_realtime_mem_limit }}
+{% endif %}
+  volumes:
+    - '/var/log/splunk/realtime:/opt/tomcat/logs'
+    - './scratch/realtime:/scratch'
+{% endif %}
+
+{% if core_deploy_tags and not agave_core_workers_only %}
+tags:
+  extends:
+    file: common.yml
+    service: java_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/tags-api:{{ core_version }}
+{% if agave_core_tags_mem_limit %}
+  mem_limit: {{ agave_core_tags_mem_limit }}
+{% endif %}
+  volumes:
+    - '/var/log/splunk/tags:/opt/tomcat/logs'
+    - './scratch/tags:/scratch'
+{% endif %}
+
+{% if core_deploy_uuids and not agave_core_workers_only %}
+uuids:
+  extends:
+    file: common.yml
+    service: java_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/uuids-api:{{ core_version }}
+{% if agave_core_uuids_mem_limit %}
+  mem_limit: {{ agave_core_uuids_mem_limit }}
+{% endif %}
+  volumes:
+    - '/var/log/splunk/uuids:/opt/tomcat/logs'
+    - './scratch/uuids:/scratch'
+{% endif %}
+
+{% if core_deploy_postits and not agave_core_workers_only %}
+postits:
+  extends:
+    file: common.yml
+    service: php_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/postits-api:{{ core_version }}
+{% if agave_core_postits_mem_limit %}
+  mem_limit: {{ agave_core_postits_mem_limit }}
+{% endif %}
+  environment:
+    - 'IPLANT_PROXY_SERVICE={{ agave_core_iplant_proxy_service }}'
+  volumes:
+    - '/var/log/splunk/postits:/var/log/apache2'
+    - './scratch/postits:/scratch'
+{% endif %}
+
+{% if core_deploy_usage and not agave_core_workers_only %}
+usage:
+  extends:
+    file: common.yml
+    service: php_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/usage-api:{{ core_version }}
+{% if agave_core_usage_mem_limit %}
+  mem_limit: {{ agave_core_usage_mem_limit }}
+{% endif %}
+  volumes:
+    - '/var/log/splunk/usage:/var/log/apache2'
+    - './scratch/usage:/scratch'
+{% endif %}
+
+{% if core_deploy_tenants and not agave_core_workers_only %}
+tenants:
+  extends:
+    file: common.yml
+    service: php_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/tenants-api:{{ core_version }}
+{% if agave_core_tenants_mem_limit %}
+  mem_limit: {{ agave_core_tenants_mem_limit }}
+{% endif %}
+  volumes:
+    - '/var/log/splunk/tenants:/var/log/apache2'
+    - './ssl:/ssl:ro'
+    - './scratch/tenants:/scratch'
+{% endif %}
+
+{% if core_deploy_logging and not agave_core_workers_only %}
+logging:
+  extends:
+    file: common.yml
+    service: php_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/logging-api:{{ core_version }}
+{% if agave_core_logging_mem_limit %}
+  mem_limit: {{ agave_core_logging_mem_limit }}
+{% endif %}
+  volumes:
+    - '/var/log/splunk/logging:/var/log/apache2'
+    - './scratch/logging:/scratch'
+{% endif %}
+
+{% if core_deploy_docs and not agave_core_workers_only %}
+docs:
+  extends:
+    file: common.yml
+    service: php_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/apidocs-api:{{ core_version }}
+{% if agave_core_docs_mem_limit %}
+  mem_limit: {{ agave_core_docs_mem_limit }}
+{% endif %}
+  volumes:
+    - '/var/log/splunk/docs:/var/log/apache2'
+    - './scratch/docs:/scratch'
+{% endif %}
+
+{% if core_deploy_stats and not agave_core_workers_only %}
+stats:
+  extends:
+    file: common.yml
+    service: php_api
+  image: {{ core_docker_private_registry }}{{ core_docker_registry_account }}/stats-api:{{ core_version }}
+{% if agave_core_stats_mem_limit %}
+  mem_limit: {{ agave_core_stats_mem_limit }}
+{% endif %}
+  environment:
+    - 'PINGDOM_USERNAME={{ core_pingdom_username }}'
+    - 'PINGDOM_PASSWORD={{ core_pingdom_password }}'
+    - 'MYSQL_HOST={{ mysql_core_host }}'
+    - 'PINGDOM_TOKEN={{ core_pingdom_token }}'
+    - 'STATUSIO_ID={{ core_statusio_id }}'
+    - 'FREEGEOIP_URL={{ core_freegeoip_url }}'
+    - 'STATS_CACHE_LIFETIME=240'
+    - 'DOCUMENT_ROOT=/var/www/html/public'
+    - 'REDIS_HOST={{ core_redis_host }}'
+    - 'REDIS_PORT={{ core_redis_port }}'
+    - 'APIM_MYSQL_HOST={{ auth_mysql_host }}'
+    - 'APIM_MYSQL_PORT={{ auth_mysql_port }}'
+    - 'APIM_MYSQL_USERNAME={{ core_auth_mysql_username }}'
+    - 'APIM_MYSQL_PASSWORD={{ core_auth_mysql_password }}'
+    - 'IPLANTC_ORG_MYSQL_HOST={{ core_iplant_mysql_host }}'
+    - 'IPLANTC_ORG_MYSQL_PORT={{ core_iplant_mysql_port }}'
+    - 'IPLANTC_ORG_MYSQL_USERNAME={{ core_iplant_mysql_username }}'
+    - 'IPLANTC_ORG_MYSQL_PASSWORD={{ core_iplant_mysql_password }}'
+    - 'IPLANTC_ORG_MYSQL_DATABASE={{ core_iplant_mysql_database }}'
+    - 'ARAPORT_ORG_MYSQL_HOST={{ core_aip_mysql_host }}'
+    - 'ARAPORT_ORG_MYSQL_PORT={{ core_aip_mysql_port }}'
+    - 'ARAPORT_ORG_MYSQL_USERNAME={{ core_aip_mysql_username }}'
+    - 'ARAPORT_ORG_MYSQL_PASSWORD={{ core_aip_mysql_password }}'
+    - 'ARAPORT_ORG_MYSQL_DATABASE={{ core_aip_mysql_database }}'
+  volumes:
+    - '/var/log/splunk/stats:/var/www/html'
+    - './scratch/stats:/scratch'
+
+
+###############################################################
+# Third-party Services
+#
+# These are the third-party services providing persistence and
+# messaging to the Core Science APIs. The containers defined
+# below are are sufficient for running in a development
+# environment. Do NOT use these for production deployments.
+#
+# Production deployments should leverage a dedicated MySQL
+# cluster, a managed MongoDB cluster, and a distributed
+# message queue. Each of these should be operated in a high
+# availability configuration. Without such a deployment, the
+# Core Science APIs cannot be properly scaled to provide HA.
+###############################################################
+
+reverseip:
+  image: fiorix/freegeoip
+  ports:
+    - "8080"
+
+redis:
+  image: redis:alpine
+  command: redis-server --appendonly yes
+  ports:
+    - '6379:6379'
+  volumes:
+    - ./cache/redis:/data
+
+{% endif %}

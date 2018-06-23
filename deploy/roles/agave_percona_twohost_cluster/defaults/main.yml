@@ -1,0 +1,6 @@
+# default port for mysql queries
+percona_port: 3306
+
+# default port for the the percona replication
+percona_repl_port: 4567
+

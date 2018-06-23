@@ -1,0 +1,8 @@
+# the key file used to checkout the core compose repo.
+core_compose_repo_key_file: core-compose.key
+
+# URI to the git repository:
+core_compose_repo_uri: git@gitlab.tacc.utexas.edu:jstubbs/core-compose.git
+
+# directory name to check out the repo into.
+core_compose_repo_name: core-compose

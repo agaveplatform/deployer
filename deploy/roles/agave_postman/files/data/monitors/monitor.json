@@ -1,0 +1,7 @@
+{
+  "active": true,
+  "frequency": 720,
+  "internalUsername": null,
+  "target": "postman-test-compute-mp-{{TEST_DATE}}",
+  "updateSystemStatus": false
+}

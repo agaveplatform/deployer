@@ -1,0 +1,38 @@
+# Creates a Docker 1.11 swarm manager using Consul for membership data. Requires CentOS on OpenStack.
+# NOTE: this role is not currently idempotent! We will eventually be moving to the latest Docker module within Ansible.
+#       All containers will first be REMOVED unless setting -e remove_conatiners=False
+#
+# Pre-requisites:
+# 1. Each node in the swarm cluster is on a private network with ports available. Private IPs must be provided for each node.
+# 2. Each node has the docker_host role (-e update_docker_version=True -e update_docker_compose_version=True -e docker_version=1.11.2-1.el7.centos)
+
+
+---
+
+- name: Ensure no containers are running
+  shell: docker rm -f `docker ps -aq` chdir=/home/apim
+  sudo: yes
+  sudo_user: apim
+  ignore_errors: yes
+  when: remove_containers
+
+- name: Pull latest consul image
+  shell: docker pull progrium/consul chdir=/home/apim
+  sudo: yes
+  sudo_user: apim
+
+- name: Launch consul container
+  shell: docker run --restart=always -d -p 8500:8500 --name=consul progrium/consul -server -bootstrap chdir=/home/apim
+  sudo: yes
+  sudo_user: apim
+
+- name: Pull swarm image
+  shell: docker pull swarm chdir=/home/apim
+  sudo: yes
+  sudo_user: apim
+
+- name: Launch swarm container in manage mode
+  shell: docker run -d -p 4000:4000 swarm manage -H :4000 --replication --advertise {{ swarm_manager_ip }}:4000 consul://{{ swarm_manager_ip }}:8500 chdir=/home/apim
+  sudo: yes
+  sudo_user: apim
+

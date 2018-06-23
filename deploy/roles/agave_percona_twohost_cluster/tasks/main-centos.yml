@@ -1,0 +1,5 @@
+---
+
+- name: install mysql
+  yum: name=mysql state=present
+  sudo: yes

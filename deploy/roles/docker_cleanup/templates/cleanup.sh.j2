@@ -1,0 +1,8 @@
+#!/bin/bash
+# clean up docker cruft
+
+# remove untagged images
+docker rmi $(docker images | grep "^<none>" | awk "{print $3}") || true
+
+# remove dangling volumes
+docker volume rm $(docker volume ls -qf dangling=true) || true

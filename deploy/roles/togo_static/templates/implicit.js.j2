@@ -1,0 +1,13 @@
+var OAuthClients = {
+  {% for key, value in agave_togo_static_implicit_auth_config.items() %}
+  "{{ key }}": {
+    "clientKey": "{{ value.client_key }}",
+    "callbackUrl": "{{ value.callback_url }}",
+    "scope": "{{ value.scope|default('PRODUCTION') }}",
+    "projectUrl": "{{ value.project_url }}",
+    "supportUrl": "{{ value.support_url }}",
+    "signupUrl": "{{ value.signup_url }}",
+    "allowsSignup": {% if value.allow_signup is True %}true{% else %}false{% endif %}
+  }{% if value|last is True %},{% endif %}
+  {% endfor %}
+};
