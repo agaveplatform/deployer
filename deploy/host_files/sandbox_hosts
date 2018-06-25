@@ -30,21 +30,53 @@ tenant_id=sandbox
 # This group will host the persistence services and should have at least 2 cores, 8GB memory, and 80GB disk.
 # Seriously consider clustering the databases and moving them offsite using a multihost deployment.
 
-sandbox.db ansible_ssh_host=192.168.205.12 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key ansible_ssh_user=vagrant
+sandbox.db ansible_ssh_host=192.168.205.12
+
+[db:children]
+mysql
+mongodb
+queue
+
+[mysql]
+# if clustering mysql, add hosts here and use this group to run the cluster management playbooks.
+
+[mongodb]
+# if sharding mongodb, add hosts here and use this group to run the cluster management playbooks.
+
+[queue]
+# if clustering the message queue, beanstalkd cannot be used. Switch to rabbitmq, add hosts here,
+# and use this group to run the cluster management playbooks.
 
 [auth]
 # This group will host the science apis and should have at least 2 cores, 8GB memory, and 80GB disk
 # This is sufficient for fairly heavy traffic, though you should scale it up to a HA setting if you expect
 # high degrees of concurrency in requests and long-lived file uploads/downloads.
 
-sandbox.auth ansible_ssh_host=192.168.205.10 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key ansible_ssh_user=vagrant
+sandbox.auth ansible_ssh_host=192.168.205.10
 
 
 [core]
 # This group will host the science apis and should have at least 4 cores, 16GB memory, and 80GB disk
 # Seriously consider splitting the worker and core services for any significant traffic or data movement.
 
-sandbox.core ansible_ssh_host=192.168.205.11 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key ansible_ssh_user=vagrant
+sandbox.core ansible_ssh_host=192.168.205.11
+
+[core:children]
+
+core_api
+core_workers
+
+[core_api]
+# Core Science API frontend hosts. These will only run the frontend services and can scale out horizontally.
+#sandbox.core_api  ansible_ssh_host=192.168.205.11  agave_core_api_only=True
+
+[core_workers]
+# Core Science API worker hosts. These will handle async tasks such as monitoring, notifications, job
+# submission, data movement, etc. Use the individual service isolation properties to effectively place
+# workers and isolate work, responsibility, and capacity. For more detailed configurations, use a
+# host_vars/<hostname> file to add all the configuration values for the given host.
+#sandbox.core_worker  ansible_ssh_host=192.168.205.13  agave_core_workers_only=True
+
 
 [docker_hosts]
 db

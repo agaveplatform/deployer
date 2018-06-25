@@ -24,6 +24,12 @@ ENV ANSIBLE_CACHE_PLUGIN_CONNECTION /etc/ansible/cache
 
 ADD ./deploy /deploy
 
+RUN cp deploy/host_files/sandbox_hosts /etc/ansible/hosts && \
+    cp deploy/agave_core_configs/sandbox_passwords-example deploy/agave_core_configs/sandbox_passwords && \
+    cp deploy/tenants/sandbox/sandbox_passwords-example deploy/tenants/sandbox/sandbox_passwords
+
+WORKDIR /deploy
+
 ENTRYPOINT ["ansible-playbook"]
 
 CMD ["-h"]
