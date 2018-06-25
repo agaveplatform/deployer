@@ -15,6 +15,9 @@
 import sys
 import os
 import shlex
+import guzzle_sphinx_theme
+
+
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -46,9 +49,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'CoTIM'
-copyright = u'2015, Joe Stubbs'
-author = u'Joe Stubbs'
+project = u'ATIM'
+copyright = u'2018, Rion Dooley'
+author = u'Rion Dooley'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -108,15 +111,43 @@ todo_include_todos = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'alabaster'
+#html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {
+    'canonical_url': '',
+    'analytics_id': '',
+    'logo_only': False,
+    'display_version': True,
+    'prev_next_buttons_location': 'bottom',
+    'style_external_links': True,
+    # 'vcs_pageview_mode': 'blob',
+    # Toc options
+    'collapse_navigation': True,
+    'sticky_navigation': False,
+    'navigation_depth': 3,
+    'includehidden': True,
+    'titles_only': False
+}
 
-# Add any paths that contain custom themes here, relative to this directory.
-#html_theme_path = []
+# html_theme = 'guzzle_sphinx_theme'
+html_theme = 'sphinx_rtd_theme'
+
+
+
+
+# # Register the theme as an extension to generate a sitemap.xml
+# extensions.append("guzzle_sphinx_theme")
+#
+# # Add any paths that contain custom themes here, relative to this directory.
+# html_theme_path = guzzle_sphinx_theme.html_theme_path()
+#
+# html_theme_options = {
+#     # Set the name of the project to appear in the sidebar
+#     "project_nav_name": "ATIM Docs",
+# }
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -137,7 +168,7 @@ html_theme = 'alabaster'
 # Add any paths that contain custom static tenants (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static tenants,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+#html_static_path = ['_static']
 
 # Add any extra paths that contain custom tenants (such as robots.txt or
 # .htaccess) here, relative to this directory. These tenants are copied
@@ -200,7 +231,7 @@ html_static_path = ['_static']
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'CoTIMdoc'
+htmlhelp_basename = 'ATIMdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -222,8 +253,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'CoTIM.tex', u'CoTIM Documentation',
-   u'Joe Stubbs', 'manual'),
+  (master_doc, 'ATIM.tex', u'ATIM Documentation',
+   u'Rion Dooley', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -252,7 +283,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'cotim', u'CoTIM Documentation',
+    (master_doc, 'atim', u'AIM Documentation',
      [author], 1)
 ]
 
@@ -266,8 +297,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'CoTIM', u'CoTIM Documentation',
-   author, 'CoTIM', 'One line description of project.',
+  (master_doc, 'ATIM', u'ATIM Documentation',
+   author, 'ATIM', 'The leading Science-as-a-Service platform for the open research community.',
    'Miscellaneous'),
 ]
 
@@ -282,3 +313,97 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+rst_prolog = """
+.. |project| replace:: The Agave Platform
+.. _project: https://agaveplatform.org
+
+.. |website| replace:: The Agave Website
+.. _Website: http://agaveplatform.org
+
+.. |developer docs| replace:: Developer Documentation
+.. _developer docs: https://docs.agaveplatform.org
+
+.. |project_support_url| replace:: https://github.com/agaveplatform/deployer/issues
+.. |project_support| replace:: Support
+.. _project_support: https://github.com/agaveplatform/deployer/issues
+
+.. |project_logo| image:: agave_logo.png :alt: The Agave Platform
+
+
+.. _tenant: https://sandbox.agaveplatform.org 
+.. |tenant| replace:: Sandbox
+.. |tenant_url| replace:: https://sandbox.agaveplatform.org
+.. |tenant_id| replace:: sandbox
+
+.. _togo: https://togo.agaveplatform.org
+.. |togo| replace:: Agave ToGo
+.. |togo_url| replace:: https://togo.agaveplatform.org
+
+.. _microsites: https://microsites.agaveplatform.org
+.. |microsites| replace:: Agave Microsites
+.. |microsite_url| replace:: https://togo.agaveplatform.org
+
+.. _cli: https://github.com/agaveplatform.org/agave-cli
+.. |cli| replace:: Agave CLI
+.. |cli_url| replace:: https://github.com/agaveplatform.org/agave-cli
+
+.. _php_sdk: http://github.com/agaveplatform.org/php-sdk
+.. |php_sdk| replace:: Agave PHP SDK
+.. |php_sdk_url| replace:: http://github.com/agaveplatform.org/php-sdk
+
+.. _python_sdk: http://github.com/agaveplatform.org/python-sdk
+.. |python_sdk| replace:: http://github.com/agaveplatform.org/python-sdk
+.. |python_sdk_url| replace:: http://github.com/agaveplatform.org/python-sdk
+
+.. _angularjs_sdk: http://github.com/agaveplatform.org/angularjs-sdk
+.. |angularjs_sdk| replace:: http://github.com/agaveplatform.org/angularjs-sdk
+.. |angularjs_sdk_url| replace:: http://github.com/agaveplatform.org/angularjs-sdk
+
+.. _r_sdk: http://github.com/agaveplatform.org/r-sdk
+.. |r_sdk| replace:: http://github.com/agaveplatform.org/r-sdk
+.. |r_sdk_url| replace:: http://github.com/agaveplatform.org/r-sdk
+
+.. _java_sdk: http://github.com/agaveplatform.org/java-sdk
+.. |java_sdk| replace:: http://github.com/agaveplatform.org/java-sdk
+.. |java_sdk_url| replace:: http://github.com/agaveplatform.org/java-sdk
+
+.. _slackin: https://slackin.agaveapi.co
+.. |slackin| replace:: Agave Slack Channel
+.. |slackin_url| replace:: https://slackin.agaveapi.co
+
+.. _mysql: https://dev.mysql.com/
+.. |mysql| replace:: MySQL
+
+.. _mongo: https://www.mongodb.com/
+.. _mongodb: https://www.mongodb.com/
+.. |mongo| replace:: MongoDB
+.. |mongodb| replace:: MongoDB
+
+.. _traefik: https://docs.traefik.io/
+.. |traefik| replace:: Traefik
+
+.. _wso2: https://wso2.com/
+.. |wso2| replace:: WSO2
+
+.. _am: https://wso2.com/api-management/
+.. |am| replace:: WSO2 API Manager
+.. |apim| replace:: API Manager
+
+.. _am docs replace:: https://docs.wso2.com/display/AM190/
+.. |am docs| replace:: WSO2 API Manager Documentation
+
+.. _is: https://wso2.com/identity-and-access-management
+.. |is| replace:: WSO2 Identity Server
+
+.. _is docs: https://docs.wso2.com/display/IS190/
+.. |is docs| replace:: WSO2 Identity Server Documentation
+
+
+.. |caution| image:: warning.png :alt: Warning!
+.. |danger| image:: danger.png :alt: Alert!
+.. |info| image:: info.png :alt: FYI!
+
+
+
+"""

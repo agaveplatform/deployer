@@ -8,17 +8,12 @@ tenant_id=sandbox
 # The name of the core service config file to read in.
 core_config_file=sandbox
 
-# The Docker version to use.
-#docker_version=1.9.1-1.el7.centos.x86_64
-
-
 [root:vars]
 # General settings to apply to all hosts. This simply maps a common ssh key and disable host checking. This should
 # be disabled in prod, however, when overriding dns from a deployment host, this is handy as it prevents the prompt
 
 ansible_ssh_common_args=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
-ansible_ssh_private_key_file=~/.ssh/id_rsa
-agave_ssh_private_key=~/.ssh/id_rsa
+#ansible_ssh_private_key_file=~/.ssh/id_rsa
 
 # update this if the privileged user account on your agave hosts is different. Usually this will be "root" or "centos"
 # depending on your VM image. This will only be used to connect to the host and su to the "apim" account that the
@@ -28,33 +23,55 @@ ansible_ssh_user=root
 # Leverage pipelining to speed up remote operations by reusing connections.
 pipelining=True
 
+# the name of your tenant.
+tenant_id=sandbox
+
 [db]
 # This group will host the persistence services and should have at least 2 cores, 8GB memory, and 80GB disk.
 # Seriously consider clustering the databases and moving them offsite using a multihost deployment.
 
-#sandbox.db ansible_ssh_host=129.114.17.114
-#agave.db ansible_ssh_host=db.sandbox.agaveplatform.org
+sandbox.db ansible_ssh_host=192.168.205.12 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key ansible_ssh_user=vagrant
 
 [auth]
 # This group will host the science apis and should have at least 2 cores, 8GB memory, and 80GB disk
 # This is sufficient for fairly heavy traffic, though you should scale it up to a HA setting if you expect
 # high degrees of concurrency in requests and long-lived file uploads/downloads.
 
-#sandbox.auth ansible_ssh_host=129.114.17.125
-#agave.auth ansible_ssh_host=auth.sandbox.agaveplatform.org
+sandbox.auth ansible_ssh_host=192.168.205.10 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key ansible_ssh_user=vagrant
+
 
 [core]
 # This group will host the science apis and should have at least 4 cores, 16GB memory, and 80GB disk
 # Seriously consider splitting the worker and core services for any significant traffic or data movement.
 
-#sandbox.core ansible_ssh_host=129.114.17.136
-#agave.core ansible_ssh_host=api.sandbox.agaveplatform.org
+sandbox.core ansible_ssh_host=192.168.205.11 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key ansible_ssh_user=vagrant
 
 [docker_hosts]
 db
 auth
 core
 
-[jenkins]
-#sandbox.postman ansible_ssh_host=129.114.17.84
-#agave.postman ansible_ssh_host=postman.sandbox.agaveplatform.org
+[postman:vars]
+
+# The hostname or ip of the linux server the newman tests will register with Agave and use to run all data and
+# compute tests
+newman_agave_test_system_host=192.168.205.12
+
+# The sftp port on which Agave should connect to `newman_agave_test_system_host` during the tests
+newman_agave_test_system_port=22
+
+# The username with which Agave should connect to `newman_agave_test_system_host` during the tests
+newman_agave_test_system_username=vagrant
+
+# The virtual home directory to use in the system definition when Agave interacts with `newman_agave_test_system_host`
+newman_agave_test_system_homedir=/home/vagrant
+
+# The public key allowing connections to `newman_agave_test_system_host`
+newman_agave_test_system_public_key_file=~/.ssh/postman.pub
+
+# The private key Agave should use to connect to `newman_agave_test_system_host`
+newman_agave_test_system_private_key_file=~/.vagrant.d/insecure_private_key
+
+
+[postman]
+localhost ansible_connection=local

@@ -8,3 +8,4 @@ pytz
 cryptography
 shade
 ansible
+guzzle_sphinx_theme
