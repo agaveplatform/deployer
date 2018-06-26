@@ -77,6 +77,17 @@
   become_user: root
   become_method: sudo
 
+- name: Ensure .bashrc file is present
+  shell: cp -n /etc/skel/{{item}} /home/apim/{{item}}
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: clean_host
+  with_items:
+    - ".bashrc"
+    - ".bash_logout"
+    - ".bash_profile"
+
 - name: Remove lines expanding aliases on remote commands from .bashrc
   lineinfile: dest=/home/apim/.bashrc
               line="^shopt -s expand_aliases"

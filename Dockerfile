@@ -10,10 +10,10 @@ FROM ubuntu:16.04
 RUN apt-get update && \
     apt-get install -y python-setuptools python-dev build-essential python-pip libffi-dev libssl-dev git ssh-client
 
+ADD ./requirements.txt /deploy/requirements.txt
 # dependencies for ansible
 RUN pip install --upgrade pip
-RUN /usr/local/bin/pip install -U paramiko PyYAML Jinja2 httplib2 six pycrypto pytz cryptography
-RUN /usr/local/bin/pip install -U shade ansible && \
+RUN pip install -r /deploy/requirements.txt && \
     mkdir -p /etc/ansible/cache && \
     touch /etc/ansible/ansible.cfg && \
     echo "deprecation_warnings=False" >> /etc/ansible/ansible.cfg

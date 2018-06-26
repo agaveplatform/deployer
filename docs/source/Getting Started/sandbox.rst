@@ -54,15 +54,16 @@ Starting an All-in-One Server
 
 This command:
 
-- Configures each of the hosts,
+- Configures each of the hosts, updates local DNS, and configures logging,
 
-- Installs the Agave Platform components on each host,
+- Downloads the appropriate Agave Platform and third party images on each host,
 
-- updates DNS and sets up logging,
+- Bootstraps the databases and installs admin and test user accounts.
 
-- Starts the various containers.
+- Starts up the containers on each host.
 
-- Bootstraps the databases and installes admin and test user accounts.
+- Completes registration fo the Science APIs
+
 
 What’s Next?
 ^^^^^^^^^^^^
@@ -84,30 +85,33 @@ Download the image from the Docker Hub.
 
     $ docker pull agaveplatform/deployer
 
-Run the deployer with your custom hosts file volume mounted into the container
+Run the deployer with your updated hosts file and ssh private key volume mounted into the container
 
 ::
 
     $ docker run -it --rm --name deployer \
+             -v $HOME/.vagrant.d/insecure_private_key:/root/.ssh/id_rsa:ro
              -v deploy/host_files/sandbox_hosts:/etc/ansible/hosts
              agaveplatform/deployer deploy_agave.plbk
 
 This command:
 
-- Configures each of the hosts,
+- Configures each of the hosts, updates local DNS, and configures logging,
 
-- Installs the Agave Platform components on each host,
+- Downloads the appropriate Agave Platform and third party images on each host,
 
-- updates DNS and sets up logging,
+- Bootstraps the databases and installs admin and test user accounts.
 
-- Starts the various containers.
+- Starts up the containers on each host.
 
-- Bootstraps the databases and installes admin and test user accounts.
+- Completes registration fo the Science APIs
 
 What’s Next?
 ^^^^^^^^^^^^
 
-Now that you have Agave Platform successfully running in your environment, try it out by running the `run_postman.plbk` playbook. Make sure you update the ``[postman:vars]`` section of your sandbox_hosts file with the information for the host you want Agave to connect to as a storage/compute system when running the tests.
+Now that you have Agave Platform successfully running in your environment, try it out by running the `run_postman.plbk` playbook.
+
+
 
 ..
     Prerequisites

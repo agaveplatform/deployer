@@ -14,3 +14,4 @@ tmp/
 deploy/inventory
 deployer-validation.bash
 jupyterhub-swarm.bash
+*.retry

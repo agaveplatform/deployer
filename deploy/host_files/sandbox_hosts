@@ -8,12 +8,12 @@ tenant_id=sandbox
 # The name of the core service config file to read in.
 core_config_file=sandbox
 
-[root:vars]
+[docker_hosts:vars]
 # General settings to apply to all hosts. This simply maps a common ssh key and disable host checking. This should
 # be disabled in prod, however, when overriding dns from a deployment host, this is handy as it prevents the prompt
 
-ansible_ssh_common_args=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
-#ansible_ssh_private_key_file=~/.ssh/id_rsa
+ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+ansible_ssh_private_key_file=~/.ssh/id_rsa
 
 # update this if the privileged user account on your agave hosts is different. Usually this will be "root" or "centos"
 # depending on your VM image. This will only be used to connect to the host and su to the "apim" account that the
@@ -25,6 +25,13 @@ pipelining=True
 
 # the name of your tenant.
 tenant_id=sandbox
+
+
+[docker_hosts:children]
+db
+auth
+core
+
 
 [db]
 # This group will host the persistence services and should have at least 2 cores, 8GB memory, and 80GB disk.
@@ -78,10 +85,6 @@ core_workers
 #sandbox.core_worker  ansible_ssh_host=192.168.205.13  agave_core_workers_only=True
 
 
-[docker_hosts]
-db
-auth
-core
 
 [postman:vars]
 
@@ -99,10 +102,10 @@ newman_agave_test_system_username=vagrant
 newman_agave_test_system_homedir=/home/vagrant
 
 # The public key allowing connections to `newman_agave_test_system_host`
-newman_agave_test_system_public_key_file=~/.ssh/postman.pub
+newman_agave_test_system_public_key_file=~/.ssh/id_rsa.pub
 
 # The private key Agave should use to connect to `newman_agave_test_system_host`
-newman_agave_test_system_private_key_file=~/.vagrant.d/insecure_private_key
+newman_agave_test_system_private_key_file=~/.ssh/id_rsa
 
 
 [postman]
