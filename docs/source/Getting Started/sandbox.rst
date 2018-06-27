@@ -81,13 +81,13 @@ Installing and Running the Agave Deployer Docker Image
 Download the image from the Docker Hub.
 
 
-::
+.. code-block:: bash
 
     $ docker pull agaveplatform/deployer
 
 Run the deployer with your updated hosts file and ssh private key volume mounted into the container
 
-::
+.. code-block:: bash
 
     $ docker run -it --rm --name deployer \
              -v $HOME/.vagrant.d/insecure_private_key:/root/.ssh/id_rsa:ro
@@ -112,35 +112,22 @@ What’s Next?
 Now that you have Agave Platform successfully running in your environment, try it out by running the `run_postman.plbk` playbook.
 
 
+Running Postman Validate Suite
+==============================
+
+To verify your installation, a collection of Postman tests are included with the Deployer. In order to run the tests, you will need a server with a publicly accessible ip address to which Agave can connect for job and data tests. For basic sandbox installations, you can run the `storage_server.plbk` playbook to start up a Docker container on your auth host that will act as a temporary SSH server for testing.  
 
 ..
-    Prerequisites
-    ====================
+
+    Do NOT do this on production hosts. Use a separate host specifically provisioned for testing to run against. The Deployer can easily provision hosts on EC2 and OpenStack for this purpose with the `os_create_host.plbk` Playbook. 
+    
+
+To kick off the tests by running the `run_postman.plbk`.
+
+.. code-block:: bash
+
+    $ ansible-playbook -i deploy/host_files/sandbox_hosts run_postman.plbk
 
 
-    Installing Deployer
-    ====================
+The tests will run and output a summary table of the results. Machine readable test results are availble in json, xlm, and html in the `deploy/tmp/agave-postman-test*/reports` directory.
 
-
-    Deploying a Sandbox Tenant
-    ==========================
-
-    Configuring Hosts File
-    -----------------------
-
-    Running the Playbook
-    --------------------
-
-    Validating Installation
-    ------------------------
-
-    Bootstrapping Data
-    --------------------
-
-
-    Deploying Agave ToGo
-    =====================
-
-
-    Configuring Agave Tooling
-    =========================
