@@ -278,10 +278,10 @@
 
 - debug:
     var=testout.stdout_lines
-  when: testout|success
+  when: testout is success
 
 - debug:
     var: testout.stderr_lines
-  when: not(testout|success)
+  when: testout is not success
 
 
