@@ -2,7 +2,9 @@
 Architecture
 ############
 
-.. include: ./overview.rst
+.. include:: ./overview.rst
+.. include:: ./core-concepts.rst
+.. include:: ./infrastructure-components.rst
 
 ..      Core Components/*
          Auth/*

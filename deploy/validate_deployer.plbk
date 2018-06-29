@@ -18,6 +18,7 @@
       prompt: "Enter Agave Namespacing Prefix"
       private: no
       default: agave
+
     - name: agave_security_group_namespace
       prompt: "Enter Agave Security Group Namespacing Prefix"
       private: no

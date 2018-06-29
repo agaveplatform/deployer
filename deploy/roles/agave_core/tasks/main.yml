@@ -45,5 +45,5 @@
   when: deploy_core_apis_a_deployment
   environment:
       AGAVE_VERSION: '{{ agave_core_version }}'
-      COMPOSE_HTTP_TIMEOUT: 2000
+      COMPOSE_HTTP_TIMEOUT: 5000
 

@@ -2,6 +2,14 @@
 Introduction
 ============
 
+The Agave Platform is a multi-tenant Science-as-a-Service platform empowering users to manage data, run code, collaborate meaningfully, and integrate virtually anything through standards-based REST interfaces. It supports a wealth of different data and authentication protocols, speaks to many different batch schedulers and execution services, and can natively communicate with many 3rd party services and collaboration platforms. Because of the diversity of languages and services it supports, Agave saves you time and money that you can use to innovate the science behind your technology.
+
+
+
+
+
+
+
 Agave Deployer is the project used to build images and deploy containers that make up the Agave Platform infrastructure. Each tenant
 runs its own VM (the "tenant vm") of containers to handle Identity and Access Management (IAM) and API management as well as other third party services.
 There are base images for all the services containing paramiterized configurations in the form of Jinja2 templates. Each

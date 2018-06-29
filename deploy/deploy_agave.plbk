@@ -110,46 +110,18 @@
       tags:
         - apis
         - core
-#
-#  # deploy and start containers
-#- name: deploy core science api containers without workers as part of a multihost deployment
-#  hosts: core_api
-#  gather_facts: no
-#
-#  roles:
-#    - role: agave_core
-#      when: (groups['core'] | length) > 1
-#      tags:
-#          - apis
-#          - core
-#  vars:
-#    - agave_core_api_only: true
-#
-#
-## deploy and start containers
-#- name: deploy headless core science api worker containers as part of a multihost deployment
-#  hosts: core_workers
-#  gather_facts: no
-#
-#  roles:
-#    - role: agave_core
-#      when: (groups['core'] | length) > 1
-#
-#  vars:
-#    - agave_core_workers_only: true
-#
-#
-#- name: initialize core science api database and run migrations on a single core host
-#  hosts: core[0]
-#
-#  roles:
-#      - role: agave_core_sql_migrations
-#        tags:
-#          - db
-#          - migrations
-#
-#  vars:
-#    - core_migrations_command: migrate
+
+- name: initialize core science api database and run migrations on a single core host
+  hosts: core[0]
+
+  roles:
+      - role: agave_core_sql_migrations
+        tags:
+          - db
+          - migrations
+
+  vars:
+    - core_migrations_command: migrate
 
 
 ########################################################################

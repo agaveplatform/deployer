@@ -25,6 +25,8 @@ ENV ANSIBLE_CACHE_PLUGIN_CONNECTION /etc/ansible/cache
 ADD ./deploy /deploy
 
 RUN cp deploy/host_files/sandbox_hosts /etc/ansible/hosts && \
+    cp deploy/host_files/ec2.py /etc/ansible/openstack_inventory.py /etc/ansible/ && \
+    cp deploy/host_files/sandbox_hosts /etc/ansible/ && \
     cp deploy/agave_core_configs/sandbox_passwords-example deploy/agave_core_configs/sandbox_passwords && \
     cp deploy/tenants/sandbox/sandbox_passwords-example deploy/tenants/sandbox/sandbox_passwords
 

@@ -10,27 +10,11 @@ Contents:
 
 .. toctree::
    :maxdepth: 4
-
+   :hidden:
 
    Introduction
    Getting Started/index
-
-..      Overview
-      Command-Line Walkthrough
-      Setting up a Sandbox
-
-   Architecture/*
-..      Overview
-      Core Components/*
-         Auth/*
-         Core Science APIs/*
-         Persistence/*
-         Web/*
-         Serverless/*
-         Training/*
-         Tooling/*
-      Additional Concepts
-      Networking
+   Architecture/index
 
    Security Guide/*
 ..      Container security
