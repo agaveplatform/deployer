@@ -1,5 +1,46 @@
+############
+Installing Agave
+############
+
+Agave 
+.. include: ./overview.rst
+
 ********************
-Setting up a Sandbox
+Introduction
+********************
+
+
+
+********************
+Prerequisites
+********************
+
+
+
+Selecting Hosts
+====================
+
+
+Bare metal
+----------
+
+
+
+Static Virtual Machines
+-----------------------
+
+
+Public Cloud
+------------
+
+
+
+Private Cloud
+-------------
+
+
+********************
+Introduction
 ********************
 
 
@@ -131,3 +172,4 @@ To kick off the tests by running the `run_postman.plbk`.
 
 The tests will run and output a summary table of the results. Machine readable test results are availble in json, xlm, and html in the `deploy/tmp/agave-postman-test*/reports` directory.
 
+j
