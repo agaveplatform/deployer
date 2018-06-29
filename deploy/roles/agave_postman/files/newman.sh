@@ -255,6 +255,7 @@ function main() {
              -i \
              -e "NODE_DEBUG=$( (( debug )) && echo "http,request,net" || echo "false" )" \
              $NEWMAN_IMAGE run \
+             --disable-unicode \
              --timeout-request 60000 \
              --delay-request 25 \
              --insecure \
