@@ -28,7 +28,7 @@ When installing the Agave Platform for a production environment, several factors
 Agave can be installed on-premises or hosted on public or private clouds. Ansible playbooks can help you with automating the provisioning and installation processes. For information, see Running Installation Playbooks.
 
 ### Sizing Considerations
-Determine the nature and duration of the traffic, data, and computation your tenant is expected to support. Concurrent API requests, data movement, and job throughput influences the number of hosts and containers you will need in your setup. See [Platform Limits](platform-limits.html) for the latest guidelines on capacity planning for your tenant.
+Determine the nature and duration of the traffic, data, and computation your tenant is expected to support. Concurrent API requests, data movement, and job throughput influences the number of hosts and containers you will need in your setup. See [Platform Limits](../Scaling%20and%20Performance/platform-limits.html) for the latest guidelines on capacity planning for your tenant.
 
 ### Environment Scenarios
 This section outlines different examples of scenarios for your Agave environment. Use these scenarios as a basis for planning your own Agave Platform deployment, based on your sizing needs.

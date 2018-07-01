@@ -233,6 +233,6 @@ The minimum core count needed is then calculated as the ``minimum_worker_contain
 
 
 .. _`Setting up a Sandbox`: ../Getting%20Started/sandbox.html
-.. _`4 host production deployment`: planning-your-installation.html#single-auth-single-persistence-and-multiple-core-systems
+.. _`4 host production deployment`: ../Installing%20Agave/planning-your-installation.html#single-auth-single-persistence-and-multiple-core-systems
 .. _`Performance Tuning Guide`: https://docs.wso2.com/display/AM190/Tuning+Performance
 .. _`WSO2 API Manager Performance and Capacity Planning`: https://docs.wso2.com/display/AM220/WSO2+API-M+Performance+and+Capacity+Planning

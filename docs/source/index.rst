@@ -32,6 +32,7 @@ The Agave Platform is a multi-tenant Science-as-a-Service platform empowering us
    Architecture/core-concepts
    Architecture/infrastructure-components
 
+
 .. asdfasdf
     toctree::
    :maxdepth: 2
@@ -53,7 +54,7 @@ The Agave Platform is a multi-tenant Science-as-a-Service platform empowering us
    :hidden:
 
    Installing Agave/planning-your-installation
-   Installing Agave/platform-limits
+   Installing Agave/prerequisites
 
 ..      Installation
       Requirements
@@ -216,7 +217,7 @@ The Agave Platform is a multi-tenant Science-as-a-Service platform empowering us
    :caption: Scaling and Performance Guide
    :hidden:
 
-..   Scaling and Performance Guide/index
+   Scaling and Performance Guide/platform-limits
 ..      Capacity Planning/*
 
 ..      Recommended Host practices
