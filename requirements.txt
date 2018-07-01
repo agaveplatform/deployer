@@ -11,3 +11,4 @@ ansible>=2.3
 #guzzle_sphinx_theme
 sphinx_rtd_theme
 boto
+recommonmark

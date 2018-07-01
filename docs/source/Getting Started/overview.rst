@@ -26,9 +26,11 @@ Why Should I Use The Agave Platform?
  Developer                |developer docs|_
  System Administrator     `Setting up a Sandbox`_
 ======================  ============================
+
 ..  Technology Evaluator     Evaluator Checklist
-    Director                 What is the Agave Platform
-    ======================  ============================
+..    Director                 What is the Agave Platform
+..    ======================  ============================
 
 .. _Evaluator Checklist: ../Organizational%20Guide/#evaluator-checklist
 .. _What is the Agave Platform: ../Organizational%20Guide/#what-is-the-agave-platform
+.. _Setting up a Sandbox: sandbox.html

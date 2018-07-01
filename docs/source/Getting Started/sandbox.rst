@@ -41,7 +41,7 @@ Method 1: Running the Ansible Playbooks
 
 You can quickly get Agave Platform running in a container using images from Docker Hub on a Linux system. This method is supported on Fedora, CentOS, and Red Hat Enterprise Linux (RHEL) hosts only.
 
-    Agave frontend services listen on ports ``80``, ``443``, ``8080``, ``8443`` and ``9000``. Agave backend services listen on 80, 443, 8440-8499, and 8070-8099. If you plan on enabling passive FTP and GridFTP support, Agave utilizes three port ranges to enable this behavior: 30000-31000, 50000-51000, 52900-52999. If another service is already listening on those ports on the respective host(s), you must stop that service before launching the Agave Platform containers.
+.. note:: Agave frontend services listen on ports ``80``, ``443``, ``8080``, ``8443`` and ``9000``. Agave backend services listen on 80, 443, 8440-8499, and 8070-8099. If you plan on enabling passive FTP and GridFTP support, Agave utilizes three port ranges to enable this behavior: 30000-31000, 50000-51000, 52900-52999. If another service is already listening on those ports on the respective host(s), you must stop that service before launching the Agave Platform containers.
 
 
 Starting an All-in-One Server
@@ -112,14 +112,12 @@ What’s Next?
 Now that you have Agave Platform successfully running in your environment, try it out by running the `run_postman.plbk` playbook.
 
 
-Running Postman Validate Suite
+Validating your Installation
 ==============================
 
 To verify your installation, a collection of Postman tests are included with the Deployer. In order to run the tests, you will need a server with a publicly accessible ip address to which Agave can connect for job and data tests. For basic sandbox installations, you can run the `storage_server.plbk` playbook to start up a Docker container on your auth host that will act as a temporary SSH server for testing.  
 
-..
-
-    Do NOT do this on production hosts. Use a separate host specifically provisioned for testing to run against. The Deployer can easily provision hosts on EC2 and OpenStack for this purpose with the `os_create_host.plbk` Playbook. 
+.. warning:: Do NOT do this on production hosts. Use a separate host specifically provisioned for testing to run against. The Deployer can easily provision hosts on EC2 and OpenStack for this purpose with the `os_create_host.plbk` Playbook.
     
 
 To kick off the tests by running the `run_postman.plbk`.

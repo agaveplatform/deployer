@@ -1,9 +1,8 @@
-############
-Installing Agave
-############
+## Planning your Installation
 
-Agave 
-.. include: ./overview.rst
+
+
+
 
 ********************
 Introduction

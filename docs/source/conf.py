@@ -15,8 +15,8 @@
 import sys
 import os
 import shlex
-import guzzle_sphinx_theme
-
+import recommonmark
+from recommonmark.transform import AutoStructify
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -29,6 +29,19 @@ import guzzle_sphinx_theme
 # If your documentation needs a minimal Sphinx version, state it here.
 #needs_sphinx = '1.0'
 
+
+source_parsers = {
+   '.md': 'recommonmark.parser.CommonMarkParser',
+}
+
+github_doc_root = 'https://github.com/rtfd/recommonmark/tree/master/doc/'
+def setup(app):
+    app.add_config_value('recommonmark_config', {
+            'url_resolver': lambda url: github_doc_root + url,
+            'auto_toc_tree_section': 'Contents',
+            }, True)
+    app.add_transform(AutoStructify)
+
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
@@ -39,8 +52,8 @@ templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-# source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
+#source_suffix = '.rst'
 
 # The encoding of source tenants.
 #source_encoding = 'utf-8-sig'
@@ -49,7 +62,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'ATIM'
+project = u'Agave Platform'
 copyright = u'2018, Rion Dooley'
 author = u'Rion Dooley'
 
@@ -154,16 +167,16 @@ html_theme = 'sphinx_rtd_theme'
 #html_title = None
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-#html_short_title = None
+html_short_title = 'Agave Platform'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = None
+html_logo = 'images/agave-icon-white.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-#html_favicon = None
+html_favicon = 'images/favicon.ico'
 
 # Add any paths that contain custom static tenants (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static tenants,
@@ -328,9 +341,6 @@ rst_prolog = """
 .. |project_support| replace:: Support
 .. _project_support: https://github.com/agaveplatform/deployer/issues
 
-.. |project_logo| image:: agave_logo.png :alt: The Agave Platform
-
-
 .. _tenant: https://sandbox.agaveplatform.org 
 .. |tenant| replace:: Sandbox
 .. |tenant_url| replace:: https://sandbox.agaveplatform.org
@@ -400,10 +410,9 @@ rst_prolog = """
 .. |is docs| replace:: WSO2 Identity Server Documentation
 
 
-.. |caution| image:: warning.png :alt: Warning!
-.. |danger| image:: danger.png :alt: Alert!
-.. |info| image:: info.png :alt: FYI!
-
-
 
 """
+#.. |caution| image:: warning.png :alt: Warning!
+#.. |danger| image:: danger.png :alt: Alert!
+#.. |info| image:: info.png :alt: FYI!
+#.. |project_logo| image:: 'images/agave-platform-logo.png' :alt: The Agave Platform

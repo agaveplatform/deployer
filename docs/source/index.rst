@@ -1,23 +1,44 @@
-.. CoTIM documentation master file, created by
-   sphinx-quickstart on Fri Jun 12 11:01:03 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. image:: images/agave-platform-logo.png
+   :alt: The Agave Platform
+   :width: 70%
+   :align: center
 
-Agave Platform Tenant Infrastructure Management Documentation
-=============================================================
 
-Contents:
+Introduction
+=============
+
+The Agave Platform is a multi-tenant Science-as-a-Service platform empowering users to manage data, run code, collaborate meaningfully, and integrate virtually anything through standards-based REST interfaces. It supports a wealth of different data and authentication protocols, speaks to many different batch schedulers and execution services, and can natively communicate with many 3rd party services and collaboration platforms. Because of the diversity of languages and services it supports, Agave saves you time and money that you can use to innovate the science behind your technology.
+
+.. asdfasdfa
+   toctree::
+   :maxdepth: 2
+   :caption: Welcome
+   Introduction
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
+   :caption: Getting Started
    :hidden:
 
-   Introduction
-   Getting Started/index
-   Architecture/index
+   Getting Started/overview
+   Getting Started/sandbox
 
-   Security Guide/*
-..      Container security
+.. toctree::
+   :maxdepth: 2
+   :caption: Architecture
+   :hidden:
+
+   Architecture/overview
+   Architecture/core-concepts
+   Architecture/infrastructure-components
+
+.. asdfasdf
+    toctree::
+   :maxdepth: 2
+   :caption: Architecture
+
+..   Security Guide/*
+      Container security
       Private registries
       Configuration management
       Network security
@@ -26,14 +47,26 @@ Contents:
       Monitoring events and logs
       Managing secrets
 
-   Installing Agave/*
+.. toctree::
+   :maxdepth: 2
+   :caption: Installing Agave
+   :hidden:
+
+   Installing Agave/planning-your-installation
+   Installing Agave/platform-limits
+
 ..      Installation
       Requirements
       Building
       Quickstarts/*
          Sandbox
 
-   Upgrading Agave/*
+.. toctree::
+   :maxdepth: 2
+   :caption: Upgrading Agave
+   :hidden:
+
+..   Upgrading Agave/index
 ..      Hosting and infrastructure
       Tenant Level Services
          API management
@@ -49,7 +82,12 @@ Contents:
          Database updates
          Rolling back the database
 
-   Configuring Agave/*
+.. toctree::
+   :maxdepth: 2
+   :caption: Configuring Agave
+   :hidden:
+
+..   Configuring Agave/index
 ..      IAM
          Identity providers
             Hosted
@@ -112,7 +150,20 @@ Contents:
          JSON Mirror
          Changelog Parser
 
-   Agave Administration/*
+.. toctree::
+   :maxdepth: 2
+   :caption: Building Images
+   :hidden:
+
+   Building Images/index
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Agave Administration
+   :hidden:
+
+..   Agave Administration/*
 ..      WSO2 AM
 ..      Admin Services
          Tenant contact info
@@ -160,7 +211,12 @@ Contents:
          Ansible Vault
          Jenkins secrets
 
-   Scaling and Performance Guide/*
+.. toctree::
+   :maxdepth: 2
+   :caption: Scaling and Performance Guide
+   :hidden:
+
+..   Scaling and Performance Guide/index
 ..      Capacity Planning/*
 
 ..      Recommended Host practices
@@ -194,7 +250,12 @@ Contents:
 
 ..      Maintenance/*
 
-   Organizational Guide/*
+.. toctree::
+   :maxdepth: 2
+   :caption: Organizational Guide
+   :hidden:
+
+..   Organizational Guide/*
 ..      What is the Agave Platform
       Evaluator Checklist
       New Adopter Checklist
@@ -219,10 +280,10 @@ Contents:
 
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. Indices and tables
+.. ==================
+..
+.. * :ref:`genindex`
+.. * :ref:`modindex`
+.. * :ref:`search`
 
