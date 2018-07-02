@@ -7,6 +7,8 @@ docker_version: 1.9.1-0~trusty
 # docker-compose installs as a single binary:
 docker_compose_version: 1.6.2
 
+docker_insecure_registries: []
+
 update_docker_compose_version: False
 update_docker_version: False
 

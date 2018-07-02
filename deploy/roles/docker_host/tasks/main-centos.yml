@@ -1,7 +1,7 @@
 ---
 
 # override default ubuntu docker packages when not explicitly overridden by user.
-- name: default the docker version for centos
+- name: Configure the default the docker version for centos
   set_fact:
     docker_version: 1.9.1-1.el7.centos
   when: docker_version | search('trusty')
@@ -18,25 +18,94 @@
   with_items: "{{ docker_cleanup_packages_EL }}"
   when: update_docker_version
 
-- name: Remove Docker CE repository
-  file:
-    path: /etc/yum.repos.d/docker-ce.repo
-    state: absent
-  when:  update_docker_version
+#- name: Remove Docker CE repository
+#  file:
+#    path: /etc/yum.repos.d/docker-ce.repo
+#    state: absent
+#  when:  update_docker_version
+#  notify: yum-clean-metadata
 
+- name: Remove repository from a specific repo file
+  yum_repository:
+    name: "{{item}}"
+    state: absent
+  with_items:
+    - epel
+    - docker
+    - docker-ce
+  notify: yum-clean-metadata
+  ignore_errors: yes
 
 - name: Add docker yum repo
   copy: src=docker.repo.centos dest=/etc/yum.repos.d/docker.repo
-  
-- name: install common packages
-  yum: name='{{ item }}' state=present update_cache=yes
+
+- name: Add epel repo
+  yum_repository:
+    name: epel
+    description: EPEL YUM repo
+    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+    gpgcheck: no
+  notify: yum-clean-metadata
+
+- name: Install common packages
+  yum:
+    name: '{{ item }}'
+    state: present
+    update_cache: yes
+    disable_gpg_check: yes
   with_items:
     - libselinux-python
     - git
     - cronie
-  
+    - net-tools
+    - bind-utils
+    - iftop
+    - bash-completion
+    - psacct
+    - yum-plugin-ovl
+    - wget
+
+
+- name: Ensure services enabled
+  service:
+    name: '{{ item }}'
+    state: started
+    enabled: yes
+  with_items:
+      - psacct
+
 - debug: msg="Installing docker version {{ docker_version }}"
 
-- name: install docker engine
+- name: Install docker engine
   yum: name=docker-engine-{{ docker_version }} state=present
   when: update_docker_version
+
+- name: Update Docker systemd service definition
+  template: src="systemsd-docker.service.j2" dest="/usr/lib/systemd/system/docker.service"
+  when: update_docker_version and docker_insecure_registries|length > 0
+
+- name: Reload docker service definition
+  systemd:
+    daemon_reload: yes
+  when: update_docker_version
+
+- name: Restart Docker with the new service definition
+  systemd:
+    name: docker.service
+    state: restarted
+  when: update_docker_version
+
+
+#- name: Create docker storage volume
+#  shell: vgcreate docker-storage /dev/sdb1 /dev/sdb2
+#
+#
+#- name: Create docker storage volume
+#  shell: lvcreate -n docker-pool -L 2G docker-storage
+#
+#- name: Create docker storage volume
+#  shell: lvcreate -n docker-poolmeta -L 500M docker-storage
+#
+#- name: Create docker storage volume
+#  shell: lvconvert --type thin-pool --poolmetadata docker-storage/docker-poolmeta docker-storage/docker-pool
+#
