@@ -24,10 +24,10 @@ deploy_core_default_templates: true
 ######################################################################################
 
 # the key file used to checkout the core compose repo.
-core_compose_repo_key_file: core-compose.key
+core_compose_repo_key_file:
 
 # URI to the git repository:
-core_compose_repo_uri: git@gitlab.tacc.utexas.edu:jstubbs/core-compose.git
+core_compose_repo_uri:
 
 # directory name to check out the repo into.
 core_compose_repo_name: core-compose

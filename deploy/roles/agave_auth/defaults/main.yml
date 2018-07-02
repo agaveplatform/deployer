@@ -48,7 +48,7 @@ tag: 0.2 # used for clients and id
 mysql_port: 3306
 
 # whether to deploy the admin_password_grant which makes it possible to pull delegated tokens using the admin credentials
-deploy_admin_password_grant: False
+deploy_admin_password_grant: True
 
 # length of time, in sexonds, that an access token should be valid.
 access_token_validity_time: 14400
@@ -78,7 +78,7 @@ deploy_custom_oauth_app: False
 update_custom_oauth_app: False
 
 # whether to deploy the tenant admin services
-deploy_admin_services: False
+deploy_admin_services: True
 
 auth_gateway_ip: 172.17.0.1
 

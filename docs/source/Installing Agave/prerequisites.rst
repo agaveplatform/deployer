@@ -341,7 +341,6 @@ Ensure the following ports required by Agave are open on your network and config
      - Required for SSH by the installer or system administrator.
 
 .. list-table:: Aggregated Logging
-   :
    :widths: 20 10 70
    :header-rows: 1
 

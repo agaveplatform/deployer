@@ -186,7 +186,7 @@ to use the simpler approach, or set ``deploy_core_default_templates=False`` and 
   - ``deploy_core_apis_b_deployment`` - (True/False). The core APIs deploy in an A/B configuration to minimize downtime during updates. Set this to true to deploy the "B" set. One of "A" or "B" should be set to true.
   - ``agave_core_workers_only`` - (True/False). Whether to deploy the core workers. Using this feature you can deploy only the workers. NOTE: this feature is experimental.
   - ``kill_core_containers`` - (True/False). Whether to remove any existing core containers when deploying.
-  - ``agave_core_version`` - Version of the core services to deploy (e.g. 2.1.6).
+  - ``agave_core_version`` - Version of the core services to deploy (e.g. 2.2.6).
   - ``agave_core_hostname`` - Hostname for the core services.
   - ``core_deploy_ssl_certs`` - (True/False) Whether or not to use custom SSL certs for core services. If False, deployer will use stock (self-signed) certs for core services. In general, this is not an issue since the core services are not directly exposed to external users (SSL termination for external requests happens in the auth layer). However, if you have the need to export core services and/or terminate SSL in the core layer, set this to True and provide ssl certs using the "agave_core_ssl_cert", "agave_core_ssl_key" and "agave_core_ca_cert".
   - ``agave_core_ssl_cert`` - Path in the container to core ssl cert. This file should be placed in the ``roles/agave_core/files/core-apis-ssl`` directory.
@@ -207,7 +207,7 @@ to use the simpler approach, or set ``deploy_core_default_templates=False`` and 
   - ``core_compose_repo_path`` - Relative path inside the git repo to use for the compose files. Note: Set this variable for each core host in the inventory file.
 
 
-  - ``agave_core_realtime_service_type`` - Type of backend service to use for realtime API. Currently value ``fanout`` is supported.
+  - ``agave_core_realtime_service_type`` - Type of backend service to use for realtime API. Currently value ``fanout``, ``pushpin``, and ``none`` are supported.
   - ``agave_core_realtime_service`` - Addressable location of the backend (fanout) service for realtime API.
   - ``agave_core_realtime_service_realm_id`` - Realm id when using the fanout backend.
   - ``agave_core_realtime_service_realm_key`` - realm key when using the fanout backend.
