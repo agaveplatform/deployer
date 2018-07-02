@@ -61,8 +61,14 @@ agave_core_metadata_user: wcs
 
 # Beanstalkd connection info
 beanstalk_server: "{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
+
+agave_core_messaging_provider: beanstalk
 agave_core_messaging_host: "{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
 agave_core_messaging_port: 11300
+# messaging password will be empty if using beanstalkd
+agave_core_messaging_password: ""
+# messaging username will be empty if using beanstalkd
+agave_core_messaging_user: ""
 
 # Mysql connection info
 mysql_core_host: "{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"

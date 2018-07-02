@@ -52,6 +52,8 @@ java_api:
     - 'IPLANT_NOTIFICATION_FAILED_DB_SCHEME={{ agave_core_notification_failed_db_scheme }}'
     - 'IPLANT_MESSAGING_HOST={{ agave_core_messaging_host }}'
     - 'IPLANT_MESSAGING_PORT={{ agave_core_messaging_port }}'
+    - 'IPLANT_MESSAGING_USERNAME={{ agave_core_messaging_username }}'
+    - 'IPLANT_MESSAGING_PASSWORD={{ agave_core_messaging_password }}'
     - 'REALTIME_PROVIDER={{ agave_core_realtime_service_type }}'
     - 'REALTIME_URL={{ agave_core_realtime_service }}'
     - 'REALTIME_REALM_ID={{ agave_core_realtime_service_realm_id }}'
@@ -113,8 +115,13 @@ php_api:
     - 'IPLANT_NOTIFICATION_FAILED_DB_USER={{ agave_core_notification_failed_db_user }}'
     - 'IPLANT_NOTIFICATION_FAILED_DB_PWD={{ agave_core_notification_failed_db_pwd }}'
     - 'IPLANT_NOTIFICATION_FAILED_DB_SCHEME={{ agave_core_notification_failed_db_scheme }}'
+    - 'IPLANT_MESSAGING_PROVIDER={{ agave_core_messaging_provider|default("beanstalk") }}
     - 'IPLANT_MESSAGING_HOST={{ agave_core_messaging_host }}'
     - 'IPLANT_MESSAGING_PORT={{ agave_core_messaging_port }}'
+{% if agave_core_messaging_provider != 'beanstalk' %}
+    - 'IPLANT_MESSAGING_USERNAME={{ agave_core_messaging_username }}'
+    - 'IPLANT_MESSAGING_PASSWORD={{ agave_core_messaging_password }}'
+{% endif %}
     - 'REALTIME_PROVIDER={{ agave_core_realtime_service_type }}'
     - 'REALTIME_URL={{ agave_core_realtime_service }}'
     - 'REALTIME_REALM_ID={{ agave_core_realtime_service_realm_id }}'
