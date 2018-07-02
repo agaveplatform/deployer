@@ -57,6 +57,7 @@ The Agave Platform is a multi-tenant Science-as-a-Service platform empowering us
    Installing Agave/prerequisites
    Installing Agave/host-preparation
    Installing Agave/configuring-your-inventory-file
+   Installing Agave/example-inventory-files
 ..      Installation
       Requirements
       Building

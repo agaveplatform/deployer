@@ -30,7 +30,7 @@ To assign environment variables during the Ansible install that apply more globa
     agave_core_smtps_provider=sendgrid
 
 
-.. note:: If a parameter value in the Ansible inventory file contains special characters, such as "#", "{" or "}", you must double-escape the value (that is enclose the value in both single and double quotation marks). For example, to use "mypasswordwith###hashsigns" as a value for the variable ``agave_core_smtps_user_password``, declare it as ``agave_core_smtps_user_password='"mypasswordwith###hashsigns"'`` in the Ansible host inventory file.
+.. note:: If a parameter value in the Ansible inventory file contains special characters, such as "#", "{" or "}", you must double-escape the value (that is enclose the value in both single and double quotation marks). For example, to use "mypasswordwith###hashsigns" as a value for the variable ``agave_core_smtps_user_password``, declare it as ``"'agave_core_smtps_user_password='"mypasswordwith###hashsigns"'`` in the Ansible host inventory file.
 
 .. include:: ./auth-component-variables.rst
 .. include:: ./core-component-variables.rst
