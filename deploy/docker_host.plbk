@@ -23,6 +23,9 @@
 ---
 # deploy and start containers
 - hosts: agave
+  become: yes
+  become_method: sudo
+
   roles:
     - agave_host
     - docker_host

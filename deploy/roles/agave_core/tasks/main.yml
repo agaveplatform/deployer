@@ -11,6 +11,7 @@
   with_items:
       - core-apis
       - repos
+      - core-apis/ssl
 
 - name: copy docker compose aliases for the service stack
   template: src=docker-compose.aliases dest=/home/apim/.bashrc.d/docker-compose.aliases

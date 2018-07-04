@@ -14,22 +14,52 @@
       - proxy.yml.j2
       - pull_images.sh.j2
 
-#- name: list core-apis-ssl cert directory
-#  command: ls "{{playbook_dir}}/core-apis-ssl"
-#  register: sslcerts
-#  when: core_deploy_ssl_certs
-#
-#- name: check certs were found in core-apis-ssl exist
-#  fail:
-#    msg: "No core api SSL certs found in {{playbook_dir}}/core-apis-ssl"
-#  when: core_deploy_ssl_certs and sslcerts.stdout == ""
-
 - name: Copy core-apis ssl files
-  copy: src=core-apis-ssl/ dest=/home/apim/core-apis/ssl mode=0755
-  when: core_deploy_ssl_certs
+  copy: src=core-apis-ssl/ dest=/home/apim/core-apis/ssl/ mode=0755
+  when: core_deploy_ssl_certs 
   become: yes
   become_user: apim
   become_method: sudo
+
+#- name: Generate RSA Key
+#  command: openssl genrsa \
+#    -out "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key" 2048
+#  args:
+#    creates: "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key"
+#  become: yes
+#  become_user: apim
+#  become_method: sudo
+
+- name: Generate self-signed certs on remote host
+  import_tasks: create_tls_certs.yml
+  when: core_deploy_ssl_certs == false 
+
+#- name: Generate CSR
+#  command: openssl req \
+#    -new \
+#    -subj "/C/US/ST=TX/L=Austin/O=AgavePlatform/CN={{agave_core_hostname}}" \
+#    -key "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key" \
+#    -out "/home/apim/core-apis/ssl/{{agave_core_hostname}}.csr"
+#  args:
+#    creates: "/home/apim/core-api/ssl/{{agave_core_hostname}}.csr"
+#  become: yes
+#  become_user: apim
+#  become_method: sudo
+#  when: core_deploy_ssl_certs == false 
+#
+#- name: Generate self-signed OpenSSL certificate
+#  command: openssl req \
+#    -x509 \
+#    -days 1825 \
+#    -key "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key" \
+#    -in "/home/apim/core-apis/ssl/{{agave_core_hostname}}.csr" \
+#    -out "/home/apim/core-apis/ssl/{{agave_core_hostname}}.crt"
+#  args:
+#    creates: "/home/apim/core-apis/ssl/{{agave_core_hostname}}.crt"
+#  become: yes
+#  become_user: apim
+#  become_method: sudo
+#  when: core_deploy_ssl_certs == false 
 
 - name: Pull latest docker images from templates
   shell: ./pull_images.sh chdir=/home/apim/core-apis/

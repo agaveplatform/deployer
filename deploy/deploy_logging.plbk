@@ -8,5 +8,8 @@
 
 - name: prepare each host by installing base packages
   hosts: agave
+  become: yes
+  become_method: sudo
+  
   roles:
-      - logrotate
+    - logrotate
