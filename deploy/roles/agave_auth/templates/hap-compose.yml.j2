@@ -1,6 +1,6 @@
 {% if ha_deployment %}
 hap.{{ tenant_id }}.agave.tacc.utexas.edu:
-    image: agaveapi/haproxy_auth:{{ haproxy_auth_version }}
+    image: agaveplatform/haproxy_auth:{{ haproxy_auth_version }}
     ports:
         - "80:80"
         - "443:443"

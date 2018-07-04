@@ -32,7 +32,7 @@
   become_method: sudo
 
 - name: A stack -- ensure each api is registered and published and any necessary roles exist
-  shell: docker run --rm -i --link a_adminnginx_1 -e base_url=http://a_adminnginx_1:80 -v /home/apim/boutique_apis/{{ item }}.json:/api.json agaveapi/flask_admin_utils
+  shell: docker run --rm -i --link a_adminnginx_1 -e base_url=http://a_adminnginx_1:80 -v /home/apim/boutique_apis/{{ item }}.json:/api.json agaveplatform/flask_admin_utils
   with_items: "{{ boutique_apis }}"
   become: yes
   become_user: apim
@@ -40,7 +40,7 @@
   when: A.stat.exists == True
 
 - name: B stack -- ensure each api is registered and published and any necessary roles exist
-  shell: docker run --rm -i --link b_adminnginx_1 -e base_url=http://b_adminnginx_1:80 -v /home/apim/boutique_apis/{{ item }}.json:/api.json agaveapi/flask_admin_utils
+  shell: docker run --rm -i --link b_adminnginx_1 -e base_url=http://b_adminnginx_1:80 -v /home/apim/boutique_apis/{{ item }}.json:/api.json agaveplatform/flask_admin_utils
   with_items: "{{ boutique_apis }}"
   become: yes
   become_user: apim

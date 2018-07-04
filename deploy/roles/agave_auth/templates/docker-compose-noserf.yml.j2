@@ -1,7 +1,7 @@
 ---
 
 httpd.{{ tenant_id }}.agave.tacc.utexas.edu:
-    image: agaveapi/apim_httpd:{{ apim_httpd_version }}
+    image: agaveplatform/apim_httpd:{{ apim_httpd_version }}
     links:
         - apim.{{ tenant_id }}.agave.tacc.utexas.edu
         - clients.{{ tenant_id }}.agave.tacc.utexas.edu
@@ -58,7 +58,7 @@ httpd.{{ tenant_id }}.agave.tacc.utexas.edu:
     restart: unless-stopped
 
 apim.{{ tenant_id }}.agave.tacc.utexas.edu:
-    image: agaveapi/apim19_base:{{ apim19_base_version }}
+    image: agaveplatform/apim19_base:{{ apim19_base_version }}
 {% if deploy_admin_services or use_hosted_id or use_remote_userstore %}
     links:
 {% if deploy_admin_services %}
@@ -98,7 +98,7 @@ apim.{{ tenant_id }}.agave.tacc.utexas.edu:
     # command: api-key-manager
 
 clients.{{ tenant_id }}.agave.tacc.utexas.edu:
-    image: agaveapi/agave_clients_dedicated:{{ agave_clients_dedicated_version }}
+    image: agaveplatform/agave_clients_dedicated:{{ agave_clients_dedicated_version }}
     links:
         - apim.{{ tenant_id }}.agave.tacc.utexas.edu
     ports:
@@ -127,7 +127,7 @@ profiles.{{ tenant_id }}.agave.tacc.utexas.edu:
     restart: unless-stopped
 
 id_admin:
-    image: agaveapi/agave_id_dedicated:{{ agave_id_dedicated_version }}
+    image: agaveplatform/agave_id_dedicated:{{ agave_id_dedicated_version }}
     ports:
         - "80"
 {% if update_auth_dns %}
@@ -144,7 +144,7 @@ id_admin:
 
 {% if deploy_admin_services %}
 adminnginx:
-    image: agaveapi/admin_services_nginx:{{ admin_services_nginx_version }}
+    image: agaveplatform/admin_services_nginx:{{ admin_services_nginx_version }}
     links:
         - adminjwt
         - adminaccounts
@@ -153,14 +153,14 @@ adminnginx:
     command: /bin/bash -c "env && envsubst < /etc/nginx/sites-enabled/flask-project.template > /etc/nginx/sites-enabled/flask-project && rm -f /etc/nginx/sites-enabled/flask-project.template && nginx -g 'daemon off;'"
 
 adminjwt:
-    image: agaveapi/flask_admin_services:{{ flask_admin_services_version }}
+    image: agaveplatform/flask_admin_services:{{ flask_admin_services_version }}
     ports:
         - "5000"
     environment:
         package: /services/jwt
 
 adminaccounts:
-    image: agaveapi/flask_admin_services:{{ flask_admin_services_version }}
+    image: agaveplatform/flask_admin_services:{{ flask_admin_services_version }}
     ports:
         - "5000"
 {% if update_auth_admin_dns %}

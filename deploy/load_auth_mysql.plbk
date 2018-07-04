@@ -3,11 +3,11 @@
 ---
 
   # update database server first so that apim container can start correctly
-- hosts: db
-  vars:
-      - ldap_host_ip: "{{ hostvars[groups['db'][0]]['ansible_eth0']['ipv4']['address'] }}"
-      - auth_mysql_host: "{{ hostvars[groups['db'][0]]['ansible_ssh_host'] }}"
-      - auth_beanstalk_server: "{{ hostvars[groups['db'][0]]['ansible_ssh_host'] }}"
-      - core_host: "{{ hostvars[groups['core'][0]]['ansible_ssh_host'] }}"
+- hosts: db[0]
+#  vars:
+#      - ldap_host_ip: "{{ hostvars[groups['db'][0]]['ansible_eth0']['ipv4']['address'] }}"
+#      - auth_mysql_host: "{{ hostvars[groups['db'][0]]['ansible_ssh_host'] }}"
+#      - auth_beanstalk_server: "{{ hostvars[groups['db'][0]]['ansible_ssh_host'] }}"
+#      - core_host: "{{ hostvars[groups['core'][0]]['ansible_ssh_host'] }}"
   roles:
     - mysql_apim

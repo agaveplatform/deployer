@@ -49,7 +49,7 @@ proxy:
 {% endif %}
 {% endif %}
   volumes:
-    - '/var/log/splunk/proxy:/var/log/apache2'
+    - '/home/apim/logs/proxy:/var/log/apache2'
 {% if core_deploy_ssl_certs %}
     - './ssl:/ssl:ro'
 {% endif %}

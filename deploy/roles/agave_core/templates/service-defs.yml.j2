@@ -37,7 +37,7 @@ jobs:
     - 'GLOBUS_TCP_PORT_RANGE=50007,50017'
     - 'CATALINA_OPTS="-Duser.timezone=America/Chicago -Djsse.enableCBCProtection=false -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms2048m -Xmx{{ "8192m" if (agave_core_jobs_mem_limit|replace("m", "")|int) > 8192 else "4096m" }} -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"'
   volumes:
-    - '/var/log/splunk/jobs:/opt/tomcat/logs'
+    - '/home/apim/logs/jobs:/opt/tomcat/logs'
     - './scratch/jobs:/scratch'
 {% endif %}
 
@@ -56,7 +56,7 @@ files:
     - 'GLOBUS_TCP_PORT_RANGE=50301,50310'
     - 'CATALINA_OPTS="-Duser.timezone=America/Chicago -Djsse.enableCBCProtection=false -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms2048m -Xmx{{ "8192m" if (agave_core_files_mem_limit|replace("m", "")|int) > 8192 else "4096m" }} -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"'
   volumes:
-    - '/var/log/splunk/files:/opt/tomcat/logs'
+    - '/home/apim/logs/files:/opt/tomcat/logs'
     - './scratch/files:/scratch'
 {% endif %}
 
@@ -76,7 +76,7 @@ apps:
     - 'IPLANT_MAX_APP_CLONING_TASKS={{agave_core_apps_max_cloning_tasks if not agave_core_api_only else 0}}'
     - 'CATALINA_OPTS="-Duser.timezone=America/Chicago -Djsse.enableCBCProtection=false -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms1024m -Xmx2048 -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"'
   volumes:
-    - '/var/log/splunk/apps:/opt/tomcat/logs'
+    - '/home/apim/logs/apps:/opt/tomcat/logs'
     - './scratch/apps:/scratch'
 {% endif %}
 
@@ -90,7 +90,7 @@ systems:
   mem_limit: {{ agave_core_systems_mem_limit }}
 {% endif %}
   volumes:
-    - '/var/log/splunk/systems:/opt/tomcat/logs'
+    - '/home/apim/logs/systems:/opt/tomcat/logs'
     - './scratch/systems:/scratch'
 {% endif %}
 
@@ -108,7 +108,7 @@ monitors:
     - 'IPLANT_MAX_MONITOR_TASKS={{agave_core_monitors_max_tasks if not agave_core_api_only else 0}}'
     - 'IPLANT_MAX_MONITOR_RETRIES={{agave_core_monitors_max_retries if not agave_core_api_only else 0}}'
   volumes:
-    - '/var/log/splunk/monitors:/opt/tomcat/logs'
+    - '/home/apim/logs/monitors:/opt/tomcat/logs'
     - './scratch/monitors:/scratch'
 {% endif %}
 
@@ -122,7 +122,7 @@ profiles:
   mem_limit: {{ agave_core_profiles_mem_limit }}
 {% endif %}
   volumes:
-    - '/var/log/splunk/profiles:/opt/tomcat/logs'
+    - '/home/apim/logs/profiles:/opt/tomcat/logs'
     - './scratch/profiles:/scratch'
 {% endif %}
 
@@ -138,7 +138,7 @@ metadata:
   environment:
     - 'CATALINA_OPTS="-Duser.timezone=America/Chicago -Djsse.enableCBCProtection=false -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms512m -Xmx2048 -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"'
   volumes:
-    - '/var/log/splunk/metadata:/opt/tomcat/logs'
+    - '/home/apim/logs/metadata:/opt/tomcat/logs'
     - './scratch/metadata:/scratch'
 {% endif %}
 
@@ -154,7 +154,7 @@ notifications:
   environment:
     - 'IPLANT_MAX_NOTIFICATION_TASKS={{agave_core_notifications_max_notification_tasks if not agave_core_api_only else 0}}'
   volumes:
-    - '/var/log/splunk/notifications:/opt/tomcat/logs'
+    - '/home/apim/logs/notifications:/opt/tomcat/logs'
     - './scratch/notifications:/scratch'
 {% endif %}
 
@@ -174,7 +174,7 @@ transforms:
     #- 'IPLANT_MAX_ARCHIVE_TASKS={{agave_core_transforms_max_transform_tasks}}'
     #- 'IPLANT_MAX_SUBMISSION_TASKS={{agave_core_transforms_max_transform_tasks}}'
   volumes:
-    - '/var/log/splunk/transforms:/opt/tomcat/logs'
+    - '/home/apim/logs/transforms:/opt/tomcat/logs'
     - './scratch/transforms:/scratch'
 {% endif %}
 
@@ -188,7 +188,7 @@ realtime:
   mem_limit: {{ agave_core_realtime_mem_limit }}
 {% endif %}
   volumes:
-    - '/var/log/splunk/realtime:/opt/tomcat/logs'
+    - '/home/apim/logs/realtime:/opt/tomcat/logs'
     - './scratch/realtime:/scratch'
 {% endif %}
 
@@ -202,7 +202,7 @@ tags:
   mem_limit: {{ agave_core_tags_mem_limit }}
 {% endif %}
   volumes:
-    - '/var/log/splunk/tags:/opt/tomcat/logs'
+    - '/home/apim/logs/tags:/opt/tomcat/logs'
     - './scratch/tags:/scratch'
 {% endif %}
 
@@ -216,7 +216,7 @@ uuids:
   mem_limit: {{ agave_core_uuids_mem_limit }}
 {% endif %}
   volumes:
-    - '/var/log/splunk/uuids:/opt/tomcat/logs'
+    - '/home/apim/logs/uuids:/opt/tomcat/logs'
     - './scratch/uuids:/scratch'
 {% endif %}
 
@@ -232,7 +232,7 @@ postits:
   environment:
     - 'IPLANT_PROXY_SERVICE={{ agave_core_iplant_proxy_service }}'
   volumes:
-    - '/var/log/splunk/postits:/var/log/apache2'
+    - '/home/apim/logs/postits:/var/log/apache2'
     - './scratch/postits:/scratch'
 {% endif %}
 
@@ -246,7 +246,7 @@ usage:
   mem_limit: {{ agave_core_usage_mem_limit }}
 {% endif %}
   volumes:
-    - '/var/log/splunk/usage:/var/log/apache2'
+    - '/home/apim/logs/usage:/var/log/apache2'
     - './scratch/usage:/scratch'
 {% endif %}
 
@@ -260,7 +260,7 @@ tenants:
   mem_limit: {{ agave_core_tenants_mem_limit }}
 {% endif %}
   volumes:
-    - '/var/log/splunk/tenants:/var/log/apache2'
+    - '/home/apim/logs/tenants:/var/log/apache2'
     - './ssl:/ssl:ro'
     - './scratch/tenants:/scratch'
 {% endif %}
@@ -275,7 +275,7 @@ logging:
   mem_limit: {{ agave_core_logging_mem_limit }}
 {% endif %}
   volumes:
-    - '/var/log/splunk/logging:/var/log/apache2'
+    - '/home/apim/logs/logging:/var/log/apache2'
     - './scratch/logging:/scratch'
 {% endif %}
 
@@ -289,7 +289,7 @@ docs:
   mem_limit: {{ agave_core_docs_mem_limit }}
 {% endif %}
   volumes:
-    - '/var/log/splunk/docs:/var/log/apache2'
+    - '/home/apim/logs/docs:/var/log/apache2'
     - './scratch/docs:/scratch'
 {% endif %}
 
@@ -328,7 +328,7 @@ stats:
     - 'ARAPORT_ORG_MYSQL_PASSWORD={{ core_aip_mysql_password }}'
     - 'ARAPORT_ORG_MYSQL_DATABASE={{ core_aip_mysql_database }}'
   volumes:
-    - '/var/log/splunk/stats:/var/www/html'
+    - '/home/apim/logs/stats:/var/www/html'
     - './scratch/stats:/scratch'
 
 

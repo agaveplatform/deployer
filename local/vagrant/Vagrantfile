@@ -6,14 +6,14 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.ssh.private_key_path = ["~/.ssh/docker.example.com.pem", "~/.vagrant.d/insecure_private_key"]
+  config.ssh.private_key_path = ["~/.ssh/id_rsa", "~/.vagrant.d/insecure_private_key"]
   config.ssh.insert_key = false
 
   # Turn off shared folders
   config.vm.synced_folder ".", "/vagrant", id: "vagrant-root", disabled: true
 
   # auth vm definition
-  config.vm.define "auth" do |auth|
+  config.vm.define "agave.auth" do |auth|
       auth.vm.box = "centos/7"
       auth.vm.hostname = "auth"
 
@@ -26,33 +26,33 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # core api vm definition
-  config.vm.define "core" do |core|
+  config.vm.define "agave.core.core_api" do |core|
       core.vm.box ="centos/7"
       core.vm.hostname = "core"
 
       core.vm.provider "virtualbox" do |v|
           v.customize [ "modifyvm", :id, "--cpus", "2" ]
-          v.customize [ "modifyvm", :id, "--memory", "4192" ]
+          v.customize [ "modifyvm", :id, "--memory", "2048" ]
       end
 
       core.vm.network "private_network", ip: "192.168.205.11"
   end
   
   # core worker vm definition
-  config.vm.define "core-worker" do |core|
+  config.vm.define "agave.core.core_workers" do |core|
       core.vm.box ="centos/7"
       core.vm.hostname = "core"
 
       core.vm.provider "virtualbox" do |v|
           v.customize [ "modifyvm", :id, "--cpus", "2" ]
-          v.customize [ "modifyvm", :id, "--memory", "4192" ]
+          v.customize [ "modifyvm", :id, "--memory", "4196" ]
       end
 
       core.vm.network "private_network", ip: "192.168.205.13"
   end
 
   # db vm definition
-  config.vm.define "db" , primary: true do |db|
+  config.vm.define "agave.db" , primary: true do |db|
       db.vm.box = "centos/7"
       db.vm.hostname = "db"
 

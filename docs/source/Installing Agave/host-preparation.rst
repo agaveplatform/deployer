@@ -60,7 +60,7 @@ The Agave Platform installer will also install and configure the Docker daemon o
 
     ...
 
-    [docker_hosts:vars]
+    [agave:vars]
 
     ...
 

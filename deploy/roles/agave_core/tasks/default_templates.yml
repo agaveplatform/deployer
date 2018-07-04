@@ -51,15 +51,16 @@
   become_method: sudo
   ignore_errors: yes
   when: kill_core_containers
+  register: docker_rm_core_containers
 
 - pause: seconds=30
+  when: kill_core_containers and docker_rm_core_containers is success
 
 - name: start the core-apis proxy container with docker compose
   shell: docker-compose -p apim -f proxy.yml up -d chdir=/home/apim/core-apis/
   become: yes
   become_user: apim
   become_method: sudo
-  when: not agave_core_workers_only
   environment:
       AGAVE_VERSION: '{{ agave_core_version }}'
       COMPOSE_HTTP_TIMEOUT: 2000

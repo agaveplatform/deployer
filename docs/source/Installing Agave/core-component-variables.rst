@@ -140,7 +140,7 @@ The following tables describe variables for use with the Ansible installer that 
        | core host in the inventory file.
 
 
-   * - **agave_core_realtime_service_type**
+   * - **agave_core_realtime_provider**
      - string
      - | Type of backend service to use for realtime API.
        | Currently value "fanout", "pushpin", and "none"

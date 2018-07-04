@@ -2,14 +2,17 @@
 #
 # Create the default users for a tenant.
 #
-curl localhost:9000/ous
+
+SERVICE_PORT=80
+
+curl localhost:$SERVICE_PORT/ous
 
 # create the OU
-curl -X POST --data "ou=tenant{{ tenant_id }}" localhost:9000/ous
+curl -X POST --data "ou=tenant{{ tenant_id }}" localhost:$SERVICE_PORT/ous
 
 # create the users
 
-curl -X POST --data "username={{ api_user }}&password={{ api_password }}&email={{ api_user }}@test.com&first_name={{ api_user_first_name }}&last_name={{ api_user_last_name }}&phone={{ api_user_phone }}&mobile_phone={{ api_user_mobile_phone }}" localhost:9000/users
-curl -X POST --data "username={{ normal_access_user }}&password={{ normal_access_password }}&email={{ normal_access_user }}@test.com&first_name={{ normal_access_user_first_name }}&last_name={{ normal_access_user_last_name }}&phone={{ normal_access_user_phone }}&mobile_phone={{ normal_access_user_mobile_phone }}" localhost:9000/users
-curl -X POST --data "username={{ private_shared_user }}&password={{ private_shared_password }}&email={{ private_shared_user }}@test.com&first_name={{ private_shared_user_first_name }}&last_name={{ private_shared_user_last_name }}&phone={{ private_shared_user_phone }}&mobile_phone={{ private_shared_user_mobile_phone }}" localhost:9000/users
-curl -X POST --data "username={{ other_user }}&password={{ other_password }}&email={{ other_user }}@test.com&first_name={{ other_user_first_name }}&last_name={{ other_user_last_name }}&phone={{ other_user_phone }}&mobile_phone={{ other_user_mobile_phone }}" localhost:9000/users
+curl -X POST --data "username={{ api_user }}&password={{ api_password }}&email={{ api_user }}@test.com&first_name={{ api_user_first_name }}&last_name={{ api_user_last_name }}&phone={{ api_user_phone }}&mobile_phone={{ api_user_mobile_phone }}" localhost:$SERVICE_PORT/users
+curl -X POST --data "username={{ normal_access_user }}&password={{ normal_access_password }}&email={{ normal_access_user }}@test.com&first_name={{ normal_access_user_first_name }}&last_name={{ normal_access_user_last_name }}&phone={{ normal_access_user_phone }}&mobile_phone={{ normal_access_user_mobile_phone }}" localhost:$SERVICE_PORT/users
+curl -X POST --data "username={{ private_shared_user }}&password={{ private_shared_password }}&email={{ private_shared_user }}@test.com&first_name={{ private_shared_user_first_name }}&last_name={{ private_shared_user_last_name }}&phone={{ private_shared_user_phone }}&mobile_phone={{ private_shared_user_mobile_phone }}" localhost:$SERVICE_PORT/users
+curl -X POST --data "username={{ other_user }}&password={{ other_password }}&email={{ other_user }}@test.com&first_name={{ other_user_first_name }}&last_name={{ other_user_last_name }}&phone={{ other_user_phone }}&mobile_phone={{ other_user_mobile_phone }}" localhost:$SERVICE_PORT/users

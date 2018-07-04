@@ -10,7 +10,7 @@ included in the repository is also bundled, though password files and other secu
 entrypoint for the image is ``ansible-playbook``, so running a playbook using the image involves passing the playbook arguments after mounting any
 configuration files not already included. The basic format is as follows:
 
-``docker run <volume mounts> agaveapi/deployer -i <hosts file> <playbook>``
+``docker run <volume mounts> agaveplatform/deployer -i <hosts file> <playbook>``
 
 There are a couple of points worth noting. First, paths referred to in the ``docker run`` statement are relative to the ``deploy`` directory from within the container. Any files not included in the image must be mounted in to a path relative to this image. Some files that will need to be mounted:
   - ``hosts`` file, if different from the hosts files included in the ``deployer`` repository.
@@ -20,7 +20,7 @@ There are a couple of points worth noting. First, paths referred to in the ``doc
 
 Here is an example invocation where we mount several files into the container:
 
-``docker run --rm -v /home/jdoe/ansible/keys/prod:/root/.ssh/id_rsa  -v /home/jdoe/ansible/tenants/dev_staging/dev_staging_passwords:/deploy/tenants/dev_staging/dev_staging_passwords -v /home/jdoe/ansible/tenants/dev_staging/httpd:/deploy/tenants/dev_staging/httpd agaveapi/deployer -i /deploy/host_files/staging_hosts /deploy/update_tenant.plbk``
+``docker run --rm -v /home/jdoe/ansible/keys/prod:/root/.ssh/id_rsa  -v /home/jdoe/ansible/tenants/dev_staging/dev_staging_passwords:/deploy/tenants/dev_staging/dev_staging_passwords -v /home/jdoe/ansible/tenants/dev_staging/httpd:/deploy/tenants/dev_staging/httpd agaveplatform/deployer -i /deploy/host_files/staging_hosts /deploy/update_tenant.plbk``
 
 More playbooks are continuing to be developed to provide more
 functionality out of the box, and developing additional use cases and/or roles should be straight-forward for any developer familiar with Ansible.

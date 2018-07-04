@@ -22,32 +22,13 @@
 #
 ########################################################################
 
-#
-#- name: determine if this is a multihost deployment of the core science APIs.
-#  hosts: 127.0.0.1
-#  connection: local
-#  gather_facts: no
-#
-#  vars:
-#      - CORE_HOST_COUNT: "{{groups['core'] | length |int}}"
-#
-#  tasks:
-#    - debug:
-#        msg="This is a multihost deployment of the core services. APIs and workers will be split up."
-#      when: (CORE_HOST_COUNT|int) > 1
-#      tags: corehostcount
-#
 
-- name: setup the hosts on which we will deploy the platform
-  hosts: docker_hosts
-  roles:
-      - agave_host
-      - docker_host
-      - logrotate
-  vars:
-      - update_docker_version: True
-      - update_docker_compose_version: True
-      - clean_host: True
+- name: prepare each host by installing base packages
+  import_playbook: docker_host.plbk
+
+
+- name: setup logging and logrotation on the hosts
+  import_playbook: deploy_logging.plbk
 
 
 ########################################################################
@@ -58,28 +39,45 @@
 
 
 # first, deploy databases
-- name: deploy the database containers in a single host configuration
-  hosts: db
-  gather_facts: no
 
-  roles:
-      - agave_db_onehost
-  vars:
-      - update_docker_version: True
-      - update_docker_compose_version: True
-      - clean_host: True
+- name: deploy the database containers in a single host configuration
+  import_playbook: deploy_agave-dbs.plbk
+
+#- name: deploy the database containers in a single host configuration
+#  hosts: db
+#  gather_facts: no
+#
+#  roles:
+#      - agave_db_onehost
 
 # load auth data
-- name: init the database accounts, schemas, collections, queues, and startup data
-  hosts: db
-  roles:
-      - mysql_apim
-  vars:
-      - env: sandbox
-      - mysql_root_user: root
-      - mysql_root_password: password
-      - create_tenant_mysql_user: true
+- name: setup logging and logrotation on the hosts
+  import_playbook: load_auth_mysql.plbk
 
+#- name: init and migrate the apim db
+#  hosts: db
+#  roles:
+#      - mysql_apim
+#  vars:
+#      - env: sandbox
+#      - mysql_root_user: root
+#      - mysql_root_password: password
+#      - create_tenant_mysql_user: true
+
+# load core api migrations
+- name: initialize core science api database and run migrations on a single core host
+  import_playbook: load_core_migrations.plbk
+#- name: initialize core science api database and run migrations on a single core host
+#  hosts: core[0]
+#
+#  roles:
+#      - role: agave_core_sql_migrations
+#        tags:
+#          - db
+#          - migrations
+#
+#  vars:
+#    - core_migrations_command: migrate
 
 ########################################################################
 #
@@ -88,41 +86,19 @@
 ########################################################################
 
 # deploy single host core services and run migrations
-- name: deploy core compose files if we are managing configurations from git
-  hosts: core
-  gather_facts: no
-
-  roles:
-    - role: agave_core_compose_repo
-      when: deploy_core_default_templates is defined and deploy_core_default_templates == false
-      tags:
-        - apis
-        - core
-
-# deploy single host core services and run migrations
 - name: deploy core science api containers
-  hosts: core
-  gather_facts: no
+  import_playbook: deploy_core.plbk
 
-  roles:
-    - role: agave_core
-#      when: (groups['core'] | length) == 1
-      tags:
-        - apis
-        - core
-
-- name: initialize core science api database and run migrations on a single core host
-  hosts: core[0]
-
-  roles:
-      - role: agave_core_sql_migrations
-        tags:
-          - db
-          - migrations
-
-  vars:
-    - core_migrations_command: migrate
-
+#- name: deploy core science api containers
+#  hosts: core
+#  gather_facts: no
+#
+#  roles:
+#    - role: agave_core
+##      when: (groups['core'] | length) == 1
+#      tags:
+#        - apis
+#        - core
 
 ########################################################################
 #
@@ -132,29 +108,38 @@
 
 # deploy the auth services
 - name: deploy the apim, auth, and identity services on a single host
-  hosts: auth
-  gather_facts: no
+  import_playbook: deploy_auth.plbk
 
-  roles:
-      - agave_auth
-      - auth_rolling_deploy
-      - ldap_apim
+#- name: deploy the apim, auth, and identity services on a single host
+#  hosts: auth
+#  gather_facts: no
+#
+#  roles:
+#      - agave_auth
+#      - auth_rolling_deploy
+#      - ldap_apim
+#
+#  vars:
+#      - env: sandbox
+#      - mysql_root_user: root
+#      - mysql_root_password: password
+#      - remove_all_auth_containers: True
 
-  vars:
-      - env: sandbox
-      - mysql_root_user: root
-      - mysql_root_password: password
-      - clean_host: True
-      - remove_all_auth_containers: True
+# add default tenant admin and test users
+- name: Configuring LDAP with admin and test users
+  import_playbook: load_ldap_users.plbk
 
 # add boutique apis
 - name: register all boutique APIs with the APIM
-  hosts: auth
-  gather_facts: no
+  import_playbook: register_boutique_apis.plbk
 
-  roles:
-      - role: boutique_apis
-        tags: boutique
+#- name: register all boutique APIs with the APIM
+#  hosts: auth
+#  gather_facts: no
+#
+#  roles:
+#      - role: boutique_apis
+#        tags: boutique
 
 ######
 # run test suite

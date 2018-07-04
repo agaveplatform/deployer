@@ -40,8 +40,8 @@ You can see these example hosts present in the ``[auth]``, ``[core]``, and ``[db
     # The name of the core service config file to read in.
     core_config_file=sandbox
 
-    # Create a docker_hosts group that contains the auth, core, and db groups
-    [docker_hosts:vars]
+    # Create a agave group that contains the auth, core, and db groups
+    [agave:vars]
 
     # SSH user, this user should allow ssh based auth without requiring a password
     ansible_ssh_user=root
@@ -50,7 +50,7 @@ You can see these example hosts present in the ``[auth]``, ``[core]``, and ``[db
     #ansible_become=true
 
 
-    [docker_hosts:children]
+    [agave:children]
     db
     auth
     core
@@ -100,8 +100,8 @@ You can see these example hosts present in the ``[auth]``, ``[core]``, and ``[db
     # The name of the core service config file to read in.
     core_config_file=sandbox
 
-    # Create a docker_hosts group that contains the auth, core, and db groups
-    [docker_hosts:vars]
+    # Create a agave group that contains the auth, core, and db groups
+    [agave:vars]
 
     # SSH user, this user should allow ssh based auth without requiring a password
     ansible_ssh_user=root
@@ -110,7 +110,7 @@ You can see these example hosts present in the ``[auth]``, ``[core]``, and ``[db
     #ansible_become=true
 
 
-    [docker_hosts:children]
+    [agave:children]
     db
     auth
     core
@@ -175,8 +175,8 @@ You can see these example hosts present in the ``[auth]``, ``[core_api]``, and `
       # The name of the core service config file to read in.
       core_config_file: sandbox
     children:
-      # Create a docker_hosts group that contains the auth, core, and db groups
-      docker_hosts:
+      # Create a agave group that contains the auth, core, and db groups
+      agave:
         # common variables to all component hosts
         vars:
           # SSH user, this user should allow ssh based auth without requiring a password

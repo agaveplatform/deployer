@@ -4,7 +4,7 @@
 # Pushpin - websocket relay
 ##############################################################
 pushpin:
-  image: agaveapi/pushpin:1.6.0
+  image: agaveplatform/pushpin:1.6.0
   hostname: realtime.staging.agaveapi.co
   mem_limit: 512m
   restart: on-failure

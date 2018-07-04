@@ -1,4 +1,4 @@
-# Run this playbook to deploy the entire Agave stack, including auth, core and db. This playbook should not be used
+# Run this playbook to deploy and init an Agave auth host. This playbook should not be used
 # to update an existing deployment as initial database loads will be redone resulting in data loss.
 #
 # NOTE: This playbook requires Ansible v2.0+
@@ -21,20 +21,16 @@
   roles:
       - agave_auth
       - auth_rolling_deploy
-      - ldap_apim
   vars:
       - env: sandbox
       - mysql_root_user: root
       - mysql_root_password: password
-      - clean_host: True
-      - update_docker_version: True
-      - update_docker_compose_version: True
       - remove_all_auth_containers: True
-      - deploy_core_api_templates: True
 
-# add and boutique apis
-- hosts: auth
-
-  roles:
-      - role: boutique_apis
-        tags: boutique
+## add default tenant admin and test users
+#- name: Configuring LDAP with admin and test users
+#  import_playbook: load_ldap_users.plbk
+#
+## add boutique apis
+#- name: register all boutique APIs with the APIM
+#  import_playbook: register_boutique_apis.plbk

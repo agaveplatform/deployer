@@ -14,9 +14,13 @@
 ---
 
 - name: gather all hosts information
-  hosts: all
+  hosts: core
 
   # run sql migrations
-- hosts: core
+- hosts: core[0]
+
   roles:
     - agave_core_sql_migrations
+
+  vars:
+    - core_migrations_command: migrate

@@ -163,10 +163,11 @@
   become_user: apim
   become_method: sudo
   when: remove_all_auth_containers
+  register: docker_rm_auth_containers
 
 - name: wait for the auth containers to finish deleting
   pause: seconds=30
-  when: remove_all_auth_containers
+  when: remove_all_auth_containers and docker_rm_auth_containers is success
 
 # note: this should almost never be used; exception is when wanting to competely start from scratch.
 - name: remove all auth containers

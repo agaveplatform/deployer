@@ -16,27 +16,21 @@
 # first, deploy databases
 - hosts: db
   roles:
-      - agave_host
-      - docker_host
-      - agave_db_onehost
-  vars:
-      - update_docker_version: True
-      - update_docker_compose_version: True
-      - mysql_core_password: password
+      - role: agave_db_onehost
 
-# load auth data
-- hosts: db
-  roles:
-      - mysql_apim
-  vars:
-      # - env: sandbox
-      - mysql_root_user: root
-      - mysql_root_password: password
-      - create_tenant_mysql_user: true
-
-# run initial migrations
-- hosts: core
-  roles:
-    - agave_core_sql_migrations
-  vars:
-    - core_migrations_command: migrate
+## load auth data
+#- hosts: db
+#  roles:
+#      - mysql_apim
+#  vars:
+#      # - env: sandbox
+#      - mysql_root_user: root
+#      - mysql_root_password: password
+#      - create_tenant_mysql_user: true
+#
+## run initial migrations
+#- hosts: core
+#  roles:
+#    - agave_core_sql_migrations
+#  vars:
+#    - core_migrations_command: migrate

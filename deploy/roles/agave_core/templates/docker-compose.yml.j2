@@ -40,7 +40,7 @@ files:
     - 'GLOBUS_TCP_PORT_RANGE=50301,50310'
 {% endif %}
 
-{% if core_deploy_apps and not agave_core_workers_only %}
+{% if core_deploy_apps and false == agave_core_workers_only %}
 apps:
   extends:
     file: service-defs.yml
@@ -54,7 +54,7 @@ apps:
     - 'GLOBUS_TCP_PORT_RANGE=50901,50910'
 {% endif %}
 
-{% if core_deploy_systems and not agave_core_workers_only %}
+{% if core_deploy_systems and false == agave_core_workers_only %}
 systems:
   extends:
     file: service-defs.yml
@@ -65,7 +65,7 @@ systems:
     - "52923:52911"
 {% endif %}
 
-{% if core_deploy_monitors and not agave_core_workers_only %}
+{% if core_deploy_monitors and false == agave_core_workers_only %}
 monitors:
   extends:
     file: service-defs.yml
@@ -76,7 +76,7 @@ monitors:
     - "52924:52911"
 {% endif %}
 
-{% if core_deploy_metadata and not agave_core_workers_only %}
+{% if core_deploy_metadata and false == agave_core_workers_only %}
 metadata:
   extends:
     file: service-defs.yml
@@ -87,7 +87,7 @@ metadata:
     - "52926:52911"
 {% endif %}
 
-{% if core_deploy_notifications and not agave_core_workers_only %}
+{% if core_deploy_notifications and false == agave_core_workers_only %}
 notifications:
   extends:
     file: service-defs.yml
@@ -98,7 +98,7 @@ notifications:
     - "52927:52911"
 {% endif %}
 
-{% if core_deploy_transforms and not agave_core_workers_only %}
+{% if core_deploy_transforms and false == agave_core_workers_only %}
 transforms:
   extends:
     file: service-defs.yml
@@ -112,7 +112,7 @@ transforms:
     - 'GLOBUS_TCP_PORT_RANGE=50601,50610'
 {% endif %}
 
-{% if core_deploy_tags and not agave_core_workers_only %}
+{% if core_deploy_tags and false == agave_core_workers_only %}
 tags:
   extends:
     file: service-defs.yml
@@ -123,7 +123,7 @@ tags:
     - "52929:52911"
 {% endif %}
 
-{% if core_deploy_uuids and not agave_core_workers_only %}
+{% if core_deploy_uuids and false == agave_core_workers_only %}
 uuids:
   extends:
     file: service-defs.yml
@@ -134,7 +134,7 @@ uuids:
     - "52930:52911"
 {% endif %}
 
-{% if core_deploy_postits and not agave_core_workers_only %}
+{% if core_deploy_postits and false == agave_core_workers_only %}
 postits:
   extends:
     file: service-defs.yml
@@ -144,7 +144,7 @@ postits:
     - "8453:443"
 {% endif %}
 
-{% if core_deploy_realtime and not agave_core_workers_only %}
+{% if core_deploy_realtime and false == agave_core_workers_only %}
 realtime:
   extends:
     file: service-defs.yml
@@ -155,7 +155,7 @@ realtime:
     - "52931:52911"
 {% endif %}
 
-{% if core_deploy_usage and not agave_core_workers_only %}
+{% if core_deploy_usage and false == agave_core_workers_only %}
 usage:
   extends:
     file: service-defs.yml
@@ -165,7 +165,7 @@ usage:
     - "8454:443"
 {% endif %}
 
-{% if core_deploy_tenants and not agave_core_workers_only %}
+{% if core_deploy_tenants and false == agave_core_workers_only %}
 tenants:
   extends:
     file: service-defs.yml
@@ -175,7 +175,7 @@ tenants:
     - "8455:443"
 {% endif %}
 
-{% if core_deploy_logging and not agave_core_workers_only %}
+{% if core_deploy_logging and false == agave_core_workers_only %}
 logging:
   extends:
     file: service-defs.yml
@@ -185,7 +185,7 @@ logging:
     - "8456:443"
 {% endif %}
 
-{% if core_deploy_docs and not agave_core_workers_only %}
+{% if core_deploy_docs and false == agave_core_workers_only %}
 docs:
   extends:
     file: service-defs.yml
@@ -195,7 +195,7 @@ docs:
     - "8457:443"
 {% endif %}
 
-{% if core_deploy_custom_profiles and not agave_core_workers_only %}
+{% if core_deploy_custom_profiles and false == agave_core_workers_only %}
 profiles:
   extends:
     file: service-defs.yml
@@ -225,7 +225,7 @@ profiles:
 {#    - "8440:443"#}
 {#{% endif %}#}
 
-{% if core_deploy_stats and not agave_core_workers_only %}
+{% if core_deploy_stats and false == agave_core_workers_only %}
 stats:
  extends:
    file: service-defs.yml

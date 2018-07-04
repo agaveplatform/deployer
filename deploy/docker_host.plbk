@@ -15,15 +15,19 @@
 #       hosts file.
 #
 # Example invocation:
-# $ ansible-playbook -i host_files/docker_hosts docker_host.plbk
+# $ ansible-playbook -i host_files/agave docker_host.plbk
 #
 # ansible-playbook -i host_files/sandbox_hosts docker_host.plbk -e update_docker_version=True -e update_docker_compose_version=True
 
 
 ---
-
-  # deploy and start containers
-- hosts: docker_hosts
+# deploy and start containers
+- hosts: agave
   roles:
     - agave_host
     - docker_host
+
+  vars:
+    - update_docker_version: True
+    - update_docker_compose_version: True
+    - clean_host: True

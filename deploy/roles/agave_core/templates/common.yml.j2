@@ -48,16 +48,21 @@ java_api:
     - 'IPLANT_NOTIFICATION_FAILED_DB_HOST={{ agave_core_notification_failed_db_host }}'
     - 'IPLANT_NOTIFICATION_FAILED_DB_PORT={{ agave_core_notification_failed_db_port }}'
     - 'IPLANT_NOTIFICATION_FAILED_DB_USER={{ agave_core_notification_failed_db_user }}'
-    - 'IPLANT_NOTIFICATION_FAILED_DB_PWD={{ agave_core_notification_failed_db_pwd }}'
+    - 'IPLANT_NOTIFICATION_FAILED_DB_PWD={{ agave_core_notification_failed_db_password }}'
     - 'IPLANT_NOTIFICATION_FAILED_DB_SCHEME={{ agave_core_notification_failed_db_scheme }}'
+    - 'IPLANT_MESSAGING_PROVIDER={{ agave_core_messaging_provider|default("beanstalk") }}'
     - 'IPLANT_MESSAGING_HOST={{ agave_core_messaging_host }}'
     - 'IPLANT_MESSAGING_PORT={{ agave_core_messaging_port }}'
-    - 'IPLANT_MESSAGING_USERNAME={{ agave_core_messaging_username }}'
+{% if 'beanstalk' != agave_core_messaging_provider %}
+    - 'IPLANT_MESSAGING_USERNAME={{ agave_core_messaging_user }}'
     - 'IPLANT_MESSAGING_PASSWORD={{ agave_core_messaging_password }}'
-    - 'REALTIME_PROVIDER={{ agave_core_realtime_service_type }}'
+{% endif %}
+    - 'REALTIME_PROVIDER={{ agave_core_realtime_provider }}'
     - 'REALTIME_URL={{ agave_core_realtime_service }}'
+{% if 'fanout' == agave_core_realtime_provider %}
     - 'REALTIME_REALM_ID={{ agave_core_realtime_service_realm_id }}'
     - 'REALTIME_REALM_KEY={{ agave_core_realtime_service_realm_key }}'
+{% endif %}
     - 'MAIL_SMTPS_FROM_NAME="Agave Staging Notification Service"'
     - 'MAIL_SMTPS_FROM_ADDRESS="noreply@agaveapi.co"'
     - 'MAIL_SMTPS_PROVIDER={{ agave_core_smtps_provider }}'
@@ -113,19 +118,21 @@ php_api:
     - 'IPLANT_NOTIFICATION_FAILED_DB_HOST={{ agave_core_notification_failed_db_host }}'
     - 'IPLANT_NOTIFICATION_FAILED_DB_PORT={{ agave_core_notification_failed_db_port }}'
     - 'IPLANT_NOTIFICATION_FAILED_DB_USER={{ agave_core_notification_failed_db_user }}'
-    - 'IPLANT_NOTIFICATION_FAILED_DB_PWD={{ agave_core_notification_failed_db_pwd }}'
+    - 'IPLANT_NOTIFICATION_FAILED_DB_PWD={{ agave_core_notification_failed_db_password }}'
     - 'IPLANT_NOTIFICATION_FAILED_DB_SCHEME={{ agave_core_notification_failed_db_scheme }}'
-    - 'IPLANT_MESSAGING_PROVIDER={{ agave_core_messaging_provider|default("beanstalk") }}
+    - 'IPLANT_MESSAGING_PROVIDER={{ agave_core_messaging_provider|default("beanstalk") }}'
     - 'IPLANT_MESSAGING_HOST={{ agave_core_messaging_host }}'
     - 'IPLANT_MESSAGING_PORT={{ agave_core_messaging_port }}'
-{% if agave_core_messaging_provider != 'beanstalk' %}
-    - 'IPLANT_MESSAGING_USERNAME={{ agave_core_messaging_username }}'
+{% if 'beanstalk' != agave_core_messaging_provider %}
+    - 'IPLANT_MESSAGING_USERNAME={{ agave_core_messaging_user }}'
     - 'IPLANT_MESSAGING_PASSWORD={{ agave_core_messaging_password }}'
 {% endif %}
-    - 'REALTIME_PROVIDER={{ agave_core_realtime_service_type }}'
+    - 'REALTIME_PROVIDER={{ agave_core_realtime_provider }}'
     - 'REALTIME_URL={{ agave_core_realtime_service }}'
+{% if 'fanout' == agave_core_realtime_provider %}
     - 'REALTIME_REALM_ID={{ agave_core_realtime_service_realm_id }}'
     - 'REALTIME_REALM_KEY={{ agave_core_realtime_service_realm_key }}'
+{% endif %}
     - 'MAIL_SMTPS_PROVIDER={{ agave_core_smtps_provider }}'
     - 'MAIL_SMTPS_HOST={{ agave_core_smtps_host }}'
     - 'MAIL_SMTPS_AUTH={{ agave_core_smtps_auth }}'

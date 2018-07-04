@@ -8,11 +8,10 @@ tenant_id=sandbox
 # The name of the core service config file to read in.
 core_config_file=sandbox
 
-[docker_hosts:vars]
-# General settings to apply to all hosts. This simply maps a common ssh key and disable host checking. This should
+[agave:vars]
+# General settings to apply to all agave hosts. This simply maps a common ssh key and disable host checking. This should
 # be disabled in prod, however, when overriding dns from a deployment host, this is handy as it prevents the prompt
-
-ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+#ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
 ansible_ssh_private_key_file=~/.ssh/id_rsa
 
 # update this if the privileged user account on your agave hosts is different. Usually this will be "root" or "centos"
@@ -27,7 +26,7 @@ pipelining=True
 tenant_id=sandbox
 
 
-[docker_hosts:children]
+[agave:children]
 db
 auth
 core

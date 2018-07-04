@@ -30,6 +30,7 @@
   become_user: root
   become_method: sudo
 
+
 - include_tasks: default_templates.yml
   when: deploy_core_default_templates
 
@@ -42,7 +43,7 @@
   become: yes
   become_user: apim
   become_method: sudo
-  when: deploy_core_apis_a_deployment
+  when: deploy_core_apis
   environment:
       AGAVE_VERSION: '{{ agave_core_version }}'
       COMPOSE_HTTP_TIMEOUT: 5000

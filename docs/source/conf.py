@@ -164,14 +164,14 @@ html_theme = 'sphinx_rtd_theme'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = None
+html_title = 'Agave Platform Documentation'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 html_short_title = 'Agave Platform'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = 'images/agave-icon-white.png'
+html_logo = 'images/agave-platform-logo-white.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32

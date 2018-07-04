@@ -55,26 +55,27 @@ core_deploy_httpd_balancer: false
 ######################################################################################
 
 # Mongodb connection info
-agave_core_metadata_host: "{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
-agave_core_metadata_port: 27017
-agave_core_metadata_user: wcs
+agave_core_metadata_host: "{{ mongodb_host | default(hostvars[ groups['db'][0] ]['ansible_ssh_host']) }}"
+agave_core_metadata_port: "{{ mongodb_port | default('27017') }}"
+agave_core_metadata_user: "{{ mongodb_user | default('wcs') }}"
+agave_core_metadata_password: "{{ mongodb_password | default('changeme') }}"
 
 # Beanstalkd connection info
-beanstalk_server: "{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
+beanstalk_server: "{{ messaging_host | hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
 
 agave_core_messaging_provider: beanstalk
-agave_core_messaging_host: "{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
-agave_core_messaging_port: 11300
+agave_core_messaging_host: "{{ messaging_host | default(hostvars[ groups['db'][0] ]['ansible_ssh_host']) }}"
+agave_core_messaging_port: "{{ messaging_port | default('11300') }}"
 # messaging password will be empty if using beanstalkd
 agave_core_messaging_password: ""
 # messaging username will be empty if using beanstalkd
 agave_core_messaging_user: ""
 
 # Mysql connection info
-mysql_core_host: "{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
-mysql_core_port: 3301
-mysql_core_user: agaveapi
-mysql_core_password: d3f@ult$
+mysql_core_host: "{{ mysql_host| default(hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
+mysql_core_port: "{{ mysql_port| default('3301')}}"
+mysql_core_user: "{{ mysql_user| default('agaveapi') }}"
+mysql_core_password: "{{ mysql_password| default('d3f@ult$') }}"
 
 
 ######################################################################################
@@ -271,8 +272,8 @@ core_deploy_transforms: true
 # Max memory for the realtime container. 2GB should be more than enough.
 # Add containers if you run out of memory.
 agave_core_realtime_mem_limit: 2048m
-agave_core_realtime_service_type: pushpin
-agave_core_realtime_service: "http://{{ hostvars[ groups['auth'][0] ]['ansible_ssh_host'] }}/pushpin"
+agave_core_realtime_provider: none
+agave_core_realtime_service: ""
 agave_core_realtime_service_realm_id:
 agave_core_realtime_service_realm_key:
 core_deploy_realtime: true
@@ -321,9 +322,9 @@ agave_core_notification_topic: "{{tenant_id}}.notifications.topic"
 # notifications have a retry policy with optional persistence upon failure. If failed, this configures
 # where to write the failed notification and the terms of persistence. By default, the metadata service's
 # mongodb is used.
-agave_core_notification_failed_db_host: "{{ agave_core_metadata_host | default( hostvars[ groups['core'][0] ]['ansible_ssh_host'] ) }}"
-agave_core_notification_failed_db_port: "{{ agave_core_metadata_port | default('27017') }}"
-agave_core_notification_failed_db_user: "{{ agave_core_metadata_user | default('wcs') }}"
-agave_core_notification_failed_db_password: "{{ agave_core_metadata_password | default('changeme') }}"
+agave_core_notification_failed_db_host: "{{ mongodb_host | default(hostvars[ groups['db'][0] ]['ansible_ssh_host']) }}"
+agave_core_notification_failed_db_port: "{{ mongodb_port | default('27017') }}"
+agave_core_notification_failed_db_user: "{{ mongodb_user | default('wcs') }}"
+agave_core_notification_failed_db_password: "{{ mongodb_password | default('changeme') }}"
 agave_core_notification_failed_db_scheme: notifications
 

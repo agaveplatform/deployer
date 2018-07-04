@@ -17,34 +17,48 @@
   become_user: apim
   become_method: sudo
 
-- name: first, remove id_admin container so role can be re-run even in case of partial execution
+#- name: stop id_admin_temp container if running
+#  shell: docker kill  id_admin_temp
+#  become: yes
+#  become_user: apim
+#  become_method: sudo
+#  ignore_errors: yes
+
+- name: first, remove id_admin_temp container so role can be re-run even in case of partial execution
   shell: docker rm -f id_admin_temp
   become: yes
   become_user: apim
   become_method: sudo
   ignore_errors: yes
+#  register: docker_rm_id_admin_temp
+
+#- name: wait for the id_admin_temp container to finish deleting
+#  pause: seconds=30
+#  when: docker_rm_id_admin_temp is success
 
 - name: create a one off id_admin container
-  shell: docker run -d -h {{host}} --name id_admin_temp -p "9000:80" -v /home/apim/update_id_admin_settings.sh:/update_id_admin_settings.sh -v /home/apim/{{ tenant_id }}/{{ tenant_id }}.yml:/values.yml -v /home/apim/{{ tenant_id }}/passwords:/passwords agaveapi/agave_id_dedicated
+  shell: docker run -d -h {{host}} --name id_admin_temp -v /home/apim/create_users.sh:/create_users.sh -v /home/apim/update_id_admin_settings.sh:/update_id_admin_settings.sh -v /home/apim/{{ tenant_id }}/{{ tenant_id }}.yml:/values.yml -v /home/apim/{{ tenant_id }}/passwords:/passwords agaveplatform/agave_id_dedicated
   become: yes
   become_user: apim
   become_method: sudo
 
 - name: update configs and restart apache
-  shell: docker exec id_admin_temp sh /update_id_admin_settings.sh
+  shell: docker exec -i id_admin_temp sh /update_id_admin_settings.sh
   become: yes
   become_user: apim
   become_method: sudo
 
-- name: waiting for id admin container to come online
-  wait_for:
-    port: 9000
-    
 - name: add users
-  shell: sh create_users.sh chdir=/home/apim
+  shell: docker exec -i id_admin_temp sh /create_users.sh
   become: yes
   become_user: apim
   become_method: sudo
+
+#- name: add users
+#  shell: sh create_users.sh chdir=/home/apim
+#  become: yes
+#  become_user: apim
+#  become_method: sudo
 
 - name: remove id_admin container
   shell: docker rm -f id_admin_temp

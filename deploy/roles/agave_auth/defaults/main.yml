@@ -7,7 +7,7 @@ remove_all_auth_containers: false
 # to ensure files from previous deployments don't create issues.
 remove_apim_dir: False
 
-agave_id_image: agaveapi/agave_id_dedicated
+agave_id_image: agaveplatform/agave_id_dedicated
 
 # service versions
 haproxy_auth_version: latest

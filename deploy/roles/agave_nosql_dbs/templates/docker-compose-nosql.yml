@@ -4,22 +4,22 @@
 # MongoDB - NoSQL document store
 ##############################################################
 mongo:
- image: agaveapi/mongo:2.6
- name: nosql.staging.agaveapi.co
- restart: always
- ports:
-  - '27017:27017'
- environment:
-  - 'MONGODB_USERNAME=agaveapi'
-  - 'MONGODB_PASSWORD=d3f@ult\$'
-  - 'MONGODB_DATABASE=api'
+  image: agaveplatform/mongodb:2.6
+  name: nosql.staging.agaveapi.co
+  restart: always
+  ports:
+    - '27017:27017'
+  environment:
+    MONGODB_USERNAME: {{ agave_core_metadata_user }}
+    MONGODB_PASSWORD: {{ agave_core_metadata_password }}
+    MONGODB_DATABASE: api
  
 ##############################################################
 # Beanstalkd - light and fast messaging
 ##############################################################
 beanstalk:
   hostname: queue.staging.agaveapi.co
-  image: agaveapi/beanstalkd
+  image: agaveplatform/beanstalkd
   restart: always
   ports:
     - "11300:11300"
@@ -28,7 +28,7 @@ beanstalk:
 # LDAP - APIM & IaaS
 ##############################################################
 slapd:
-  image: jstubbs/slapd
+  image: agaveplatform/slapd
   ports:
     - "389:389"
   environment:

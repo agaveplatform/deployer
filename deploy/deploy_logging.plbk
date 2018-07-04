@@ -1,0 +1,12 @@
+# Run this playbook to setup logging on agave hosts. This playbook can be rerun repeatedly without
+# destroying existing logs
+#
+# Example invocation:
+# $ ansible-playbook -i host_files/sandbox_hosts deploy_logging.plbk
+#
+---
+
+- name: prepare each host by installing base packages
+  hosts: agave
+  roles:
+      - logrotate

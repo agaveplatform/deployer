@@ -14,14 +14,14 @@ newman_agave_tenant_base_ip=192.168.205.10
 # Vagrant db host is undersized, so we cap the mysql size accordingly
 mysql_mem_limit=512m
 
-[docker_hosts:vars]
+[agave:vars]
 
 ansible_ssh_common_args=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
 ansible_ssh_user=vagrant
 
 
-[docker_hosts:children]
+[agave:children]
 
 auth
 core
