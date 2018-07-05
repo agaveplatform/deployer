@@ -9,9 +9,9 @@
 
 - name: Generate RSA Key
   command: openssl genrsa \
-    -out "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key" 2048
+    -out "/home/apim/{{ tenant_id }}/httpd/{{cert_key_file|default('apache.key')}}" 2048
   args:
-    creates: "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key"
+    creates: "/home/apim/{{ tenant_id }}/httpd/{{cert_key_file|default('apache.key')}}"
   become: yes
   become_user: apim
   become_method: sudo
@@ -21,10 +21,10 @@
   command: openssl req \
     -new \
     -subj "/C/US/ST=TX/L=Austin/O=AgavePlatform/CN={{agave_core_hostname}}" \
-    -key "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key" \
-    -out "/home/apim/core-apis/ssl/{{agave_core_hostname}}.csr"
+    -key "/home/apim/{{ tenant_id }}/httpd/{{cert_key_file|default('apache.key')}}" \
+    -out "/home/apim/{{ tenant_id }}/httpd/{{cert_key_file|default('apache.key')}}.csr"
   args:
-    creates: "/home/apim/core-api/ssl/{{agave_core_hostname}}.csr"
+    creates: "/home/apim/{{ tenant_id }}/httpd/{{cert_key_file|default('apache.key')}}"
   become: yes
   become_user: apim
   become_method: sudo
@@ -34,11 +34,11 @@
   command: openssl req \
     -x509 \
     -days 1825 \
-    -key "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key" \
-    -in "/home/apim/core-apis/ssl/{{agave_core_hostname}}.csr" \
-    -out "/home/apim/core-apis/ssl/{{agave_core_hostname}}.crt"
+    -key "/home/apim/{{ tenant_id }}/httpd/{{cert_key_file|default('apache.key')}}" \
+    -in "/home/apim/{{ tenant_id }}/httpd/{{cert_key_file|default('apache.key')}}.csr" \
+    -out "/home/apim/{{ tenant_id }}/httpd/{{cert_file|default('apache.crt')}}"
   args:
-    creates: "/home/apim/core-apis/ssl/{{agave_core_hostname}}.crt"
+    creates: "/home/apim/{{ tenant_id }}/httpd/{{cert_file|default('apache.crt')}}"
   become: yes
   become_user: apim
   become_method: sudo
