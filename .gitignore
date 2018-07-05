@@ -15,3 +15,7 @@ deploy/inventory
 deployer-validation.bash
 jupyterhub-swarm.bash
 *.retry
+deploy/host_files/*_hosts
+!deploy/host_files/sandbox_hosts
+!deploy/host_files/vagrant_hosts
+
