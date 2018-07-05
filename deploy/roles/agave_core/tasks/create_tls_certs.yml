@@ -1,0 +1,45 @@
+---
+- name: Ensure ssl directory exists for remote self-signed TLS certs
+  file:
+    path: "/home/apim/core-apis/ssl"
+    state: directory
+  become: yes
+  become_user: apim
+  become_method: sudo
+
+- name: Generate RSA Key
+  command: openssl genrsa \
+    -out "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key" 2048
+  args:
+    creates: "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key"
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: core_deploy_ssl_certs == false 
+
+- name: Generate CSR
+  command: openssl req \
+    -new \
+    -subj "/C/US/ST=TX/L=Austin/O=AgavePlatform/CN={{agave_core_hostname}}" \
+    -key "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key" \
+    -out "/home/apim/core-apis/ssl/{{agave_core_hostname}}.csr"
+  args:
+    creates: "/home/apim/core-api/ssl/{{agave_core_hostname}}.csr"
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: core_deploy_ssl_certs == false 
+
+- name: Generate self-signed OpenSSL certificate
+  command: openssl req \
+    -x509 \
+    -days 1825 \
+    -key "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key" \
+    -in "/home/apim/core-apis/ssl/{{agave_core_hostname}}.csr" \
+    -out "/home/apim/core-apis/ssl/{{agave_core_hostname}}.crt"
+  args:
+    creates: "/home/apim/core-apis/ssl/{{agave_core_hostname}}.crt"
+  become: yes
+  become_user: apim
+  become_method: sudo
+  when: core_deploy_ssl_certs == false
