@@ -11,4 +11,4 @@ mysql_login_host: 172.17.0.1
 mysql_login_port: 3306
 apim_version: 19
 load_auth_sql_data: true
-create_tenant_mysql_user: false
+create_tenant_mysql_user: true
