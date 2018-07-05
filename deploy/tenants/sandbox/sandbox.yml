@@ -151,6 +151,9 @@ boutique_apis:
 # -----
 # HTTPD
 # -----
+# deploy_custom_tls_certs - if true, the files at the cert_file and cert_key_file paths will be used as the tls certs for the default https endpoint of the tenant.
+deploy_custom_tls_certs: False
+
 # cert file - should be a path relative to the httpd directory contained within the tenant directory for this tenant
 # inside the tenants directory: e.g. deploy/tenants/sanbox/httpd
 cert_file: apache.crt

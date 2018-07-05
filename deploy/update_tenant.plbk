@@ -15,12 +15,13 @@
 
 ---
 
-  # deploy and start containers
+# deploy and start containers
 
 - name: gather all hosts information
   hosts: all
 
 - hosts: auth
+
   roles:
     - agave_auth
     - auth_rolling_deploy

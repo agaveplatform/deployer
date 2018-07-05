@@ -62,14 +62,10 @@ update_auth_admin_dns: True
 # whether to deploy a custom set of tls certificates provided by the user, or generate a self-signed certificate for the tenant's domain
 deploy_custom_tls_certs: False
 
-# cert file - should be a path relative to the httpd directory contained within the 
-tenant directory for this tenant
-# inside the tenants directory: e.g. deploy/tenants/sanbox/httpd
+# cert file - should be a path relative to the httpd directory contained within the tenant directory for this tenant inside the tenants directory: e.g. deploy/tenants/sanbox/httpd
 cert_file: apache.crt
 
-# cert key file - should be a path relative to the httpd directory contained within 
-the tenant directory for this tenant
-# inside the tenants directory: e.g. deploy/tenants/sanbox/httpd
+# cert key file - should be a path relative to the httpd directory contained within the tenant directory for this tenant inside the tenants directory: e.g. deploy/tenants/sanbox/httpd
 cert_key_file: apache.key
 
 

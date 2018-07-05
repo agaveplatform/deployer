@@ -1,7 +1,8 @@
 ---
+
 - name: Ensure ssl directory exists for remote self-signed TLS certs
   file:
-    path: "/home/apim/core-apis/ssl"
+    path: "/home/apim/{{ tenant_id }}/httpd"
     state: directory
   become: yes
   become_user: apim
@@ -15,20 +16,18 @@
   become: yes
   become_user: apim
   become_method: sudo
-  when: core_deploy_ssl_certs == false 
 
 - name: Generate CSR
   command: openssl req \
     -new \
-    -subj "/C/US/ST=TX/L=Austin/O=AgavePlatform/CN={{agave_core_hostname}}" \
+    -subj "/C/US/ST=TX/L=Austin/O=AgavePlatform/CN={{host}}" \
     -key "/home/apim/{{ tenant_id }}/httpd/{{cert_key_file|default('apache.key')}}" \
     -out "/home/apim/{{ tenant_id }}/httpd/{{cert_key_file|default('apache.key')}}.csr"
   args:
-    creates: "/home/apim/{{ tenant_id }}/httpd/{{cert_key_file|default('apache.key')}}"
+    creates: "/home/apim/{{ tenant_id }}/httpd/{{cert_key_file|default('apache.key')}}.csr"
   become: yes
   become_user: apim
   become_method: sudo
-  when: core_deploy_ssl_certs == false 
 
 - name: Generate self-signed OpenSSL certificate
   command: openssl req \
@@ -42,4 +41,3 @@
   become: yes
   become_user: apim
   become_method: sudo
-  when: core_deploy_ssl_certs == false
