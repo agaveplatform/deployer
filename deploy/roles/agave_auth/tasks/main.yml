@@ -82,7 +82,7 @@
 
 - name: generate tls certs on remote host
   include_tasks: create_tls_certs.yml
-  when: deploy_custom_tls_certs is false or copy_auth_tls_certs.failed
+  when: deploy_custom_tls_certs == False or copy_auth_tls_certs.failed
 
 - name: register custom_docs_exist
   local_action: stat path="{{ playbook_dir }}/tenants/{{ tenant_id }}/docs/v2/"
