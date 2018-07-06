@@ -78,9 +78,9 @@
 #  become_method: sudo
 #  when: load_auth_sql_data
 
-#- name: wait for servers to start up
-#  shell: sleep 20
-#  when: load_auth_sql_data
+- name: wait for servers to start up
+  shell: sleep 20
+  when: load_auth_sql_data
 
 - name: execute sql script
   shell: mysql -u{{ mysql_root_user }} -h {{ mysql_login_host }} -P {{ mysql_login_port }} -p{{ mysql_root_password }} < /home/apim/apim_mysql_scripts/{{ tenant_id }}/am{{ apim_version }}-amdbs.sql
