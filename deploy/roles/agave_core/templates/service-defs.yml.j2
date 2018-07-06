@@ -17,7 +17,7 @@
 #
 #
 ###############################################################
-#   Agave Core Services
+#   agave.core.service: 
 ###############################################################
 
 {% if core_deploy_jobs %}
@@ -39,7 +39,6 @@ jobs:
   volumes:
     - '/home/apim/logs/jobs:/opt/tomcat/logs'
     - '/home/apim/core-apis/scratch/jobs:/scratch'
-{% endif %}
 {#  log_driver: fluentd#}
 {#  log_opt:#}
 {#    fluentd-tag: agave.tenant.{{ tenant_id }}#}
@@ -578,7 +577,7 @@ stats:
     agave.core.api: 'True'
 {% endif %}
     agave.ops.groups: "{{ groups|join(',') }}"
-{% endif %}
+
 
 
 
