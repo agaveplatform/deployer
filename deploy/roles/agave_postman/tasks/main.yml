@@ -111,7 +111,10 @@
 ## Pull Newman image used to run the Postman collection
 #- name: Fetch Newman Image
 #  command: docker pull postman/newman_ubuntu1404:3.2.0
-
+- name: Make sure temp directory is present
+  file:
+    path: tmp
+    state: directory
 
 # Clean up previous test data and reports
 - name: Find previous test directories

@@ -26,14 +26,7 @@
 #      -e newman_agave_test_system_public_key=@public_key \
 #      -e newman_agave_test_system_private_key=@private_key \
 #      -e newman_agave_test_system_private_key
-#
-# deployer -i /deploy/host_files/core_prod_hosts /deploy/run_postman_tests.plbk \
-#      -e newman_agave_tenant_base_hostname=sandbox.example.com \
-#      -e newman_agave_tenant_base_ip=25.41.126.9 \
-#      -e newman_agave_test_system_host=sftp.example.com \
-#      -e newman_agave_test_system_username=ubuntu \
-#      -e newman_agave_test_system_public_key=@public_key \
-#      -e newman_agave_test_system_private_key=@private_key
+#      -e newman_single_service_name=
 #
 ################################################################################
 

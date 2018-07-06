@@ -38,8 +38,35 @@ jobs:
     - 'CATALINA_OPTS="-Duser.timezone=America/Chicago -Djsse.enableCBCProtection=false -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms2048m -Xmx{{ "8192m" if (agave_core_jobs_mem_limit|replace("m", "")|int) > 8192 else "4096m" }} -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"'
   volumes:
     - '/home/apim/logs/jobs:/opt/tomcat/logs'
-    - './scratch/jobs:/scratch'
+    - '/home/apim/core-apis/scratch/jobs:/scratch'
 {% endif %}
+{#  log_driver: fluentd#}
+{#  log_opt:#}
+{#    fluentd-tag: agave.tenant.{{ tenant_id }}#}
+{#    fluentd-tag: agave.core.service: jobs#}
+{#{% if  agave_core_workers_only %}#}
+{#    fluentd-tag: agave.core.worker.jobs#}
+{#{% endif %}#}
+{#{% if  agave_core_api_only %}#}
+{#    fluentd-tag: agave.core.api.jobs#}
+{#{% endif %}#}
+{#{% for g in groups %}#}
+{#    fluentd-tag: agave.core.group.{{ g }}#}
+{#{% endfor %}#}
+  labels:
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+    agave.core.service: jobs
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
+{% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_files %}
 files:
@@ -57,8 +84,22 @@ files:
     - 'CATALINA_OPTS="-Duser.timezone=America/Chicago -Djsse.enableCBCProtection=false -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms2048m -Xmx{{ "8192m" if (agave_core_files_mem_limit|replace("m", "")|int) > 8192 else "4096m" }} -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"'
   volumes:
     - '/home/apim/logs/files:/opt/tomcat/logs'
-    - './scratch/files:/scratch'
+    - '/home/apim/core-apis/scratch/files:/scratch'
+  labels:
+    agave.core.service:  files
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+    agave.ops.ab_deployment: A
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_apps and not agave_core_workers_only %}
 apps:
@@ -77,8 +118,21 @@ apps:
     - 'CATALINA_OPTS="-Duser.timezone=America/Chicago -Djsse.enableCBCProtection=false -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms1024m -Xmx2048 -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"'
   volumes:
     - '/home/apim/logs/apps:/opt/tomcat/logs'
-    - './scratch/apps:/scratch'
+    - '/home/apim/core-apis/scratch/apps:/scratch'
+  labels:
+    agave.core.service: apps
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_systems and not agave_core_workers_only %}
 systems:
@@ -91,8 +145,21 @@ systems:
 {% endif %}
   volumes:
     - '/home/apim/logs/systems:/opt/tomcat/logs'
-    - './scratch/systems:/scratch'
+    - '/home/apim/core-apis/scratch/systems:/scratch'
+  labels:
+    agave.core.service: systems
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_monitors and not agave_core_workers_only %}
 monitors:
@@ -109,8 +176,21 @@ monitors:
     - 'IPLANT_MAX_MONITOR_RETRIES={{agave_core_monitors_max_retries if not agave_core_api_only else 0}}'
   volumes:
     - '/home/apim/logs/monitors:/opt/tomcat/logs'
-    - './scratch/monitors:/scratch'
+    - '/home/apim/core-apis/scratch/monitors:/scratch'
+  labels:
+    agave.core.service: monitors
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_custom_profiles and not agave_core_workers_only %}
 profiles:
@@ -123,8 +203,21 @@ profiles:
 {% endif %}
   volumes:
     - '/home/apim/logs/profiles:/opt/tomcat/logs'
-    - './scratch/profiles:/scratch'
+    - '/home/apim/core-apis/scratch/profiles:/scratch'
+  labels:
+    agave.core.service: profiles
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_metadata and not agave_core_workers_only %}
 metadata:
@@ -139,8 +232,21 @@ metadata:
     - 'CATALINA_OPTS="-Duser.timezone=America/Chicago -Djsse.enableCBCProtection=false -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms512m -Xmx2048 -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"'
   volumes:
     - '/home/apim/logs/metadata:/opt/tomcat/logs'
-    - './scratch/metadata:/scratch'
+    - '/home/apim/core-apis/scratch/metadata:/scratch'
+  labels:
+    agave.core.service: metadata
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_notifications and not agave_core_workers_only %}
 notifications:
@@ -155,8 +261,21 @@ notifications:
     - 'IPLANT_MAX_NOTIFICATION_TASKS={{agave_core_notifications_max_notification_tasks if not agave_core_api_only else 0}}'
   volumes:
     - '/home/apim/logs/notifications:/opt/tomcat/logs'
-    - './scratch/notifications:/scratch'
+    - '/home/apim/core-apis/scratch/notifications:/scratch'
+  labels:
+    agave.core.service: notfications
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_transforms %}
 transforms:
@@ -175,8 +294,21 @@ transforms:
     #- 'IPLANT_MAX_SUBMISSION_TASKS={{agave_core_transforms_max_transform_tasks}}'
   volumes:
     - '/home/apim/logs/transforms:/opt/tomcat/logs'
-    - './scratch/transforms:/scratch'
+    - '/home/apim/core-apis/scratch/transforms:/scratch'
+  labels:
+    agave.core.service: transforms
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_realtime and not agave_core_workers_only %}
 realtime:
@@ -189,8 +321,21 @@ realtime:
 {% endif %}
   volumes:
     - '/home/apim/logs/realtime:/opt/tomcat/logs'
-    - './scratch/realtime:/scratch'
+    - '/home/apim/core-apis/scratch/realtime:/scratch'
+  labels:
+    agave.core.service: realtime
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_tags and not agave_core_workers_only %}
 tags:
@@ -203,8 +348,21 @@ tags:
 {% endif %}
   volumes:
     - '/home/apim/logs/tags:/opt/tomcat/logs'
-    - './scratch/tags:/scratch'
+    - '/home/apim/core-apis/scratch/tags:/scratch'
+  labels:
+    agave.core.service: tags
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_uuids and not agave_core_workers_only %}
 uuids:
@@ -217,8 +375,21 @@ uuids:
 {% endif %}
   volumes:
     - '/home/apim/logs/uuids:/opt/tomcat/logs'
-    - './scratch/uuids:/scratch'
+    - '/home/apim/core-apis/scratch/uuids:/scratch'
+  labels:
+    agave.core.service: uuids
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_postits and not agave_core_workers_only %}
 postits:
@@ -233,8 +404,21 @@ postits:
     - 'IPLANT_PROXY_SERVICE={{ agave_core_iplant_proxy_service }}'
   volumes:
     - '/home/apim/logs/postits:/var/log/apache2'
-    - './scratch/postits:/scratch'
+    - '/home/apim/core-apis/scratch/postits:/scratch'
+  labels:
+    agave.core.service: postits
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_usage and not agave_core_workers_only %}
 usage:
@@ -247,8 +431,21 @@ usage:
 {% endif %}
   volumes:
     - '/home/apim/logs/usage:/var/log/apache2'
-    - './scratch/usage:/scratch'
+    - '/home/apim/core-apis/scratch/usage:/scratch'
+  labels:
+    agave.core.service: usage
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_tenants and not agave_core_workers_only %}
 tenants:
@@ -262,8 +459,21 @@ tenants:
   volumes:
     - '/home/apim/logs/tenants:/var/log/apache2'
     - './ssl:/ssl:ro'
-    - './scratch/tenants:/scratch'
+    - '/home/apim/core-apis/scratch/tenants:/scratch'
+  labels:
+    agave.core.service: tenants
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_logging and not agave_core_workers_only %}
 logging:
@@ -276,8 +486,21 @@ logging:
 {% endif %}
   volumes:
     - '/home/apim/logs/logging:/var/log/apache2'
-    - './scratch/logging:/scratch'
+    - '/home/apim/core-apis/scratch/logging:/scratch'
+  labels:
+    agave.core.service: logging
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_docs and not agave_core_workers_only %}
 docs:
@@ -290,8 +513,21 @@ docs:
 {% endif %}
   volumes:
     - '/home/apim/logs/docs:/var/log/apache2'
-    - './scratch/docs:/scratch'
+    - '/home/apim/core-apis/scratch/docs:/scratch'
+  labels:
+    agave.core.service: docs
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
 {% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 {% if core_deploy_stats and not agave_core_workers_only %}
 stats:
@@ -329,7 +565,21 @@ stats:
     - 'ARAPORT_ORG_MYSQL_DATABASE={{ core_aip_mysql_database }}'
   volumes:
     - '/home/apim/logs/stats:/var/www/html'
-    - './scratch/stats:/scratch'
+    - '/home/apim/core-apis/scratch/stats:/scratch'
+  labels:
+    agave.core.service: stats
+    agave.tenant: {{ tenant_id }}
+    agave.ops.ab_deployment: A
+    agave.ops.component: core
+{% if  agave_core_workers_only %}
+    agave.core.worker: 'True'
+{% endif %}
+{% if  agave_core_api_only %}
+    agave.core.api: 'True'
+{% endif %}
+    agave.ops.groups: "{{ groups|join(',') }}"
+{% endif %}
+
 
 
 ###############################################################
@@ -358,6 +608,6 @@ redis:
   ports:
     - '6379:6379'
   volumes:
-    - ./cache/redis:/data
+    - /home/apim/core-apis/cache/redis:/data
 
 {% endif %}

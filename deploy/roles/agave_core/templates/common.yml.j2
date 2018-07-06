@@ -78,16 +78,16 @@ java_api:
     - 'IPLANT_MIN_MONITOR_REPEAT_INTERVAL={{ agave_core_monitor_min_check_interval }}'
 {% if core_deploy_ssl_certs %}
     - 'CATALINA_TMPDIR=/scratch'
-    - 'SSL_CERT={{ agave_core_ssl_cert }}'
-    - 'SSL_KEY={{ agave_core_ssl_key }}'
-    - 'SSL_CA_CERT={{ agave_core_ca_cert }}'
+    - 'SSL_CERT=/ssl/{{ agave_core_ssl_cert | default("/ssl/" + agave_core_hostname + ".crt") | basename }}'
+    - 'SSL_KEY=/ssl/{{ agave_core_ssl_key | default("/ssl/" + agave_core_hostname + ".key") | basename }}'
+    - 'SSL_CA_CERT={{ "/ssl/" + agave_core_ca_cert if agave_core_ca_cert else "" }}'
 {% endif %}
 #     - 'CATALINA_OPTS="-Duser.timezone=America/Chicago -Djsse.enableCBCProtection=false -Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms512m -Xmx1024m -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"'
   volumes:
 {% if core_deploy_ssl_certs %}
-    - './ssl:/ssl:ro'
+    - '/home/apim/core-apis/ssl:/ssl:ro'
 {% endif %}
-    - './scratch:/scratch'
+    - '/home/apim/core-apis/scratch:/scratch'
 
 php_api:
   hostname: {{ agave_core_hostname }}
@@ -144,12 +144,12 @@ php_api:
 #    - 'LOG_TARGET_STDOUT=0'
     - 'IPLANT_MIN_MONITOR_REPEAT_INTERVAL={{ agave_core_monitor_min_check_interval }}'
 {% if core_deploy_ssl_certs %}
-    - 'SSL_CERT={{ agave_core_ssl_cert }}'
-    - 'SSL_KEY={{ agave_core_ssl_key }}'
-    - 'SSL_CA_CERT={{ agave_core_ca_cert }}'
+    - 'SSL_CERT=/ssl/{{ agave_core_ssl_cert | default("/ssl/" + agave_core_hostname + ".crt") | basename }}'
+    - 'SSL_KEY=/ssl/{{ agave_core_ssl_key | default("/ssl/" + agave_core_hostname + ".key") | basename }}'
+    - 'SSL_CA_CERT={{ "/ssl/" + agave_core_ca_cert if agave_core_ca_cert else "" }}'
 {% endif %}
   volumes:
 {% if core_deploy_ssl_certs %}
-    - './ssl:/ssl:ro'
+    - '/home/apim/core-apis/ssl:/ssl:ro'
 {% endif %}
-    - './scratch:/scratch'
+    - '/home/apim/core-apis/scratch:/scratch'

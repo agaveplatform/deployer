@@ -42,10 +42,10 @@ proxy:
     - 'STATUS_WHITELIST=129.114'
     - 'LOG_LEVEL_INFO=1'
 {% if core_deploy_ssl_certs %}
-    - 'SSL_CERT={{ agave_core_ssl_cert }}'
-    - 'SSL_KEY={{ agave_core_ssl_key }}'
+    - 'SSL_CERT=/ssl/{{ agave_core_ssl_cert }}'
+    - 'SSL_KEY=/ssl/{{ agave_core_ssl_key }}'
 {% if agave_core_ca_cert %}
-    - 'SSL_CA_CERT={{ agave_core_ca_cert }}'
+    - 'SSL_CA_CERT=/ssl/{{ agave_core_ca_cert }}'
 {% endif %}
 {% endif %}
   volumes:
