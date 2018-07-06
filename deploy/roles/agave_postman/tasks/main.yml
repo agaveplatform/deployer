@@ -19,7 +19,7 @@
 # handle argument generation for node debug output
 - name: Conditionally set --debug flag to print output of wire trafic from NODE_DEBUG in newman
   set_fact:
-    newman_debug_arg: "{{ '--debug' if newman_debug else '' }}"
+    newman_debug_arg: "{{ '-d' if newman_debug else '' }}"
 
 - debug:
     var: newman_debug_arg
@@ -29,7 +29,7 @@
 # handle argument generation for verbose output
 - name: Conditionally set --verbose flag to print verbose setup output
   set_fact:
-    newman_verbose_arg: "{{ '--verbose' if newman_verbose else '' }}"
+    newman_verbose_arg: "{{ '-v' if newman_verbose else '' }}"
 
 - debug:
     var: newman_verbose_arg
@@ -102,11 +102,8 @@
     newman_agave_tenant_add_host_args: "{{ '--add-host ' + newman_agave_tenant_base_hostname + ':' + newman_agave_tenant_base_ip if not((newman_agave_tenant_base_ip is undefined) or (newman_agave_tenant_base_ip is none) or (newman_agave_tenant_base_ip|trim == '')) else ''}}"
 #  when: newman_agave_tenant_base_ip is defined && newman_agave_tenant_base_ip is not False
 
-
 - debug:
     var: not(newman_agave_tenant_add_host_args|trim == '')
-
-
 
 ## Pull Newman image used to run the Postman collection
 #- name: Fetch Newman Image
@@ -172,9 +169,6 @@
   when: newman_agave_test_system_private_key_file is defined
   register: jsonpki_private_key_file
 
-- debug:
-    var=jsonpki_private_key_file
-
 - name: escape private key file contents
   shell: echo {{ newman_agave_test_system_private_key | quote }} | lib/jsonpki --private
   args:
@@ -183,14 +177,9 @@
   when: newman_agave_test_system_private_key_file is not defined
   register: jsonpki_private_key
 
-- debug:
-    var=jsonpki_private_key
-
 - name: Reassign escaped private key values
   set_fact:
     newman_agave_test_system_private_key: '{{ jsonpki_private_key_file.stdout if newman_agave_test_system_private_key_file is defined else jsonpki_private_key.stdout }}'
-    #newman_agave_test_system_private_key: "{{ newman_agave_test_system_private_key | replace('\\n', '\\\\n') | replace('\\/', '\\\\/') }}"
-
 
 - name: escape public key file contents
   shell: lib/jsonpki --public {{newman_agave_test_system_public_key_file}}
@@ -199,10 +188,6 @@
     executable: /bin/bash
   when: newman_agave_test_system_public_key_file is defined
   register: jsonpki_public_key_file
-
-
-- debug:
-    var=jsonpki_public_key_file
 
 - name: escape public key file contents
   shell: echo {{ newman_agave_test_system_public_key | quote }} | lib/jsonpki --public
@@ -214,18 +199,9 @@
 #- debug:
 #   var: newman_agave_test_system_private_key
 
-- debug:
-    var=jsonpki_public_key
-
-
 - name: Reassign escaped public key values
   set_fact:
     newman_agave_test_system_public_key: '{{ jsonpki_public_key_file.stdout if newman_agave_test_system_public_key_file is defined else jsonpki_public_key.stdout }}'
-    #newman_agave_test_system_public_key: "{{ newman_agave_test_system_public_key | replace('\\n', '\\\\n') | replace('\\/', '\\\\/') | replace('&', '\\\\&') }}"
-
-#- debug:
-#   var: newman_agave_test_system_public_key
-
 
 # Compiles templates for system definitions, etc needed to configure postman tests at runtime.
 # These tell Agave what system(s) to connect to for data and compute tests.

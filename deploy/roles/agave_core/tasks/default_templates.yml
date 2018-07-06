@@ -81,10 +81,6 @@
   ignore_errors: yes
   register: docker_ps_core_containers
 
-
-- debug:
-    var: docker_ps_core_containers
-
 # ignore errors here since this call will fail if there are no containers running
 - name: remove existing containers
   shell: docker rm -f `docker ps -aq` chdir=/home/apim/core-apis/
