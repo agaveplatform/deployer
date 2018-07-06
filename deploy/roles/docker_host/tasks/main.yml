@@ -82,10 +82,7 @@
 
 # Aliases, completion, helpers for docker and docker compose
 - name: Install docker aliases into user's .bashrc.d directory
-  get_url:
-    url: https://bitbucket.org/!api/2.0/snippets/deardooley/9KL4X/8cda45426572de3ff43a8da07f12e5ee95f73b5d/files/docker.aliases
-    dest: /home/apim/.bashrc.d/docker.aliases
-    force: yes
+  shell: curl -skL -o /home/apim/.bashrc.d/docker.aliases https://bitbucket.org/!api/2.0/snippets/deardooley/9KL4X/8cda45426572de3ff43a8da07f12e5ee95f73b5d/files/docker.aliases
   become: yes
   become_user: apim
   become_method: sudo
@@ -102,9 +99,7 @@
 
 - name: Install docker-compose bash completion
   get_url:
-    url: https://raw.githubusercontent.com/docker/compose/1.21.2/contrib/completion/bash/docker-compose
-    dest: /etc/bash_completion.d/docker-compose
-    force: yes
+    shell: curl -skL -o /etc/bash_completion.d/docker-compose https://raw.githubusercontent.com/docker/compose/1.21.2/contrib/completion/bash/docker-compose
   become: yes
   become_user: root
   become_method: sudo
