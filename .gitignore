@@ -19,3 +19,4 @@ deploy/host_files/*_hosts
 !deploy/host_files/sandbox_hosts
 !deploy/host_files/vagrant_hosts
 
+deploy/roles/fluentd
