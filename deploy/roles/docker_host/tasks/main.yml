@@ -98,8 +98,7 @@
   become_method: sudo
 
 - name: Install docker-compose bash completion
-  get_url:
-    shell: curl -skL -o /etc/bash_completion.d/docker-compose https://raw.githubusercontent.com/docker/compose/1.21.2/contrib/completion/bash/docker-compose
+  shell: curl -skL -o /etc/bash_completion.d/docker-compose https://raw.githubusercontent.com/docker/compose/1.21.2/contrib/completion/bash/docker-compose
   become: yes
   become_user: root
   become_method: sudo
