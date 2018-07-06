@@ -8,7 +8,7 @@
   when: "{{ update_docker_version }} or {{ update_docker_compose_version }}"
 
 - name: download docker binary
-  get_url: url=https://get.docker.com/builds/Linux/x86_64/docker-{{ docker_version }}.tgz dest=/usr/bin/docker
+  shell: curl -skL https://get.docker.com/builds/Linux/x86_64/docker-{{ docker_version }}.tgz dest=/usr/bin/docker
   become: yes
   become_user: root
   become_method: sudo

@@ -1,16 +1,12 @@
 
 - name: download latest storage docker-compose file
-  get_url:
-      url: https://raw.githubusercontent.com/agaveplatform/science-apis/master/config/testbed/data.yml
-      dest: /home/apim/docker-compose-storage.yml
+  shell: curl -skL -o /home/apim/docker-compose-storage.yml https://raw.githubusercontent.com/agaveplatform/science-apis/master/config/testbed/data.yml
   become: yes
   become_user: apim
   become_method: sudo
 
 - name: download latest execution docker-compose file
-  get_url:
-      url: https://raw.githubusercontent.com/agaveplatform/science-apis/master/config/testbed/compute.yml
-      dest: /home/apim/docker-compose-compute.yml
+  shell: curl -skL -o /home/apim/docker-compose-compute.yml https://raw.githubusercontent.com/agaveplatform/science-apis/master/config/testbed/compute.yml
   become: yes
   become_user: apim
   become_method: sudo
