@@ -125,11 +125,22 @@
               line="if [[ -e $HOME/.bashrc.d ]] && [[ -d $HOME/.bashrc.d ]]; then for i in $(ls $HOME/.bashrc.d); do source $HOME/.bashrc.d/$i ; done fi"
               state=present
   become: yes
-  become_user: root
+  become_user: apim
+  become_method: sudo
+
+- name: Add scirpt to .bashrc.d folder to disable squid proxy on this host by default
+  copy:
+    src: "../files/{{item}}"
+    dest: /home/apim/.bashrc.d/disable_squid_proxy.sh
+    mode: 0740
+  with_items:
+    - disable_squid_proxy.sh
+  become: yes
+  become_user: apim
   become_method: sudo
 
 - name: give other users access to apim home directory
-  file: path=/home/apim mode=0755
+  file: path=/home/apim mode=0750
   become: yes
   become_user: root
   become_method: sudo
