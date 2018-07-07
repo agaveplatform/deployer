@@ -162,6 +162,15 @@
   become_user: apim
   become_method: sudo
 
+
+- name: Check for existing auth containers
+  shell: docker ps -aq
+  become: yes
+  become_user: apim
+  become_method: sudo
+  ignore_errors: yes
+  register: docker_ps_auth_containers
+
 # note: this should almost never be used; exception is when wanting to competely start from scratch.
 - name: remove all auth containers
   shell: docker rm -f `docker ps -aq`
@@ -169,21 +178,20 @@
   become: yes
   become_user: apim
   become_method: sudo
-  when: remove_all_auth_containers
+  when: remove_all_auth_containers == True and docker_ps_auth_containers.stdout
   register: docker_rm_auth_containers
 
 - name: wait for the auth containers to finish deleting
   pause: seconds=30
   when: remove_all_auth_containers and docker_rm_auth_containers is success
 
-# note: this should almost never be used; exception is when wanting to competely start from scratch.
-- name: remove all auth containers
+- name: pull auth containers images
   shell: docker-compose -f /home/apim/hap-compose.yml pull --ignore-pull-failures
   become: yes
   become_user: apim
   become_method: sudo
   environment:
-      COMPOSE_HTTP_TIMEOUT: 2000
+      COMPOSE_HTTP_TIMEOUT: 20000
 
 - name: ensure haproxy is running
   shell: docker-compose -f /home/apim/hap-compose.yml up -d
@@ -191,7 +199,7 @@
   become_user: apim
   become_method: sudo
   environment:
-      COMPOSE_HTTP_TIMEOUT: 2000
+      COMPOSE_HTTP_TIMEOUT: 20000
 
 - name: Compile pull_images template
   template: src=pull_images.sh.j2 dest=/home/apim/pull_images.sh

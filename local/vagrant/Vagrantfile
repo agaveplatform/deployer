@@ -20,6 +20,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       auth.vm.provider "virtualbox" do |v|
           v.customize [ "modifyvm", :id, "--cpus", "1" ]
           v.customize [ "modifyvm", :id, "--memory", "2048" ]
+          # handle automatic clock skew fix when box is resumed after long sleeps.
+          # without this ntpd will not catch up on its own and you have to run
+          # sudo ntpdate ntp.ubuntu.com to resync clocks
+          v.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 10000 ]
       end
 
       auth.vm.network "private_network", ip: "192.168.205.10"
@@ -33,6 +37,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       core.vm.provider "virtualbox" do |v|
           v.customize [ "modifyvm", :id, "--cpus", "2" ]
           v.customize [ "modifyvm", :id, "--memory", "2048" ]
+          # handle automatic clock skew fix when box is resumed after long sleeps. 
+          # without this ntpd will not catch up on its own and you have to run
+          # sudo ntpdate ntp.ubuntu.com to resync clocks
+          v.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 10000 ]
       end
 
       core.vm.network "private_network", ip: "192.168.205.11"
@@ -46,6 +54,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       core.vm.provider "virtualbox" do |v|
           v.customize [ "modifyvm", :id, "--cpus", "2" ]
           v.customize [ "modifyvm", :id, "--memory", "4196" ]
+          # handle automatic clock skew fix when box is resumed after long sleeps. 
+          # without this ntpd will not catch up on its own and you have to run
+          # sudo ntpdate ntp.ubuntu.com to resync clocks
+          v.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 10000 ]
       end
 
       core.vm.network "private_network", ip: "192.168.205.13"
@@ -59,6 +71,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       db.vm.provider "virtualbox" do |v|
           v.customize [ "modifyvm", :id, "--cpus", "1" ]
           v.customize [ "modifyvm", :id, "--memory", "1024" ]
+          # handle automatic clock skew fix when box is resumed after long sleeps. 
+          # without this ntpd will not catch up on its own and you have to run
+          # sudo ntpdate ntp.ubuntu.com to resync clocks
+          v.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 10000 ]
       end
 
       db.vm.network "private_network", ip: "192.168.205.12"

@@ -17,25 +17,66 @@
   become_user: apim
   become_method: sudo
 
-- name: stop the old containers
-  shell: docker-compose -f docker-compose-dbs-onehost.yml stop  chdir=/home/apim
+- name: Check for existing containers
+  shell: docker ps -aq
   become: yes
   become_user: apim
   become_method: sudo
   ignore_errors: yes
-  environment:
-      COMPOSE_HTTP_TIMEOUT: 2000
+  register: docker_ps_db_containers
 
-- name: remove the old containers
-  shell: docker-compose -f docker-compose-dbs-onehost.yml rm -f chdir=/home/apim
+# ignore errors here since this call will fail if there are no containers running
+- name: remove existing containers
+  shell: docker rm -f `docker ps -aq` chdir=/home/apim
   become: yes
   become_user: apim
   become_method: sudo
   ignore_errors: yes
-  environment:
-      COMPOSE_HTTP_TIMEOUT: 2000
+  when: kill_db_containers == True and docker_ps_db_containers.stdout
+  register: docker_rm_db_containers
 
-- pause: seconds=15
+- pause: seconds=30
+  when: kill_db_containers == True and docker_ps_db_containers.stdout
+
+#- name: stop the old containers
+#  shell: docker-compose -f docker-compose-dbs-onehost.yml stop  chdir=/home/apim
+#  become: yes
+#  become_user: apim
+#  become_method: sudo
+#  ignore_errors: yes
+#  environment:
+#      COMPOSE_HTTP_TIMEOUT: 2000
+#
+#- name: remove the old containers
+#  shell: docker-compose -f docker-compose-dbs-onehost.yml rm -f chdir=/home/apim
+#  become: yes
+#  become_user: apim
+#  become_method: sudo
+#  ignore_errors: yes
+#  environment:
+#      COMPOSE_HTTP_TIMEOUT: 2000
+#
+#- pause: seconds=15
+
+- name: clear persistent container data
+  file:
+    state: absent
+    path: "/home/apim/{{item}}"
+  with_items:
+    - slapd_data
+    - beanstalkd_data
+    - mongo_data
+    - mysql_core_data
+    - mysql_auth_data
+  when: kill_db_containers and create_persistent_db_volumes
+
+- name: pull the docker images
+  shell: docker-compose -f docker-compose-dbs-onehost.yml pull --ignore-pull-failures chdir=/home/apim
+  become: yes
+  become_user: apim
+  become_method: sudo
+  environment:
+      COMPOSE_HTTP_TIMEOUT: 20000
 
 - name: start the containers with docker compose
   shell: docker-compose -f docker-compose-dbs-onehost.yml up -d  chdir=/home/apim
@@ -43,4 +84,4 @@
   become_user: apim
   become_method: sudo
   environment:
-      COMPOSE_HTTP_TIMEOUT: 2000
+      COMPOSE_HTTP_TIMEOUT: 20000

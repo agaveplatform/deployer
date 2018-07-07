@@ -2,6 +2,9 @@
 - name: check if A_deployed
   stat: path=/home/apim/A_deployed
   register: A
+  become: yes
+  become_user: apim
+  become_method: sudo
 
 - name: msg
   debug: msg="A containers are not deployed (A_deployed path doesn't exist)"
@@ -10,6 +13,9 @@
 - name: check if B_deployed
   stat: path=/home/apim/B_deployed
   register: B
+  become: yes
+  become_user: apim
+  become_method: sudo
 
 - name: msg
   debug: msg="B containers are not deployed (B_deployed path doesn't exist)"
