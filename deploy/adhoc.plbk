@@ -1,0 +1,25 @@
+# Throwaway playbook for running adhoc roles and tasks.
+#
+
+---
+# deploy and start containers
+- hosts: all
+  become: yes
+  become_method: sudo
+
+  roles:
+    - agave_host
+  vars:
+    - clean_host: True
+
+
+#  # disable host http_proxy in /etc/profile.d files
+#  tasks:
+#    - lineinfile:
+#        dest: "{{ item }}"
+#        regexp: '^\s*(?:export)?\s*http_proxy\s*=\s*(.*)$'
+#        line: '#http_proxy=\1'
+#        backrefs: yes
+#      become: yes
+#      loop:
+#        - /etc/profile

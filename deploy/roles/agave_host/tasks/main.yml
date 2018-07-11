@@ -9,40 +9,30 @@
 - name: Disable sudo requiretty for Ansible pipelining
   lineinfile: dest=/etc/sudoers regexp="^Defaults(\s+)(.*)requiretty(.*)" line="#Defaults\1\2requiretty\3" backrefs=yes
   become: yes
-  become_user: root
-  become_method: sudo
   when: etc_sudoers.stat.exists
   ignore_errors: True
 
 - name: remove apim dir
   shell: rm -rf /home/apim
   become: yes
-  become_user: root
-  become_method: sudo
   when: clean_host
   ignore_errors: True
 
 - name: remove ansible temp dir
   shell: rm -rf /root/.ansible/tmp
   become: yes
-  become_user: root
-  become_method: sudo
   when: clean_host
   ignore_errors: True
 
 - name: remove containers
-  shell: docker rm -f `docker ps -aq`
+  shell: "docker ps -aq | xargs --no-run-if-empty docker rm -f"
   become: yes
-  become_user: root
-  become_method: sudo
   when: clean_host
   ignore_errors: True
 
 - name: Add agave services user
   user: name={{ agave_linux_user_name }} generate_ssh_key=yes state=present
   become: yes
-  become_user: root
-  become_method: sudo
 
 - name: Add vagrant user to sudoers with no password
   lineinfile:
@@ -51,8 +41,6 @@
     state: present
     create: yes
   become: yes
-  become_user: root
-  become_method: sudo
   when: ansible_ssh_user == "vagrant"
 
 - name: Add user apim to sudoers with no password
@@ -62,26 +50,20 @@
     state: present
     create: yes
   become: yes
-  become_user: root
-  become_method: sudo
 
 - name: Add user apim's key to authorized keys
   shell: cat id_rsa.pub > authorized_keys chdir=/home/apim/.ssh creates=/home/apim/.ssh/authorized_keys
   become: yes
   become_user: apim
-  become_method: sudo
 
 - name: Ensure permissions on apim sudoers
   file: path=/etc/sudoers.d/99-apim-user mode=0440 owner=root
   become: yes
-  become_user: root
-  become_method: sudo
 
 - name: Ensure .bashrc file is present
   shell: cp -n /etc/skel/{{item}} /home/apim/{{item}}
   become: yes
   become_user: apim
-  become_method: sudo
   when: clean_host
   with_items:
     - ".bashrc"
@@ -94,7 +76,6 @@
               state=absent
   become: yes
   become_user: apim
-  become_method: sudo
 
 - name: Add shopt -s expand_aliases to .bashrc file to expand aliases on remote commands
   lineinfile: dest=/home/apim/.bashrc
@@ -102,7 +83,6 @@
               state=present
   become: yes
   become_user: apim
-  become_method: sudo
 
 - name: Create .bashrc.d directory to hold custom scripts to source on login
   file:
@@ -110,15 +90,12 @@
     state: directory
   become: yes
   become_user: apim
-  become_method: sudo
 
 - name: Remove sourcing of .bashrc.d folder contents from .bashrc file
   lineinfile: dest=/home/apim/.bashrc
               regexp="^if \[\[ -e \$HOME/\.bashrc\.d \]\]"
               state=absent
   become: yes
-  become_user: root
-  become_method: sudo
 
 - name: Add sourcing of .bashrc.d folder contents at login to .bashrc file
   lineinfile: dest=/home/apim/.bashrc
@@ -126,47 +103,33 @@
               state=present
   become: yes
   become_user: apim
-  become_method: sudo
 
-- name: Add scirpt to .bashrc.d folder to disable squid proxy on this host by default
-  copy:
-    src: "../files/{{item}}"
-    dest: /home/apim/.bashrc.d/disable_squid_proxy.sh
-    mode: 0740
-  with_items:
-    - disable_squid_proxy.sh
-  become: yes
-  become_user: apim
-  become_method: sudo
+- name: Disabling known http proxy config file settings on host
+  include_tasks: disable_http_proxies.yml
+  when: disable_http_proxies|bool
 
 - name: give other users access to apim home directory
   file: path=/home/apim mode=0750
   become: yes
-  become_user: root
-  become_method: sudo
 
 - name: add common RHEL software packages
   yum: name='{{ item }}' state=present update_cache=yes
   become: yes
-  become_user: root
-  become_method: sudo
   when: ansible_os_family == "RedHat"
   with_items:
       - ntp
+      - jq
 
 - name: add common Debian software packages
   apt: name='{{ item }}' state=present update_cache=yes
   become: yes
-  become_user: root
-  become_method: sudo
   when: ansible_os_family == "Debian"
   with_items:
       - ntp
+      - jq
 
 - name: ensure services enabled
   service: name='{{ item }}' state=started enabled=yes
   become: yes
-  become_user: root
-  become_method: sudo
   with_items:
       - ntpd

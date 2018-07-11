@@ -10,7 +10,7 @@
 ---
 
 - name: Ensure no containers are running
-  shell: docker rm -f `docker ps -aq` chdir=/home/apim
+  shell: "docker ps -aq | xargs --no-run-if-empty docker rm -f"
   sudo: yes
   sudo_user: apim
   ignore_errors: yes

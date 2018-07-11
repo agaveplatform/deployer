@@ -38,6 +38,20 @@
   become_method: sudo
   ignore_errors: yes
 
+- name: Remove previous docker directories. This blows away all docker networking
+  file:
+    path: "{{item}}"
+    state: absent
+  with_items:
+    - /var/docker/network
+    - /etc/docker
+    - /var/lib/docker
+    - /run/docker.sock
+    - /run/docker.pid
+    - /etc/systemd/system/docker.service.d
+  when:  update_docker_version
+
+
 - shell: uname -r
   register: kernel_version
 

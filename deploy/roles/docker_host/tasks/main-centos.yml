@@ -33,6 +33,7 @@
     - /var/lib/docker
     - /run/docker.sock
     - /run/docker.pid
+    - /etc/systemd/system/docker.service.d
   when:  update_docker_version
 
 - name: Ensure new docker networking directory is present

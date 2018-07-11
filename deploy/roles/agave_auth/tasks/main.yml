@@ -173,7 +173,7 @@
 
 # note: this should almost never be used; exception is when wanting to competely start from scratch.
 - name: remove all auth containers
-  shell: docker rm -f `docker ps -aq`
+  shell: "docker ps -aq | xargs --no-run-if-empty docker rm -f"
   ignore_errors: yes
   become: yes
   become_user: apim

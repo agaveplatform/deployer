@@ -12,7 +12,7 @@
   become_method: sudo
 
 - name: stop containers
-  shell: docker rm -f `docker ps -aq`
+  shell: "docker ps -aq | xargs --no-run-if-empty docker rm -f"
   when: stop_containers
   become: yes
   become_user: apim

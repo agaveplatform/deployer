@@ -83,7 +83,7 @@
 
 # ignore errors here since this call will fail if there are no containers running
 - name: remove existing containers
-  shell: docker rm -f `docker ps -aq` chdir=/home/apim/core-apis/
+  shell: "docker ps -aq | xargs --no-run-if-empty docker rm -f"
   become: yes
   become_user: apim
   become_method: sudo
