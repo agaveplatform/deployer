@@ -65,4 +65,4 @@ agave_core_smtps_provider: sendgrid
 agave_core_smtps_host: smtp.sendgrid.net
 agave_core_smtps_auth: true
 agave_core_smtps_port: 587
-agave_core_smtps_user: agavedev
+agave_core_smtps_user: agaveapi

@@ -6,9 +6,10 @@ six
 pycrypto
 pytz
 cryptography
-shade
-ansible>=2.3
+openstacksdk>0.12
+ansible>=2.5
 #guzzle_sphinx_theme
 sphinx_rtd_theme
 boto
+sphinx
 recommonmark

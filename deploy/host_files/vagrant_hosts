@@ -50,11 +50,13 @@ core_api
 core_workers
 
 [core_api]
-vagrant.core.core_api ansible_ssh_host=192.168.205.11 ansible_ssh_user=vagrant agave_core_api_only=True
+vagrant.core.core_api ansible_ssh_host=192.168.205.11 ansible_ssh_user=vagrant agave_core_api_only=True agave_core_tenants_mem_limit=512m agave_core_logging_mem_limit=512m agave_core_docs_mem_limit=512m agave_core_uuids_mem_limit=1024m agave_core_tags_mem_limit=1024m agave_core_realtime_mem_limit=512m agave_core_metadata_mem_limit=1024m agave_core_monitors_mem_limit=1024m agave_core_systems_mem_limit=2048m agave_core_apps_mem_limit=2048m agave_core_files_mem_limit=4096m agave_core_jobs_mem_limit=4096m agave_core_notifications_mem_limit=2048m
 
 [core_workers]
-vagrant.core.core_worker ansible_ssh_host=192.168.205.13 agave_core_workers_only=True agave_core_job_max_submission_task=1 agave_core_job_max_staging_tasks=1 agave_core_job_max_archiving_tasks=1  agave_core_job_max_monitoring_tasks=1 agave_core_files_max_staging_tasks=2 agave_core_files_max_transform_tasks=1
+vagrant.core.core_worker ansible_ssh_host=192.168.205.13 agave_core_workers_only=True agave_core_job_max_submission_task=1 agave_core_job_max_staging_tasks=1 agave_core_job_max_archiving_tasks=1  agave_core_job_max_monitoring_tasks=1 agave_core_files_max_staging_tasks=2 agave_core_files_max_transform_tasks=1 core_deploy_monitors=False core_deploy_notifications=False core_deploy_transforms=False agave_core_jobs_mem_limit=2048m agave_core_files_mem_limit=2048m
 
 [db]
 vagrant.db ansible_ssh_host=192.168.205.12
 
+[local]
+localhost ansible_connection=local

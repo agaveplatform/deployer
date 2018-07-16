@@ -25,3 +25,4 @@ local/vagrant/3-host
 local/vagrant/2-host
 local/vagrant/2-host/Vagrantfile
 local/vagrant/3-host/Vagrantfile
+/deploy/host_files/openstack.yml

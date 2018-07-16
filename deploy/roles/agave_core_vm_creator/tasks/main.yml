@@ -68,7 +68,7 @@
         password: "{{os_password}}"
     server: "{{os_core_vm_name}}"
     region_name: "{{os_region}}"
-    floating_ip_address: {{os_core_vm_ip_address}}
+    floating_ip_address: "{{os_core_vm_ip_address}}"
     reuse: yes
     wait: yes
     timeout: 300

@@ -160,7 +160,7 @@ systems:
 {% endif %}
 
 
-{% if core_deploy_monitors and not agave_core_workers_only %}
+{% if core_deploy_monitors %}
 monitors:
   extends:
     file: common.yml
@@ -171,8 +171,8 @@ monitors:
 {% endif %}
   restart: "always"
   environment:
-    - 'IPLANT_MAX_MONITOR_TASKS={{agave_core_monitors_max_tasks if not agave_core_api_only else 0}}'
-    - 'IPLANT_MAX_MONITOR_RETRIES={{agave_core_monitors_max_retries if not agave_core_api_only else 0}}'
+    - 'IPLANT_MAX_MONITOR_TASKS={{agave_core_monitors_max_tasks}}'
+    - 'IPLANT_MAX_MONITOR_RETRIES={{agave_core_monitors_max_retries}}'
   volumes:
     - '/home/apim/logs/monitors:/opt/tomcat/logs'
     - '/home/apim/core-apis/scratch/monitors:/scratch'
@@ -247,7 +247,7 @@ metadata:
 {% endif %}
 
 
-{% if core_deploy_notifications and not agave_core_workers_only %}
+{% if core_deploy_notifications %}
 notifications:
   extends:
     file: common.yml
@@ -257,7 +257,7 @@ notifications:
   mem_limit: {{ agave_core_notifications_mem_limit }}
 {% endif %}
   environment:
-    - 'IPLANT_MAX_NOTIFICATION_TASKS={{agave_core_notifications_max_notification_tasks if not agave_core_api_only else 0}}'
+    - 'IPLANT_MAX_NOTIFICATION_TASKS={{agave_core_notifications_max_notification_tasks}}'
   volumes:
     - '/home/apim/logs/notifications:/opt/tomcat/logs'
     - '/home/apim/core-apis/scratch/notifications:/scratch'
@@ -286,11 +286,9 @@ transforms:
   mem_limit: {{ agave_core_transforms_mem_limit }}
 {% endif %}
   environment:
-    - 'IPLANT_MAX_STAGING_TASKS={{agave_core_transforms_max_staging_tasks if not agave_core_api_only else 0}}'
-    - 'IPLANT_MAX_TRANSFORM_TASKS={{agave_core_transforms_max_transform_tasks if not agave_core_api_only else 0}}'
+    - 'IPLANT_MAX_STAGING_TASKS={{agave_core_transforms_max_staging_tasks}}'
+    - 'IPLANT_MAX_TRANSFORM_TASKS={{agave_core_transforms_max_transform_tasks}}'
     - 'GLOBUS_TCP_PORT_RANGE=50601,50610'
-    #- 'IPLANT_MAX_ARCHIVE_TASKS={{agave_core_transforms_max_transform_tasks}}'
-    #- 'IPLANT_MAX_SUBMISSION_TASKS={{agave_core_transforms_max_transform_tasks}}'
   volumes:
     - '/home/apim/logs/transforms:/opt/tomcat/logs'
     - '/home/apim/core-apis/scratch/transforms:/scratch'

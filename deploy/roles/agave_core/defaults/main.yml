@@ -267,9 +267,8 @@ core_deploy_metadata: true
 # Max memory for the transforms container. 2GB should be more than enough.
 # Add containers if you run out of memory.
 agave_core_transforms_mem_limit: 2048m
-agave_core_transforms_max_staging_tasks: 2
-agave_core_transforms_max_transform_tasks: 2
-core_deploy_notifications: true
+agave_core_transforms_max_staging_tasks: 1
+agave_core_transforms_max_transform_tasks: 1
 core_deploy_transforms: true
 
 # Max memory for the realtime container. 2GB should be more than enough.
@@ -297,7 +296,7 @@ core_deploy_postits: true
 
 # Max memory for the usage container. PHP services rarely need more than 2GB
 agave_core_usage_mem_limit: 2048m
-core_deploy_usage: true
+core_deploy_usage: false
 
 # Max memory for the tenants container. PHP services rarely need more than 2GB
 agave_core_tenants_mem_limit: 1024m
@@ -309,7 +308,7 @@ core_deploy_logging: true
 
 # Max memory for the postits container. PHP services rarely need more than 2GB
 agave_core_docs_mem_limit: 1024m
-core_deploy_docs: true
+core_deploy_docs: false
 
 # Max memory for the stats container. PHP services rarely need more than 2GB
 agave_core_stats_mem_limit: 2048m
@@ -322,6 +321,7 @@ agave_core_notifications_mem_limit: 2048m
 agave_core_notifications_max_notification_tasks: 2
 agave_core_notification_queue: "{{tenant_id}}.notifications.queue"
 agave_core_notification_topic: "{{tenant_id}}.notifications.topic"
+core_deploy_notifications: true
 # notifications have a retry policy with optional persistence upon failure. If failed, this configures
 # where to write the failed notification and the terms of persistence. By default, the metadata service's
 # mongodb is used.

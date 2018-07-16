@@ -128,10 +128,10 @@ You can see these example hosts present in the ``[auth]``, ``[core]``, and ``[db
     core_workers
 
     [core_api]
-    api.core.example.com ansible_ssh_host=192.168.205.11  agave_core_api_only=True
+    api.core.example.com ansible_ssh_host=192.168.205.11  agave_core_api_only=True 
 
     [core_workers]
-    worker.core.example.com ansible_ssh_host=192.168.205.13  agave_core_workers_only=True
+    worker.core.example.com ansible_ssh_host=192.168.205.13  agave_core_workers_only=True core_deploy_monitors=False core_deploy_notifications=False core_deploy_transforms=False
 
 
 To use this example, modify the file to match your environment and specifications, and save it as /etc/ansible/hosts.
@@ -257,6 +257,12 @@ You can see these example hosts present in the ``[auth]``, ``[core_api]``, and `
                   # full run of the host's memory, disk, and cpu share.
                   data.worker.core.example.com:
                     ansible_ssh_host: 192.168.205.13
+                    # Do not deploy the monitor worker containers on this host
+                    core_deploy_monitors: False 
+		    # Do not deploy the notificaiton  worker containers on this host
+                    core_deploy_notifications: False
+		    # Do not deploy the transform worker containers on this host 
+                    core_deploy_transforms: False
                     # Do not deploy the job worker containers on this host
                     core_deploy_jobs: False
                     # Tell the workers to accept tasks for anyone but user jdoe.
@@ -279,6 +285,12 @@ You can see these example hosts present in the ``[auth]``, ``[core_api]``, and `
                   # full run of the host's memory, disk, and cpu share.
                   jobs.worker.core.example.com:
                     ansible_ssh_host: 192.168.205.14
+                    # Do not deploy the monitor worker containers on this host
+                    core_deploy_monitors: False
+                    # Do not deploy the notificaiton  worker containers on this host
+                    core_deploy_notifications: False
+                    # Do not deploy the transform worker containers on this host
+                    core_deploy_transforms: False
                     # Do not deploy the data worker containers on this host
                     core_deploy_files: False
                     # Tell the workers to accept tasks for anyone but user jdoe.
@@ -303,6 +315,12 @@ You can see these example hosts present in the ``[auth]``, ``[core_api]``, and `
                   # these settings.
                   jdoe.worker.core.example.com:
                     ansible_ssh_host: 192.168.205.15
+                    # Do not deploy the monitor worker containers on this host
+                    core_deploy_monitors: False
+                    # Do not deploy the notificaiton  worker containers on this host
+                    core_deploy_notifications: False
+                    # Do not deploy the transform worker containers on this host
+                    core_deploy_transforms: False
                     # Only process tasks for user jdoe
                     agave_core_dedicated_user_ids: jdoe
                     # Cap job container memory at 16GB. Notice the "g"

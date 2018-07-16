@@ -82,7 +82,7 @@ jwt_header:  HTTP_X_JWT_ASSERTION_SANDBOX
 agave_id_apim_pub_key: /home/apim/public_keys/apim_default.pub
 
 # APIM Role required to make updates to the LDAP database
-agave_id_user_admin_role: Internal/user-account-manager
+agave_id_user_admin_role: "Internal/{{tenant_id}}-user-account-manager"
 
 # Whether or not the USER_ADMIN_ROLE before allowing updates to the LDAP db (/users service)
 agave_id_check_user_admin_role: True

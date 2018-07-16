@@ -25,6 +25,10 @@ Options:
       --notify-slack [url] The Slack Incoming Webhook URL to which the test result summary will be
                            posted. See https://my.slack.com/services/new/incoming-webhook/ for more info.
       --add-host [host:ip] Any additional hosts to add into the docker containers.
+      --use-native-binary  Will use the native newman binary instead of running in a docker container.
+                           This requires the Agave tenant hostname be resolvable on the host either
+                           through publicly resolveable hostname or an entry in this host's /etc/hosts
+                           file.
   -t, --dry-run            Run the filters and set the environment, but skip actual test run
   -h, --help               Show this help information.
   -v, --verbose            Increase script verbosity.
@@ -84,6 +88,9 @@ See https://my.slack.com/services/new/incoming-webhook/ for more information." 1
     elif [[ $1 = "--add-host" ]] && [[ -n "$2" ]]; then
       extra_hosts+=( "$1 $2" )
       shift 2
+    elif [[ $1 = "--use-native-binary" ]]; then
+      use_native_binary=1
+      shift
     else
       break
     fi
@@ -146,11 +153,9 @@ function main() {
     # if we are skipping the frontend, update the environment accordingly
     if (( $skip_frontend )); then
         # update the environment setting SKIP_FRONTEND=true
-        #cat "$_ENVIRONMENT" | jq '.values |= map((select(.key == "SKIP_FRONTEND") | .value) |= "true")' > "$FILTERED_ENVIRONMENT"
         cat "$_ENVIRONMENT" | sed 's/%%SKIP_FRONTEND%%/true/' > "${FILTERED_ENVIRONMENT}"
     else
         # update the environment ensuring SKIP_FRONTEND=false
-        #cat "$_ENVIRONMENT" | jq '.values |= map((select(.key == "SKIP_FRONTEND") | .value) |= "")' > "$FILTERED_ENVIRONMENT"
         cat "$_ENVIRONMENT" | sed 's/%%SKIP_FRONTEND%%//' > "${FILTERED_ENVIRONMENT}"
     fi
 
@@ -224,7 +229,45 @@ function main() {
                 -c $FILTERED_COLLECTION || true
 
     # if we are not posting to slack, we run the collection manually in a docker container
-    else
+    elif
+
+      (( $verbose )) && echo "Starting docker newman runner ...";
+
+      # if newman is installed locally
+      if (( $use_native_binary )); then
+
+          NODE_DEBUG=$( (( debug )) && echo "http,request,net" || echo "false" )
+
+          echo -e "newman run
+             --disable-unicode \
+             --timeout-request 60000 \
+             --delay-request 25 \
+             --insecure \
+             --no-color \
+             --reporters cli,html,json,junit \
+             --reporter-json-export reports/newman-report.json \
+             --reporter-junit-export reports/newman-report.xml \
+             --reporter-html-export reports/newman-report.html \
+             --environment $FILTERED_ENVIRONMENT \
+             --iteration-data $_ITERATION_DATA \
+             $FILTERED_COLLECTION"
+
+          newman run
+             --disable-unicode \
+             --timeout-request 60000 \
+             --delay-request 25 \
+             --insecure \
+             --no-color \
+             --reporters cli,html,json,junit \
+             --reporter-json-export reports/newman-report.json \
+             --reporter-junit-export reports/newman-report.xml \
+             --reporter-html-export reports/newman-report.html \
+             --environment "$FILTERED_ENVIRONMENT" \
+             --iteration-data "$_ITERATION_DATA" \
+             "$FILTERED_COLLECTION"
+
+      # if newman is not installed locally, use docker
+      else
 
         echo "docker run \
              --rm=true \
@@ -246,7 +289,7 @@ function main() {
              --iteration-data $_ITERATION_DATA \
              $FILTERED_COLLECTION"
 
-        (( $verbose )) && echo "Starting docker newman runner ...";
+
         docker run \
              --rm=true \
              -l newman -l $TENANT \
@@ -267,6 +310,7 @@ function main() {
              --environment "$FILTERED_ENVIRONMENT" \
              --iteration-data "$_ITERATION_DATA" \
              "$FILTERED_COLLECTION"
+      fi
 
     fi
 

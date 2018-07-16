@@ -36,7 +36,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       core.vm.provider "virtualbox" do |v|
           v.customize [ "modifyvm", :id, "--cpus", "2" ]
-          v.customize [ "modifyvm", :id, "--memory", "2048" ]
+          v.customize [ "modifyvm", :id, "--memory", "3072" ]
           # handle automatic clock skew fix when box is resumed after long sleeps. 
           # without this ntpd will not catch up on its own and you have to run
           # sudo ntpdate ntp.ubuntu.com to resync clocks
