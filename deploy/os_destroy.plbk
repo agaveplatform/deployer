@@ -39,8 +39,8 @@
         agave_security_group_namespace: "{{agave_security_group_namespace}}"
 
         os_auth_vm_name: "{{agave_namespace}}.agave.auth"
-        os_core_api_vm_name: "{{agave_namespace}}.agave.core.api"
-        os_core_worker_vm_name: "{{agave_namespace}}.agave.core.worker"
+        os_core_api_vm_name: "{{agave_namespace}}.agave.core.core_api"
+        os_core_worker_vm_name: "{{agave_namespace}}.agave.core.core_workers"
         os_db_vm_name: "{{agave_namespace}}.agave.db"
 
         os_auth_security_group: "{{agave_security_group_namespace}}.auth"
