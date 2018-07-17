@@ -21,12 +21,24 @@
 #   os_keyname
 #   os_securitygroup
 #   os_network
+#   os_instance_username
+#   os_key_file_src
 #
 #   OPTIONAL VARIABLES
-#   os_ip_address - Set ip if you'd like to assign an existing floating ip address
-#   os_skip_floating_ip - True to completely skip assigning any floating ip.
-#                       This is helpful when the cloud provider assigns static
-#                       ip on every instance by default.
+#   os_security_groups   - the additional security groups to attach to the
+#                          instance. `default` will be attached regardless.
+#   agave_namespace      - the namespace for this instance to group when
+#                          using dynamic inventory.
+#   os_instance_group    - the primary agave component group in which to
+#                          place this instance: auth, core, db
+#   os_instance_extra_groups  - a list of additional component subgroups
+#                          in which to place this instance. Ex. core_workers, mysql
+
+#   os_ip_address        - Set ip if you'd like to assign an existing floating
+#                          ip address
+#   os_skip_floating_ip  - True to completely skip assigning any floating ip.
+#                          This is helpful when the cloud provider assigns
+#                          static ip on every instance by default.
 #
 ################################################################################
 
@@ -45,12 +57,12 @@
     availability_zone: "{{os_zone}}"
     image: "{{os_image}}"
     key_name: "{{os_keyname}}"
-    security_groups: "{{ os_auth_security_group|join(',') + ',' if os_auth_security_group|len > 0 else ''}}default"
+    security_groups: "{{ os_security_groups|join(',') + ',' if os_security_groups|length > 0 else ''}}default"
     network: "{{os_network}}"
     auto_ip: "{{ 'yes' if os_instance_ip_address is undefined and os_skip_floating_ip == False else 'no'}}"
     meta:
       group: "{{os_instance_group}}"
-      extra_groups: "{{os_instance_extra_groups}}"
+      extra_groups: "{{ os_instance_extra_groups|join(',') if os_instance_extra_groups|length > 0 else '' }}"
       environment: "{{agave_namespace|default('')}}"
       tenant: "{{agave_namespace|default('')}}"
       ansible_user: "{{os_instance_username}}"
@@ -69,7 +81,7 @@
         password: "{{os_password}}"
     server: "{{os_vm_name}}"
     region_name: "{{os_region}}"
-    floating_ip_address: {{os_ip_address}}
+    floating_ip_address: "{{os_ip_address}}"
     reuse: yes
     wait: yes
     timeout: 300

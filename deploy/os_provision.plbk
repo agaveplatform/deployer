@@ -81,18 +81,25 @@
   hosts: local
 
   roles:
-    - role: agave_auth_vm_creator
+    - role: os_instance_creator
       tags:
         - auth
     - role: os_instance_creator
       tags:
         - auth
       vars:
-        os_core_vm_name: "{{os_auth_vm_name}}"
+        os_vm_name: "{{os_auth_vm_name}}"
         os_security_groups:
           - "{{os_auth_security_group}}"
         os_instance_group: auth
         os_instance_extra_groups:
+          - apim
+          - admin_services
+          - clients
+          - profiles
+          - registration
+          - togo
+          - realtime
 
 
 - name: Provision DB VM Instances
@@ -103,7 +110,7 @@
       tags:
         - db
       vars:
-        os_core_vm_name: "{{os_db_vm_name}}"
+        os_vm_name: "{{os_db_vm_name}}"
         os_security_groups:
           - "{{os_db_security_group}}"
         os_instance_group: db
@@ -124,8 +131,8 @@
         - core
         - api
       vars:
-        os_core_vm_name: "{{os_core_api_vm_name}}"
-        os_security_group:
+        os_vm_name: "{{os_core_api_vm_name}}"
+        os_security_groups:
           - "{{os_core_security_group}}"
         os_instance_group: core
         os_instance_extra_groups:
@@ -136,8 +143,8 @@
         - core
         - worker
       vars:
-        os_core_vm_name: "{{os_core_worker_vm_name}}"
-        os_security_group:
+        os_vm_name: "{{os_core_worker_vm_name}}"
+        os_security_groups:
           - "{{os_core_security_group}}"
         os_instance_group: core
         os_instance_extra_groups:

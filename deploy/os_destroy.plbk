@@ -66,24 +66,32 @@
 
   roles:
 
-    - role: agave_auth_vm_destroyer
+    - name: Delete Auth VM
+      role: os_instance_destroyer
+      vars:
+        os_vm_name: "{{os_auth_vm_name}}"
       tags:
         - auth
 
-    - role: agave_db_vm_destroyer
+    - name: Delete DB VM
+      role: os_instance_destroyer
+      vars:
+        os_vm_name: "{{os_db_vm_name}}"
       tags:
         - db
 
-    - role: agave_core_vm_destroyer
+    - name: Delete Core API VM
+      role: os_instance_destroyer
       vars:
-        os_core_vm_name: "{{os_core_api_vm_name}}"
+        os_vm_name: "{{os_core_api_vm_name}}"
       tags:
         - core
         - api
 
-    - role: agave_core_vm_destroyer
+    - name: Delete Core Worker VM
+      role: os_instance_destroyer
       vars:
-        os_core_vm_name: "{{os_core_worker_vm_name}}"
+        os_vm_name: "{{os_core_worker_vm_name}}"
       tags:
         - core
         - worker
