@@ -26,3 +26,10 @@ local/vagrant/2-host
 local/vagrant/2-host/Vagrantfile
 local/vagrant/3-host/Vagrantfile
 /deploy/host_files/openstack.yml
+
+# ignore virutalenv
+/.Python
+/bin
+/lib
+/include
+pip-selfcheck.json

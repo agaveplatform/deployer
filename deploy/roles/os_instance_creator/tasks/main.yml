@@ -45,27 +45,18 @@
     availability_zone: "{{os_zone}}"
     image: "{{os_image}}"
     key_name: "{{os_keyname}}"
-    security_groups: "{{os_security_group}},default"
+    security_groups: "{{ os_auth_security_group|join(',') + ',' if os_auth_security_group|len > 0 else ''}}default"
     network: "{{os_network}}"
-    auto_ip: no
+    auto_ip: "{{ 'yes' if os_instance_ip_address is undefined and os_skip_floating_ip == False else 'no'}}"
+    meta:
+      group: "{{os_instance_group}}"
+      extra_groups: "{{os_instance_extra_groups}}"
+      environment: "{{agave_namespace|default('')}}"
+      tenant: "{{agave_namespace|default('')}}"
+      ansible_user: "{{os_instance_username}}"
+      ansible_ssh_private_key_file: "{{os_key_file_src}}"
     wait: yes
     timeout: 300
-
-- name: Get VM Floating IP from existing pool
-  os_floating_ip:
-    state: present
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
-    server: "{{os_vm_name}}"
-    region_name: "{{os_region}}"
-    reuse: yes
-    wait: yes
-    timeout: 300
-  when: os_ip_address is undefined and os_skip_floating_ip
 
 - name: Assign the provided Floating IP address to the VM
   os_floating_ip:
@@ -82,4 +73,4 @@
     reuse: yes
     wait: yes
     timeout: 300
-  when: os_ip_address is defined and os_skip_floating_ip is not true
+  when: os_instance_ip_address is defined and os_skip_floating_ip == False

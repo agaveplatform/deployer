@@ -1,0 +1,13 @@
+---
+# the default group to assign this vm to for
+# inventory and metadata purposes
+os_instance_group: agave
+
+# Any additioanl groups to assign them vm to
+# If empty, none will be applied.
+os_instance_extra_groups: []
+
+# The secruity group(s) to apply to the
+# instance. The default security group will
+# always be applied in order to enable ssh
+os_security_groups: []

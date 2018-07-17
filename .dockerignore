@@ -34,3 +34,7 @@ apim.priv.key
 
 build/
 tmp/
+/bin
+/lib
+/include
+.Python
