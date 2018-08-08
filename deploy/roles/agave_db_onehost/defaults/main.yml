@@ -3,3 +3,4 @@ mysql_mem_limit: False
 mongo_mem_limit: False
 kill_db_containers: True
 create_persistent_db_volumes: True
+core_deploy_maildev: False

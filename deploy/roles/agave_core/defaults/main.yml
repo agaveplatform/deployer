@@ -90,10 +90,11 @@ mysql_core_password: "{{ mysql_password| default('d3f@ult$') }}"
 # Default email provider. Can be sendgrid, smtp, local, log, or none
 agave_core_smtps_provider: sendgrid
 agave_core_smtps_host: smtp.sendgrid.net
-agave_core_smtps_auth: true
 agave_core_smtps_port: 587
 agave_core_smtps_user: agavedev
-
+agave_core_smtps_auth: true
+agave_core_smtps_from_name: Agave Notifications
+agave_core_smtps_from_address: no-reply@agaveplatform.org
 
 ######################################################################################
 #
@@ -135,7 +136,7 @@ agave_core_max_relay_transfer_size: 1
 agave_core_java_mem_limit: 2048m
 
 # Base memory config on all php containers. This can be overridden on a container by container basis
-agave_core_php_mem_limit: 2048m
+agave_core_php_mem_limit: 1024m
 
 # Max results that can be returned by any api call
 agave_core_max_page_size: 250
@@ -246,10 +247,10 @@ core_deploy_systems: true
 # API only deployment. For single host deployments and worker containers,
 # this can be bumped up to 8GB based on the number of monitoring tasks
 # and frequency with which they run.
-agave_core_monitors_mem_limit: 8192m
+agave_core_monitors_mem_limit: 4096m
 agave_core_monitor_min_check_interval: 0
 agave_core_monitors_max_tasks: 1
-agave_core_monitors_max_retries: 5
+agave_core_monitors_max_retries: 3
 core_deploy_monitors: true
 
 # Max memory for the transforms container. 2GB should be more than enough.
@@ -261,7 +262,7 @@ core_deploy_custom_profiles: false
 # under normal usage. If request size is particularly large, bump the
 # memory by a couple gig. Anything over 4GB, and you should scale out
 # the containers rather than bumping this one in size.
-agave_core_metadata_mem_limit: 4048m
+agave_core_metadata_mem_limit: 4096m
 core_deploy_metadata: true
 
 # Max memory for the transforms container. 2GB should be more than enough.
@@ -278,7 +279,7 @@ agave_core_realtime_provider: none
 agave_core_realtime_service: ""
 agave_core_realtime_service_realm_id:
 agave_core_realtime_service_realm_key:
-core_deploy_realtime: true
+core_deploy_realtime: false
 
 # Max memory for the tags container. 2GB should be more than enough.
 # Add containers if you run out of memory.
@@ -306,8 +307,8 @@ core_deploy_tenants: true
 agave_core_logging_mem_limit: 1024m
 core_deploy_logging: true
 
-# Max memory for the postits container. PHP services rarely need more than 2GB
-agave_core_docs_mem_limit: 1024m
+# Max memory for the documentation container. Should never need more than 1GB
+agave_core_docs_mem_limit: 512m
 core_deploy_docs: false
 
 # Max memory for the stats container. PHP services rarely need more than 2GB

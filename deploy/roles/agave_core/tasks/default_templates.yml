@@ -82,7 +82,7 @@
   register: docker_ps_core_containers
 
 # ignore errors here since this call will fail if there are no containers running
-- name: remove existing containers
+- name: Remove existing containers
   shell: "docker ps -aq | xargs --no-run-if-empty docker rm -f"
   become: yes
   become_user: apim
@@ -94,7 +94,7 @@
 - pause: seconds=30
   when: kill_core_containers and docker_ps_core_containers.stdout
 
-- name: start the core-apis proxy container with docker compose
+- name: Start the core-apis proxy container with docker compose
   shell: docker-compose -p apim -f proxy.yml up -d chdir=/home/apim/core-apis/
   become: yes
   become_user: apim
@@ -102,6 +102,3 @@
   environment:
       AGAVE_VERSION: '{{ agave_core_version }}'
       COMPOSE_HTTP_TIMEOUT: 2000
-
-
-

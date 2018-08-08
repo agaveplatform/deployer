@@ -16,6 +16,8 @@ mysql_core:
     MYSQL_USER: {{ mysql_core_user }}
     MYSQL_ROOT_PASSWORD: {{ mysql_root_password }}
     MYSQL_PASSWORD: {{ mysql_core_password }}
+  labels:
+    - "traefik.enable=false"
 
 mysql_auth:
   image: mysql:5.6
@@ -34,6 +36,8 @@ mysql_auth:
     MYSQL_USER: {{mysql_tenant_user}}
     MYSQL_ROOT_PASSWORD: {{ mysql_root_password }}
     MYSQL_PASSWORD: {{ mysql_tenant_pass }}
+  labels:
+    - "traefik.enable=false"
 
 mongo:
   image: agaveplatform/mongodb:2.6
@@ -50,6 +54,8 @@ mongo:
   environment:
     MONGODB_USERNAME: {{ mongodb_user }}
     MONGODB_PASSWORD: {{ mongodb_password }}
+  labels:
+    - "traefik.enable=false"
 
 beanstalk:
   image: agaveplatform/beanstalkd
@@ -60,6 +66,8 @@ beanstalk:
   volumes:
     - /home/apim/beanstalkd_data:/var/log/beanstalkd
 {% endif %}
+  labels:
+    - "traefik.enable=false"
 
 slapd:
   image: agaveplatform/slapd
@@ -67,10 +75,48 @@ slapd:
   ports:
     - "389:389"
   environment:
-      LDAP_DOMAIN: agaveapi
-      LDAP_ORGANISATION: "Agave"
-      LDAP_ROOTPASS: {{ auth_ldap_bind_password }}
+    LDAP_DOMAIN: agaveapi
+    LDAP_ORGANISATION: "Agave"
+    LDAP_ROOTPASS: {{ auth_ldap_bind_password }}
 {%  if create_persistent_db_volumes %}
   volumes:
     - /home/apim/slapd_data:/data/ldap
+{% endif %}
+  labels:
+    - "traefik.enable=false"
+
+{%  if core_deploy_maildev  %}
+maildev:
+  image: agaveplatform/maildev:latest
+  mem_limit: 512m
+  restart: on-failure
+  ports:
+    - {{agave_core_smtps_port}}:25
+    - 1080:80
+  environment:
+    OUTGOING_HOST: {{agave_core_smtps_host}}
+{% if agave_core_smtps_user %}
+    OUTGOING_USER: {{ agave_core_smtps_user }}
+{% endif %}
+{% if agave_core_smtps_password %}
+    OUTGOING_PASS: {{ agave_core_smtps_password }}
+{% endif %}
+    INCOMING_USER: {{agave_core_smtps_user}}
+    INCOMING_PASS: {{agave_core_smtps_password}}
+    AUTO_RELAY_RULES: /data/rules.json
+    BASE_PATHNAME: /mail
+    VERBOSE: 1
+  labels:
+    - "traefik.enable=true"
+    - "traefik.backend=maildev"
+    - "traefik.frontend.rule=PathPrefix:/mail"
+    - "traefik.frontend.passHostHeader=true"
+    - "traefik.port=80"
+    - "traefik.protocol=http"
+    - "traefik.frontend.entryPoints=https,http"
+{% if 1 == 2 and aems_environment != 'production' %}
+  volumes:
+    - '/home/{{ fcsa_service_account }}/aems/aems-maildev:/data'
+{% endif %}
+
 {% endif %}
