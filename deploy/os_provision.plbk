@@ -11,8 +11,8 @@
 
   vars:
 
-    agave_namespace: ci_sandbox
-    agave_security_group_namespace: ci_sandbox
+    agave_namespace: agave_ci_sandbox
+    agave_security_group_namespace: agave_ci_sandbox
 
     os_public_key: "{{ansible_env['HOME']}}/.ssh/id_rsa.pub"
     os_private_key: "{{ansible_env['HOME']}}/.ssh/id_rsa"
@@ -27,6 +27,11 @@
     os_image: 70998b22-956f-471a-9b22-d8739eb25842
     os_instance_username: centos
 
+    os_network_cidr: 10.10.9.0/24
+    os_network_allocation_pool_start: 10.10.9.2
+    os_network_allocation_pool_end: 10.10.9.254
+    os_network_gateway_ip: 10.10.9.1
+
   tasks:
 
     - name: Set Facts Collected Environment
@@ -37,8 +42,6 @@
         agave_namespace: "{{agave_namespace}}"
         agave_security_group_namespace: "{{agave_security_group_namespace}}"
 
-        os_key_file: "{{os_public_key}}"
-        os_key_file_src: "{{os_private_key}}"
         os_authurl: "{{os_authurl}}"
         os_domain: "{{os_domain}}"
         os_project: "{{os_project}}"
@@ -62,7 +65,15 @@
         os_skip_floating_ip: False
 
         os_network: "{{agave_namespace}}_net"
+        os_subnet: "{{agave_namespace}}_subnet"
+        os_network_cidr: "{{ os_network_cidr }}"
+        os_network_allocation_pool_start: "{{ os_network_allocation_pool_start }}"
+        os_network_allocation_pool_end: "{{ os_network_allocation_pool_end }}"
+        os_network_gateway_ip: "{{ os_network_gateway_ip  }}"
+
         os_keyname: "{{agave_namespace}}-key"
+        os_key_file: "{{os_public_key}}"
+        os_key_file_src: "{{os_private_key}}"
 
 
 - name: Provision Network and Security Groups

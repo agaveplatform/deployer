@@ -34,7 +34,7 @@ To assign environment variables during the Ansible install that apply more globa
 
 .. include:: ./auth-component-variables.rst
 .. include:: ./core-component-variables.rst
-
+.. include:: ./db-component-variables.rst
 
 Configuring Agave Platform Secrets
 =====================================
@@ -45,4 +45,5 @@ Several secrets are configurable by the Ansible installer for the Auth and Core 
 
 .. include:: ./auth-component-secrets.rst
 .. include:: ./core-component-secrets.rst
+.. include:: ./db-component-secrets.rst
 

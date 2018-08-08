@@ -1,9 +1,9 @@
 ---
 ################################################################################
 #
-#   VALIDATE_DEPLOYER.YML
-#   Kulisics, Joseph D.
-#   2016 June 30
+#   os_destroy.plbk
+#
+#   Tears down an infrastructure stack provisioned with openstack.
 #
 #   REQUIRED VARIABLES:
 #
@@ -14,8 +14,8 @@
 
   vars:
 
-    agave_namespace: ci_sandbox
-    agave_security_group_namespace: ci_sandbox
+    agave_namespace: agave_ci_sandbox
+    agave_security_group_namespace: agave_ci_sandbox
 
     os_public_key: "{{ansible_env['HOME']}}/.ssh/id_rsa.pub"
     os_private_key: "{{ansible_env['HOME']}}/.ssh/id_rsa"
@@ -29,6 +29,11 @@
     os_flavor: m1.medium
     os_image: 70998b22-956f-471a-9b22-d8739eb25842
     os_instance_username: centos
+
+    os_network_cidr: 10.10.9.0/24
+    os_network_allocation_pool_start: 10.10.9.2
+    os_network_allocation_pool_end: 10.10.9.254
+    os_network_gateway_ip: 10.10.9.1
 
   pre_tasks:
 
@@ -47,19 +52,19 @@
         os_core_security_group: "{{agave_security_group_namespace}}.core"
         os_db_security_group: "{{agave_security_group_namespace}}.db"
 
+        cidr: "{{ os_network_cidr }}"
+        allocation_pool_start: "{{ os_network_allocation_pool_start }}"
+        allocation_pool_end: "{{ os_network_allocation_pool_end }}"
+        gateway_ip: "{{ os_network_gateway_ip  }}"
+
         os_skip_floating_ip: False
-#
-#        os_authurl: "{{os_authurl}}"
-#        os_domain: "{{os_domain}}"
-#        os_project: "{{os_project}}"
-#        os_username: "{{os_username}}"
-#        os_password: "{{os_password}}"
-#
-#        os_region: "{{os_region}}"
-#        os_flavor: "{{os_flavor}}"
-#        os_zone: "{{os_zone}}"
-#        os_image: "{{os_image}}"
+
         os_network: "{{agave_namespace}}_net"
+        os_network_cidr: "{{ os_network_cidr }}"
+        os_network_allocation_pool_start: "{{ os_network_allocation_pool_start }}"
+        os_network_allocation_pool_end: "{{ os_network_allocation_pool_end }}"
+        os_network_gateway_ip: "{{ os_network_gateway_ip  }}"
+
         os_keyname: "{{agave_namespace}}-key"
         os_key_file: "{{os_public_key}}"
         os_key_file_src: "{{os_private_key}}"

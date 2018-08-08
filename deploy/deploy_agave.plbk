@@ -133,14 +133,6 @@
 - name: register all boutique APIs with the APIM
   import_playbook: register_boutique_apis.plbk
 
-#- name: register all boutique APIs with the APIM
-#  hosts: auth
-#  gather_facts: no
-#
-#  roles:
-#      - role: boutique_apis
-#        tags: boutique
-
 ######
 # run test suite
 #- hosts: postman

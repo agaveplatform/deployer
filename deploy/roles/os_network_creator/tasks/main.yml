@@ -13,7 +13,7 @@
 
 - name: Create OpenStack Network
   os_network:
-    name: "{{agave_namespace}}_net"
+    name: "{{ os_network }}"
     state: present
     admin_state_up: True
     external: False
@@ -25,17 +25,24 @@
         username: "{{os_username}}"
         password: "{{os_password}}"
     wait: yes
+  tags:
+    - network
+    - openstack
 
 - name: Create OpenStack Subnet
   os_subnet:
-    name: "{{agave_namespace}}_subnet"
-    network_name: "{{agave_namespace}}_net"
+    name: "{{ os_subnet }}"
+    network_name: "{{ os_network }}"
     state: present
     ip_version: 4
-    cidr: 10.10.10.0/24
-    allocation_pool_start: 10.10.10.2
-    allocation_pool_end: 10.10.10.254
-    gateway_ip: 10.10.10.1
+    cidr: "{{ os_network_cidr|default('10.10.10.0/24') }}"
+    allocation_pool_start: "{{ os_network_allocation_pool_start|default('10.10.10.2') }}"
+    allocation_pool_end: "{{ os_network_allocation_pool_end|default('10.10.10.254') }}"
+    gateway_ip: "{{ os_network_gateway_ip|default('10.10.10.1') }}"
+#    cidr: 10.10.10.0/24
+#    allocation_pool_start: 10.10.10.2
+#    allocation_pool_end: 10.10.10.254
+#    gateway_ip: 10.10.10.1
     enable_dhcp: True
     auth:
         auth_url: "{{os_authurl}}"
@@ -44,6 +51,34 @@
         username: "{{os_username}}"
         password: "{{os_password}}"
     wait: yes
+  tags:
+    - subnet
+    - openstack
+  register: agave_subnet
+
+
+- name: Query OpenStack Subnet
+  os_subnets_facts:
+    name: "{{ os_subnet }}"
+    auth:
+        auth_url: "{{os_authurl}}"
+        domain_name: "{{os_domain}}"
+        project_name: "{{os_project}}"
+        username: "{{os_username}}"
+        password: "{{os_password}}"
+    wait: yes
+  tags:
+    - subnets
+    - security_group
+    - openstack
+
+- name: show openstack subnets
+  debug:
+    var: openstack_subnets
+  tags:
+    - subnets
+    - router
+    - openstack
 
 - name: Create OpenStack Router
   os_router:
@@ -52,7 +87,7 @@
     network: public
     admin_state_up: True
     interfaces:
-        - "{{agave_namespace}}_subnet"
+        - "{{openstack_subnets[0].id}}"
     auth:
         auth_url: "{{os_authurl}}"
         domain_name: "{{os_domain}}"
@@ -60,10 +95,13 @@
         username: "{{os_username}}"
         password: "{{os_password}}"
     wait: yes
+  tags:
+    - router
+    - openstack
 
 - name: Query OpenStack Network
   os_networks_facts:
-    name: "{{agave_namespace}}_net"
+    name: "{{ os_network }}"
     auth:
         auth_url: "{{os_authurl}}"
         domain_name: "{{os_domain}}"
@@ -71,10 +109,13 @@
         username: "{{os_username}}"
         password: "{{os_password}}"
     wait: yes
+  tags:
+    - security_group
+    - openstack
 
 - name: Query OpenStack Subnet
   os_subnets_facts:
-    name: "{{agave_namespace}}_subnet"
+    name: "{{ os_subnet }}"
     auth:
         auth_url: "{{os_authurl}}"
         domain_name: "{{os_domain}}"
@@ -82,6 +123,9 @@
         username: "{{os_username}}"
         password: "{{os_password}}"
     wait: yes
+  tags:
+    - security_group
+    - openstack
 
 - name: Create Basic Firewall Rules
   os_security_group_rule:
@@ -102,6 +146,9 @@
     remote_ip_prefix: "{{item.remote_ip_prefix}}"
   with_items:
     - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 22 , port_range_max: 22 , remote_ip_prefix: 0.0.0.0/0 }
+  tags:
+    - security_group
+    - openstack
 
 - name: Create VM Keys
   os_keypair:
@@ -115,4 +162,6 @@
         project_name: "{{os_project}}"
         username: "{{os_username}}"
         password: "{{os_password}}"
-    
+  tags:
+    - keys
+    - openstack

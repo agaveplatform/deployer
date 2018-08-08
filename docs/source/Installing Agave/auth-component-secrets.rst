@@ -1,6 +1,6 @@
 Auth Components
 ---------------
-Here we list the required configuration fields for the ``tenants/<tenant_id>/<tenant_id>_passwords`` file and a description of their use.
+Here we list the required configuration fields for the ``tenants/<tenant_id>/<tenant_id>_passwords`` file and a description of their use. This file will always be imported after the  ``tenants/<tenant_id>/<tenant_id>.yml`` file, thus these values will take precedence.
 
 .. list-table:: Default Auth component password variables
    :widths: 30 15 55
@@ -19,6 +19,7 @@ Here we list the required configuration fields for the ``tenants/<tenant_id>/<te
      - | The password used to bind to the remote LDAP.
        | Should be configured when **use_remote_userstore**
        | is True.
+
    * - **apim_admin_pass**
      - string
      - | The password for the APIM admin account.
@@ -28,6 +29,7 @@ Here we list the required configuration fields for the ``tenants/<tenant_id>/<te
        | *application. Changing this setting prior to*
        | *updating the password via the web form will*
        | *break the APIM.*
+
    * - **mysql_tenant_user**
      - string
      - | The username that APIM should use to authenticate

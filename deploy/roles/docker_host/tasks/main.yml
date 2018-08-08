@@ -82,19 +82,15 @@
 
 # Aliases, completion, helpers for docker and docker compose
 - name: Install docker aliases into user's .bashrc.d directory
-  shell: curl -skL -o /home/apim/.bashrc.d/docker.aliases https://bitbucket.org/!api/2.0/snippets/deardooley/9KL4X/8cda45426572de3ff43a8da07f12e5ee95f73b5d/files/docker.aliases
+  shell: curl -skL -o /etc/profile.d/docker.aliases https://gist.githubusercontent.com/deardooley/011ce72d1e2ad3c03045879f0ea41b25/raw/25ff4601c6ec851c3048cfd02e7b9ced80ecbaeb/docker.aliases.sh
   become: yes
-  become_user: apim
   become_method: sudo
 
 - name: Add execute permission to docker aliases
   file:
-    path: /home/apim/.bashrc.d/docker.aliases
-    owner: apim
-    group: docker
+    path: /etc/profile.d/docker.aliases
     mode: 01755
   become: yes
-  become_user: apim
   become_method: sudo
 
 - name: Install docker-compose bash completion

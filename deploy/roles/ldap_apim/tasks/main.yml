@@ -9,26 +9,22 @@
   copy: src=update_id_admin_settings.sh dest=/home/apim/update_id_admin_settings.sh
   become: yes
   become_user: apim
-  become_method: sudo
 
 - name: compile the create_users script
   template: src=create_users.sh.j2 dest=/home/apim/create_users.sh
   become: yes
   become_user: apim
-  become_method: sudo
 
 - name: stop id_admin_temp container if running
   shell: docker kill id_admin_temp
   become: yes
   become_user: apim
-  become_method: sudo
   ignore_errors: yes
 
 - name: first, remove id_admin_temp container so role can be re-run even in case of partial execution
   shell: docker rm -f id_admin_temp
   become: yes
   become_user: apim
-  become_method: sudo
   ignore_errors: yes
 #  register: docker_rm_id_admin_temp
 
@@ -39,7 +35,6 @@
   shell: docker run -d -h {{host}} --name id_admin_temp -v /home/apim/create_users.sh:/create_users.sh -v /home/apim/update_id_admin_settings.sh:/update_id_admin_settings.sh -v /home/apim/{{ tenant_id }}/{{ tenant_id }}.yml:/values.yml -v /home/apim/{{ tenant_id }}/passwords:/passwords agaveplatform/agave_id_dedicated
   become: yes
   become_user: apim
-  become_method: sudo
 
 - name: wait for the id_admin_temp container to finish coming online
   pause: seconds=30
@@ -49,13 +44,11 @@
   shell: docker exec -i id_admin_temp sh /update_id_admin_settings.sh
   become: yes
   become_user: apim
-  become_method: sudo
 
 - name: add users
   shell: docker exec -i id_admin_temp sh /create_users.sh
   become: yes
   become_user: apim
-  become_method: sudo
 
 #- name: add users
 #  shell: sh create_users.sh chdir=/home/apim
@@ -67,4 +60,3 @@
   shell: docker rm -f id_admin_temp
   become: yes
   become_user: apim
-  become_method: sudo

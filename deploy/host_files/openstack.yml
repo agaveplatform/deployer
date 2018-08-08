@@ -3,5 +3,16 @@
 plugin: openstack
 expand_hostvars: yes
 fail_on_errors: yes
+use_hostnames: yes
 groups:
-  agave: "true"
+  all: "true"
+  agave: "{{ agave_namespace in server_vars['name'].split('.') }}"
+  core: "{{server_vars['metadata']['group'] == 'core'}}"
+  core_workers: "{{server_vars['metadata']['group'] == 'core'}}"
+  core_api: "{{server_vars['metadata']['group'] == 'core'}}"
+  auth: "{{server_vars['metadata']['group'] == 'auth'"
+  db: "{{server_vars['metadata']['group'] == 'db'}}"
+  mysql: "{{server_vars['metadata']['group'] == 'db' && ( 'mysql' in server_vars['metadata']['extra_groups'].split(',')) }}"
+  mongodb: "{{server_vars['metadata']['group'] == 'db' && ( 'mongodb' in server_vars['metadata']['extra_groups'].split(',')) }}"
+  queue: "{{server_vars['metadata']['group'] == 'db' && ( 'queue' in server_vars['metadata']['extra_groups'].split(',')) }}"
+  postman: "{{server_vars['metadata']['group'] == 'postman'"

@@ -90,7 +90,7 @@ def get_groups_from_server(server_vars, namegroup=True):
     if 'group' in metadata:
         groups.append(metadata['group'])
 
-    for extra_group in metadata.get('groups', '').split(','):
+    for extra_group in metadata.get('extra_groups', '').split(','):
         if extra_group:
             groups.append(extra_group.strip())
 
@@ -128,13 +128,32 @@ def get_host_groups(inventory, refresh=False, cloud=None):
 
 def append_hostvars(hostvars, groups, key, server, namegroup=False):
     hostvars[key] = dict(
-        ansible_ssh_host=server['interface_ip'],
-        ansible_host=server['interface_ip'],
+        ansible_ssh_host=server['public_v4'],
+        ansible_host=server['public_v4'],
         openstack=server)
 
     metadata = server.get('metadata', {})
+
+    if 'os_instance_username' in metadata:
+        hostvars[key]['ansible_ssh_username'] = metadata['os_instance_username']
+
     if 'ansible_user' in metadata:
         hostvars[key]['ansible_user'] = metadata['ansible_user']
+        hostvars[key]['ansible_ssh_user'] = metadata['ansible_user']
+
+    if 'ansible_ssh_private_key_file' in metadata:
+        hostvars[key]['ansible_ssh_private_key_file'] = metadata['ansible_ssh_private_key_file']
+
+    # if 'group' in metadata:
+    #     groups[metadata['group']].append(key)
+    #
+    # if 'extra_groups' in metadata:
+    #     for extra_group in metadata['extra_groups'].split(','):
+    #         if extra_group:
+    #             groups.append(extra_group.strip())
+
+    # add everything to the agave group.
+    groups['agave'].append(key)
 
     for group in get_groups_from_server(server, namegroup=namegroup):
         groups[group].append(key)
