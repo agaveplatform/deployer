@@ -16,26 +16,26 @@
 
 ---
 
-# Ensure jq is installed
-- name: Check is jq installed
-  shell: command -v jq >/dev/null 2>&1
-  register: is_jq_exist
-  ignore_errors: yes
-
-- name: Failing if jq is missing on non Debian/RedHat families
-  assert:
-    that:
-      - "is_jq_exist == 1 and ansible_os_family != 'Debian' or ansible_os_family != 'RedHat'"
-    msg: "The jq utlity is required to run the postman tests"
-
-- name: Installing missing jq utlitiy
-  package:
-    name: "{{item}}"
-    state: present
-  when: is_jq_exist == 1 and (ansible_os_family == 'Debian' or ansible_os_family == 'RedHat')
-  loop:
-    - jq
-    - node
+## Ensure jq is installed
+#- name: Check is jq installed
+#  shell: command -v jq >/dev/null 2>&1
+#  register: is_jq_exist
+#  ignore_errors: yes
+#
+#- name: Failing if jq is missing on non Debian/RedHat families
+#  assert:
+#    that:
+#      - "is_jq_exist == 1 and ansible_os_family != 'Debian' or ansible_os_family != 'RedHat'"
+#    msg: "The jq utlity is required to run the postman tests"
+#
+#- name: Installing missing jq utlitiy
+#  package:
+#    name: "{{item}}"
+#    state: present
+#  when: is_jq_exist == 1 and (ansible_os_family == 'Debian' or ansible_os_family == 'RedHat')
+#  loop:
+#    - jq
+#    - node
 
 # handle argument generation for node debug output
 - name: Conditionally set --debug flag to print output of wire trafic from NODE_DEBUG in newman
@@ -149,7 +149,7 @@
   file:
     path: "{{ item['path'] }}"
     state: absent
-  with_items: "{{ previous_postman_test_results['files'] }}"
+  loop: "{{ previous_postman_test_results['files'] }}"
   when: newman_clean_tests
 
 - name: Create test directory
@@ -177,7 +177,7 @@
   file:
     path: "{{agave_postman_testdir}}/{{item}}"
     mode: 0755
-  with_items:
+  loop:
     - "newman.sh"
     - "lib/newman-to-slack.sh"
     - "lib/jsonpki"
@@ -230,7 +230,7 @@
   template:
     src={{item}}
     dest={{agave_postman_testdir}}/{{ (item|splitext)[0]}}
-  with_items:
+  loop:
     - data/systems/compute.json.j2
     - data/systems/storage.json.j2
     - config/newman_data.json.j2
