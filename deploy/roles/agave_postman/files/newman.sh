@@ -229,45 +229,45 @@ function main() {
                 -c $FILTERED_COLLECTION || true
 
     # if we are not posting to slack, we run the collection manually in a docker container
-    elif
+    else
 
       (( $verbose )) && echo "Starting docker newman runner ...";
 
-      # if newman is installed locally
-      if (( $use_native_binary )); then
-
-          NODE_DEBUG=$( (( debug )) && echo "http,request,net" || echo "false" )
-
-          echo -e "newman run
-             --disable-unicode \
-             --timeout-request 60000 \
-             --delay-request 25 \
-             --insecure \
-             --no-color \
-             --reporters cli,html,json,junit \
-             --reporter-json-export reports/newman-report.json \
-             --reporter-junit-export reports/newman-report.xml \
-             --reporter-html-export reports/newman-report.html \
-             --environment $FILTERED_ENVIRONMENT \
-             --iteration-data $_ITERATION_DATA \
-             $FILTERED_COLLECTION"
-
-          newman run
-             --disable-unicode \
-             --timeout-request 60000 \
-             --delay-request 25 \
-             --insecure \
-             --no-color \
-             --reporters cli,html,json,junit \
-             --reporter-json-export reports/newman-report.json \
-             --reporter-junit-export reports/newman-report.xml \
-             --reporter-html-export reports/newman-report.html \
-             --environment "$FILTERED_ENVIRONMENT" \
-             --iteration-data "$_ITERATION_DATA" \
-             "$FILTERED_COLLECTION"
-
-      # if newman is not installed locally, use docker
-      else
+#      # if newman is installed locally
+#      if (( $use_native_binary )); then
+#
+#          NODE_DEBUG=$( (( debug )) && echo "http,request,net" || echo "false" )
+#
+#          echo -e "newman run
+#             --disable-unicode \
+#             --timeout-request 60000 \
+#             --delay-request 25 \
+#             --insecure \
+#             --no-color \
+#             --reporters cli,html,json,junit \
+#             --reporter-json-export reports/newman-report.json \
+#             --reporter-junit-export reports/newman-report.xml \
+#             --reporter-html-export reports/newman-report.html \
+#             --environment $FILTERED_ENVIRONMENT \
+#             --iteration-data $_ITERATION_DATA \
+#             $FILTERED_COLLECTION"
+#
+#          newman run
+#             --disable-unicode \
+#             --timeout-request 60000 \
+#             --delay-request 25 \
+#             --insecure \
+#             --no-color \
+#             --reporters cli,html,json,junit \
+#             --reporter-json-export reports/newman-report.json \
+#             --reporter-junit-export reports/newman-report.xml \
+#             --reporter-html-export reports/newman-report.html \
+#             --environment "$FILTERED_ENVIRONMENT" \
+#             --iteration-data "$_ITERATION_DATA" \
+#             "$FILTERED_COLLECTION"
+#
+#      # if newman is not installed locally, use docker
+#      else
 
         echo "docker run \
              --rm=true \
@@ -310,7 +310,7 @@ function main() {
              --environment "$FILTERED_ENVIRONMENT" \
              --iteration-data "$_ITERATION_DATA" \
              "$FILTERED_COLLECTION"
-      fi
+#      fi
 
     fi
 
