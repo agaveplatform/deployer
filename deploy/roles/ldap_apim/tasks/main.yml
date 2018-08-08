@@ -41,6 +41,10 @@
   become_user: apim
   become_method: sudo
 
+- name: wait for the id_admin_temp container to finish coming online
+  pause: seconds=30
+
+
 - name: update configs and restart apache
   shell: docker exec -i id_admin_temp sh /update_id_admin_settings.sh
   become: yes
