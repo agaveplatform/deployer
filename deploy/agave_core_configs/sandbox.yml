@@ -1,7 +1,8 @@
 # #######################
 # general playbook config
 # #######################
-host: "{{tenant_id}}.agaveplatform.org"
+tenant_id: "{{ agave_tenant_id }}"
+host: "{{ tenant_public_domain_or_ip | default(agave_tenant_id + '.agaveplatform.org') }}"
 deploy_core_apis: true
 kill_core_containers: true
 core_deploy_stats: false
@@ -11,8 +12,8 @@ core_docker_registry_account: agaveapi
 # ######################
 # general service config
 # ######################
-agave_proxy_core_ip: "{{  hostvars[ groups[( 'core_api' if 'core_api' in groups and (groups['core_api']|length > 0 ) else 'core' )] | first ]['ansible_ssh_host'] }}"
-agave_core_hostname: "api.{{tenant_id}}.agaveplatform.org"
+agave_proxy_core_ip: "{{ hostvars[ groups[( 'core_api' if 'core_api' in groups and (groups['core_api']|length > 0 ) else 'core' )] | first ]['ansible_ssh_host'] }}"
+agave_core_hostname: "api.{{ agave_tenant_id }}.agaveplatform.org"
 agave_core_log_service: "http://{{ hostvars[ groups[( 'core_api' if 'core_api' in groups and (groups['core_api']|length > 0 ) else 'core' )] | first ]['ansible_ssh_host'] }}/logging"
 agave_core_version: 2.2.6
 agave_core_iplant_proxy_service: "http://{{ hostvars[ groups[( 'core_api' if 'core_api' in groups and (groups['core_api']|length > 0 ) else 'core' )] | first ]['ansible_ssh_host'] }}" #needs to differ from the hostname of the core host so postits resolve
@@ -51,8 +52,8 @@ mongodb_host: "{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
 mongodb_port: 27017
 mongodb_user: wcs
 
-agave_core_notification_queue: sandbox.notifications.queue
-agave_core_notification_topic: sandbox.notifications.topic
+agave_core_notification_queue: "{{ agave_tenant_id }}.notifications.queue"
+agave_core_notification_topic: "{{ agave_tenant_id }}.notifications.topic"
 
 messaging_host: "{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
 messaging_port: 11300

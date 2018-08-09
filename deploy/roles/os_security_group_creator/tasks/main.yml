@@ -15,12 +15,6 @@
 
 - name: Make Agave Security Groups
   os_security_group:
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
     name: "{{item}}"
     state: present
   loop:
@@ -30,12 +24,6 @@
 
 - name: Set Auth Remote IP Rules
   os_security_group_rule:
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
     security_group: "{{os_auth_security_group}}"
     state: present
     direction: "{{item.direction}}"
@@ -51,12 +39,6 @@
 
 - name: Set Core Remote IP Rules
   os_security_group_rule:
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
     security_group: "{{os_core_security_group}}"
     state: present
     direction: "{{item.direction}}"
@@ -72,12 +54,6 @@
 
 - name: Set Core Remote Group Rules
   os_security_group_rule:
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
     security_group: "{{os_core_security_group}}"
     state: present
     direction: "{{item.direction}}"
@@ -92,12 +68,6 @@
 
 - name: Set DB Remote IP Rules
   os_security_group_rule:
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
     security_group: "{{os_db_security_group}}"
     state: present
     direction: "{{item.direction}}"
@@ -119,12 +89,6 @@
 
 - name: Set DB Remote Group Rules
   os_security_group_rule:
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
     security_group: "{{os_db_security_group}}"
     state: present
     direction: "{{item.direction}}"

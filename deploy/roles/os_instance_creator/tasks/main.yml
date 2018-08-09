@@ -16,7 +16,6 @@
 #   os_vm_name
 #   os_region
 #   os_flavor
-#   os_zone
 #   os_image
 #   os_keyname
 #   os_securitygroup
@@ -45,16 +44,9 @@
 - name: Create OpenStack VM
   os_server:
     state: present
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
     name: "{{os_vm_name}}"
-    region_name: "{{os_region}}"
+#    region_name: "{{os_region}}"
     flavor: "{{os_flavor}}"
-    availability_zone: "{{os_zone}}"
     image: "{{os_image}}"
     key_name: "{{os_keyname}}"
     security_groups: "{{ os_security_groups|join(',') + ',' if os_security_groups|length > 0 else ''}}default"
@@ -73,14 +65,8 @@
 - name: Assign the provided Floating IP address to the VM
   os_floating_ip:
     state: present
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
     server: "{{os_vm_name}}"
-    region_name: "{{os_region}}"
+#    region_name: "{{os_region}}"
     floating_ip_address: "{{os_ip_address}}"
     reuse: yes
     wait: yes

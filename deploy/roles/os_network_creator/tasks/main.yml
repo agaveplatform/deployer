@@ -18,12 +18,12 @@
     admin_state_up: True
     external: False
     shared: False
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
+#    auth:
+#        auth_url: "{{os_authurl}}"
+#        domain_name: "{{os_domain}}"
+#        project_name: "{{os_project}}"
+#        username: "{{os_username}}"
+#        password: "{{os_password}}"
     wait: yes
   tags:
     - network
@@ -39,17 +39,13 @@
     allocation_pool_start: "{{ os_network_allocation_pool_start|default('10.10.10.2') }}"
     allocation_pool_end: "{{ os_network_allocation_pool_end|default('10.10.10.254') }}"
     gateway_ip: "{{ os_network_gateway_ip|default('10.10.10.1') }}"
-#    cidr: 10.10.10.0/24
-#    allocation_pool_start: 10.10.10.2
-#    allocation_pool_end: 10.10.10.254
-#    gateway_ip: 10.10.10.1
     enable_dhcp: True
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
+#    auth:
+#        auth_url: "{{os_authurl}}"
+#        domain_name: "{{os_domain}}"
+#        project_name: "{{os_project}}"
+#        username: "{{os_username}}"
+#        password: "{{os_password}}"
     wait: yes
   tags:
     - subnet
@@ -60,82 +56,152 @@
 - name: Query OpenStack Subnet
   os_subnets_facts:
     name: "{{ os_subnet }}"
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
+#    auth:
+#        auth_url: "{{os_authurl}}"
+#        domain_name: "{{os_domain}}"
+#        project_name: "{{os_project}}"
+#        username: "{{os_username}}"
+#        password: "{{os_password}}"
     wait: yes
   tags:
     - subnets
     - security_group
     - openstack
 
-- name: show openstack subnets
-  debug:
-    var: openstack_subnets
-  tags:
-    - subnets
-    - router
-    - openstack
+#- name: show openstack subnets
+#  debug:
+#    var: openstack_subnets
+#  tags:
+#    - subnets
+#    - router
+#    - openstack
+
+#- name: Query OpenStack Network
+#  os_networks_facts:
+#    name: public
+##    auth:
+##        auth_url: "{{os_authurl}}"
+##        domain_name: "{{os_domain}}"
+##        project_name: "{{os_project}}"
+##        username: "{{os_username}}"
+##        password: "{{os_password}}"
+#    wait: yes
+#  tags:
+#    - subnets
+#    - router
+#    - openstack
+
+#- name: Saving public network info
+#  set_fact:
+#    public_network_id: "{{openstack_networks[0].id}}"
+#  tags:
+#    - subnets
+#    - router
+#    - openstack
+##
+#- debug:
+#    var: public_network_id
+#  tags:
+#    - subnets
+#    - router
+#    - openstack
 
 - name: Create OpenStack Router
   os_router:
     name: "{{agave_namespace}}_router"
     state: present
-    network: public
-    admin_state_up: True
+#    network: public
+#    external_fixed_ips:
+#      - subnet: public
+    interface: public
     interfaces:
-        - "{{openstack_subnets[0].id}}"
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
+#      - "{{os_subnet}}"
+      - "{{openstack_subnets[0].id}}"
+#    auth:
+#        auth_url: "{{os_authurl}}"
+#        domain_name: "{{os_domain}}"
+#        project_name: "{{os_project}}"
+#        username: "{{os_username}}"
+#        password: "{{os_password}}"
     wait: yes
   tags:
     - router
     - openstack
+#
+#- name: Query OpenStack Network
+#  os_networks_facts:
+#    name: "{{ os_network }}"
+##    auth:
+##        auth_url: "{{os_authurl}}"
+##        domain_name: "{{os_domain}}"
+##        project_name: "{{os_project}}"
+##        username: "{{os_username}}"
+##        password: "{{os_password}}"
+#    wait: yes
+#  tags:
+#    - security_group
+#    - openstack
+#
+#- name: Saving public network info
+#  set_fact:
+#    agave_network: "{{openstack_networks[0].id}}"
 
-- name: Query OpenStack Network
-  os_networks_facts:
-    name: "{{ os_network }}"
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
-    wait: yes
-  tags:
-    - security_group
-    - openstack
 
-- name: Query OpenStack Subnet
-  os_subnets_facts:
-    name: "{{ os_subnet }}"
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
-    wait: yes
-  tags:
-    - security_group
-    - openstack
+#- name: Create OpenStack Router
+#  os_router:
+#    name: "{{agave_namespace}}_router"
+#    state: present
+#    network: public
+##    interface: public
+##    interfaces:
+##        - "{{os_subnet}}"
+##    auth:
+##        auth_url: "{{os_authurl}}"
+##        domain_name: "{{os_domain}}"
+##        project_name: "{{os_project}}"
+##        username: "{{os_username}}"
+##        password: "{{os_password}}"
+#    wait: yes
+#  tags:
+#    - router
+#    - openstack
+
+#- name: Query OpenStack Network
+#  os_networks_facts:
+#    name: "{{ os_network }}"
+##    auth:
+##        auth_url: "{{os_authurl}}"
+##        domain_name: "{{os_domain}}"
+##        project_name: "{{os_project}}"
+##        username: "{{os_username}}"
+##        password: "{{os_password}}"
+#    wait: yes
+#  tags:
+#    - security_group
+#    - openstack
+#
+#- name: Query OpenStack Subnet
+#  os_subnets_facts:
+#    name: "{{ os_subnet }}"
+##    auth:
+##        auth_url: "{{os_authurl}}"
+##        domain_name: "{{os_domain}}"
+##        project_name: "{{os_project}}"
+##        username: "{{os_username}}"
+##        password: "{{os_password}}"
+#    wait: yes
+#  tags:
+#    - security_group
+#    - openstack
 
 - name: Create Basic Firewall Rules
   os_security_group_rule:
-    auth_type: password
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
+#    auth:
+#        auth_url: "{{os_authurl}}"
+#        domain_name: "{{os_domain}}"
+#        project_name: "{{os_project}}"
+#        username: "{{os_username}}"
+#        password: "{{os_password}}"
     security_group: default
     state: present
     direction: "{{item.direction}}"
@@ -155,13 +221,12 @@
     name: "{{os_keyname}}"
     public_key_file: "{{os_key_file}}"
     state: present
-    auth_type: password
-    auth:
-        auth_url: "{{os_authurl}}"
-        domain_name: "{{os_domain}}"
-        project_name: "{{os_project}}"
-        username: "{{os_username}}"
-        password: "{{os_password}}"
+#    auth:
+#        auth_url: "{{os_authurl}}"
+#        domain_name: "{{os_domain}}"
+#        project_name: "{{os_project}}"
+#        username: "{{os_username}}"
+#        password: "{{os_password}}"
   tags:
     - keys
     - openstack

@@ -3,13 +3,13 @@
 # ------------------------
 # Uncomment one of the following sections
 # ------------------------
-tenant_id: sandbox
-host: "{{tenant_id}}.agaveplatform.org"
+tenant_id: "{{ agave_tenant_id }}"
+host: "{{ tenant_public_domain_or_ip | default( agave_tenant_id + '.agaveplatform.org' ) }}"
 core_host: "{{ hostvars[ groups['core'][0] ]['ansible_ssh_host'] }}"
 mysql_host: "{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
 mysql_port: 3306
 ldap_name: "ldap://{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}:389"
-agave_id_app_base: "https://{{ host }}"
+agave_id_app_base: "https://{{ tenant_public_domain_or_ip | default( agave_tenant_id + '.agaveplatform.org' ) }}"
 beanstalk_server: "{{ hostvars[ groups['db'][0] ]['ansible_ssh_host'] }}"
 
 
@@ -23,7 +23,7 @@ update_auth_dns: False
 # ----
 # APIM
 # ----
-agave_env: sandbox
+agave_env: "{{ 'sandbox' if agave_tenant_id == 'sandbox' else 'prod' }}"
 apim19_base_version: 0.3
 apim_httpd_version: 0.4
 
@@ -34,7 +34,7 @@ tenant_admin_role: Internal/sandbox-services-admin
 # the url registered in APIM for the profiles API. For tenants using the django service, the
 # profiles container will have role: profiles.sandbox.agave.tacc.utexas.edu
 # For tenants like ldap, the URL will need to point to a different service (e.g. the PHP service).
-agave_profiles_url: profiles.sandbox.agave.tacc.utexas.edu/profiles
+agave_profiles_url: "profiles.{{ agave_tenant_id }}.agave.tacc.utexas.edu/profiles"
 
 deploy_admin_services: True
 
@@ -74,15 +74,15 @@ remote_group_search_base: ou
 # "me" lookup feature since these features rely on profile information in the JWT.
 agave_id_check_jwt: True
 
-# Actual header name that will show up in request.META; value depends on APIM configuration, in particular
-# the tenant id specified in api-manager.xml
-jwt_header:  HTTP_X_JWT_ASSERTION_SANDBOX
+## Actual header name that will show up in request.META; value depends on APIM configuration, in particular
+## the tenant id specified in api-manager.xml
+jwt_header:  "HTTP_X_JWT_ASSERTION_{{ agave_tenant_id | regex_replace('[_. ]+', '_') | upper }}"
 
 # Absolute path to the public key of the APIM instance; used for verifying the signature of the JWT.
 agave_id_apim_pub_key: /home/apim/public_keys/apim_default.pub
 
 # APIM Role required to make updates to the LDAP database
-agave_id_user_admin_role: "Internal/{{tenant_id}}-user-account-manager"
+agave_id_user_admin_role: "Internal/{{agave_tenant_id}}-user-account-manager"
 
 # Whether or not the USER_ADMIN_ROLE before allowing updates to the LDAP db (/users service)
 agave_id_check_user_admin_role: True
@@ -93,7 +93,7 @@ use_custom_ldap: False
 
 # Base URL of this instance of the service. Used to populate the hyperlinks in the responses.
 # Should be https:// + _host_ but have to copy it twice because there is no way to have ansible read it from above.
-##agave_id_app_base: https://dev1.tenants.sandbox.agaveapi.co
+##agave_id_app_base: "https://{{ tenant_public_domain_or_ip | default( agave_tenant_id + '.agaveplatform.org' ) }}"
 
 # DEBUG = True turns up logging and causes Django to generate excpetion pages with stack traces and
 # additional information. Should be False in production.
@@ -104,7 +104,7 @@ agave_id_debug: True
 # Beanstalk connection info
 ##beanstalk_server: 10.10.10.3
 beanstalk_port: 11300
-beanstalk_tube: dev.sandbox
+beanstalk_tube: "{{ agave_tenant_id }}.notifications.queue"
 beanstalk_srv_code: 0001-001
 tenant_uuid: 0001411570898814
 
@@ -133,7 +133,7 @@ abaco_frontend_base_url_or_ip: abaco
 
 deploy_webapp: True
 use_sendgrid: True
-email_base_url: "https://{{host}}"
+email_base_url: "https://{{ tenant_public_domain_or_ip | default( agave_tenant_id + '.agaveplatform.org' ) }}"
 
 # -----
 # Boutique APIs
