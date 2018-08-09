@@ -1,0 +1,59 @@
+---
+# tasks file for elk
+
+- name: Compile elk component templates
+  template:
+    src: "{{item}}"
+    dest: /home/apim/logging/{{ item | regex_replace('^(.*)\.j2$', '\\1') }}
+  become: yes
+  become_user: apim
+  loop:
+    - docker-compose.yml.j2
+    - logstash/pipeline/logstash.conf.j2
+    - logstash/config/logstash.yml.j2
+    - kibana/config/kibana.yml.j2
+    - elasticsearch/config/elasticsearch.yml.j2
+
+
+- name: Check for existing containers
+  shell: docker ps -aq
+  become: yes
+  become_user: apim
+  ignore_errors: yes
+  register: docker_ps_logging_containers
+
+
+# ignore errors here since this call will fail if there are no containers running
+- name: Remove existing containers
+  shell: "docker-compose down"
+  become: yes
+  become_user: apim
+  ignore_errors: yes
+  environment:
+      COMPOSE_HTTP_TIMEOUT: 20000
+  when: kill_logging_containers and docker_ps_logging_containers.stdout
+
+# Pause to allow the containers to finish deleting this can take a while
+# sometimes when the host is under load.
+- pause: seconds=30
+  when: kill_logging_containers and docker_ps_logging_containers.stdout
+
+
+- name: Pull latest docker images
+  shell: docker-compose -f docker-compose.yml pull
+  args:
+    chdir: /home/apim/logging
+  become: yes
+  become_user: apim
+  environment:
+      COMPOSE_HTTP_TIMEOUT: 20000
+
+
+- name: Start the elk containers with docker compose
+  shell: docker-compose -f docker-compose.yml up -d
+  args:
+    chdir: /home/apim/logging
+  become: yes
+  become_user: apim
+  environment:
+      COMPOSE_HTTP_TIMEOUT: 5000

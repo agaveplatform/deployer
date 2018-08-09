@@ -1,0 +1,12 @@
+---
+# defaults file for elk
+
+cluster_name: "{{agave_namespace}}"
+logging_provider: 'logstash'
+index_name: "{{tenant_id}}"
+
+# On multihost deployment, this should be set to the load balancers
+# of the respective hosts.
+elasticsearch_host: elasticsearch
+logstash_host: logstash
+kibana_host: kibana

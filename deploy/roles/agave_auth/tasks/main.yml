@@ -45,7 +45,9 @@
       - /home/apim/logs/{{ tenant_id }}/deployment-logs
 
 - name: compile the tenant config file
-  template: src=tenants/{{ tenant_id }}/{{ tenant_id }}.yml dest=/home/apim/{{ tenant_id }}/{{ tenant_id }}.yml
+  template:
+    src: "tenants/{{ tenant_id }}/{{ tenant_id }}.yml"
+    dest: "/home/apim/{{ tenant_id }}/{{ tenant_id }}.yml"
   become: yes
   become_user: apim
   become_method: sudo
@@ -57,7 +59,9 @@
 #  become_method: sudo
 
 - name: copy the password file
-  copy: src=tenants/{{ tenant_id }}/{{ tenant_id }}_passwords dest=/home/apim/{{ tenant_id }}/passwords
+  copy:
+    src: "tenants/{{ tenant_id }}/{{ tenant_id }}_passwords"
+    dest: "/home/apim/{{ tenant_id }}/passwords"
   become: yes
   become_user: apim
   become_method: sudo

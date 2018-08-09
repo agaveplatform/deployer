@@ -24,7 +24,7 @@
     os_region: "{{ lookup('env', 'OS_REGION_NAME') }}"
     os_zone: "{{ lookup('env', 'OS_ZONE_NAME')}}"
     os_flavor: m1.medium
-    os_image: 70998b22-956f-471a-9b22-d8739eb25842
+    os_image: 8c80e6da-a3f1-4ba2-afb2-d107ef3387f1
     os_instance_username: centos
 
     os_network_cidr: 10.10.9.0/24

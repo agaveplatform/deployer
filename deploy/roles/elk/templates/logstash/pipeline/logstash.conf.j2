@@ -1,0 +1,21 @@
+input {
+	tcp {
+		port => 5000
+	}
+}
+
+## adding for logspout
+input {
+  udp {
+    port  => 5000
+    codec => json
+  }
+}
+
+## Add your filters / logstash plugins configuration here
+
+output {
+	elasticsearch {
+		hosts => "{{elasticsearch_host}}:9200"
+	}
+}
