@@ -1,0 +1,10 @@
+---
+# defaults file for agave_cli
+
+agave_cli_install_globally: false
+
+agave_cli_git_repository: git@github.com:agaveplatform/agave-cli.git
+
+agave_cli_version: develop
+
+agave_cli_json_parser: jq

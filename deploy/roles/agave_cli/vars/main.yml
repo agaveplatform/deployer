@@ -1,0 +1,6 @@
+---
+# vars file for agave_cli
+
+agave_cli_deployment_directory: "{{ '/usr/local/agave-cli' if agave_cli_install_globally else '/home/apim/agave-cli' }}"
+
+agave_cli_environment_directory: "{{ '/etc/profile.d' if agave_cli_install_globally else '/home/apim/.bashrc.d' }}"

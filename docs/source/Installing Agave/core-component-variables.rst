@@ -9,6 +9,35 @@ The following tables describe variables for use with the Ansible installer that 
    * - Variable
      - Type
      - Description
+   * - **tenant_id**
+     - string
+     - | A unique id for this tenant.
+       | *Note: This will be replaced by the ``agave_tenant_id``*
+       | *field in the near future. Both are currently *
+       | *required.*
+   * - **agave_tenant_id**
+     - string
+     - | A unique id for this tenant.
+       | *Note: This will be replace the ``tenant_id``*
+       | *field in the near future. Both are currently *
+       | *required.*
+   * - **tenant_public_domain_or_ip**
+     - string
+     - | The public domain name or ip address of the
+       | auth server. This is the address you will use
+       | to connect to your installation.
+       | *required.*
+   * - **host**
+     - string
+     - | The public domain that the platform should listen
+       | to  API requests on. For example, if this value is
+       | ``api.example.org``, then the core apps service
+       | will be available at ``https://api.example.org/apps/v2``.
+       |
+       | *Note: This will be replace by the *
+       | *``tenant_public_domain_or_ip`` field in the near future.*
+       | *required.*
+
    * - **mysql_core_host**
      - string
      - | Host or ip of the core services MySQL database.

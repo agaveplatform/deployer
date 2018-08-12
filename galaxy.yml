@@ -1,0 +1,3 @@
+
+- src: zaxos.docker-ce-ansible-role
+- src: geerlingguy.jenkins

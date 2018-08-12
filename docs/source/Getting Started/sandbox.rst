@@ -44,8 +44,8 @@ You can quickly get Agave Platform running in a container using images from Dock
 .. note:: Agave frontend services listen on ports ``80``, ``443``, ``8080``, ``8443`` and ``9000``. Agave backend services listen on 80, 443, 8440-8499, and 8070-8099. If you plan on enabling passive FTP and GridFTP support, Agave utilizes three port ranges to enable this behavior: 30000-31000, 50000-51000, 52900-52999. If another service is already listening on those ports on the respective host(s), you must stop that service before launching the Agave Platform containers.
 
 
-Starting an All-in-One Server
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Starting a New Installation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1. Start the server:
 
 .. code-block:: bash
@@ -68,7 +68,7 @@ This command:
 What’s Next?
 ^^^^^^^^^^^^
 
-Now that you have Agave Platform successfully running in your environment, try it out by running the `run_postman.plbk` playbook.
+Now that you have Agave Platform successfully running in your environment, try it out by running the `run_postman_tests.plbk` playbook.
 
 Method 2: Using the Agave Deployer image
 -----------------------------------------
@@ -91,7 +91,7 @@ Run the deployer with your updated hosts file and ssh private key volume mounted
 
     $ docker run -it --rm --name deployer \
              -v $HOME/.vagrant.d/insecure_private_key:/root/.ssh/id_rsa:ro
-             -v deploy/host_files/sandbox_hosts:/etc/ansible/hosts
+             -v deploy/host_files/vagrant_hosts:/etc/ansible/hosts
              agaveplatform/deployer deploy_agave.plbk
 
 This command:
@@ -109,7 +109,7 @@ This command:
 What’s Next?
 ^^^^^^^^^^^^
 
-Now that you have Agave Platform successfully running in your environment, try it out by running the `run_postman.plbk` playbook.
+Now that you have Agave Platform successfully running in your environment, try it out by running the `run_postman_tests.plbk` playbook.
 
 
 Validating your Installation
@@ -120,11 +120,11 @@ To verify your installation, a collection of Postman tests are included with the
 .. warning:: Do NOT do this on production hosts. Use a separate host specifically provisioned for testing to run against. The Deployer can easily provision hosts on EC2 and OpenStack for this purpose with the `os_create_host.plbk` Playbook.
     
 
-To kick off the tests by running the `run_postman.plbk`.
+To kick off the tests by running the `run_postman_tests.plbk`.
 
 .. code-block:: bash
 
-    $ ansible-playbook -i deploy/host_files/sandbox_hosts run_postman.plbk
+    $ ansible-playbook -i deploy/host_files/sandbox_hosts run_postman_tests.plbk
 
 
 The tests will run and output a summary table of the results. Machine readable test results are availble in json, xlm, and html in the `deploy/tmp/agave-postman-test*/reports` directory.

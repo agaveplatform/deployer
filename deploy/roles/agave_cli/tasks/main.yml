@@ -1,0 +1,21 @@
+---
+# tasks file for agave_cli
+
+- name: Checkout the Agave CLI from git
+  git:
+    repo: "{{agave_cli_git_repository}}"
+    dest: "{{agave_cli_deployment_directory}}"
+    version: "{{agave_cli_version}}"
+    force: yes
+    depth: 1
+
+- name: Add the CLI variables to the default environment
+  template:
+    src: agave_cli_environment.sh
+    dest: "{{agave_cli_environment_directory}}/agave_cli_environment.sh"
+    mode: 01755
+
+
+
+
+

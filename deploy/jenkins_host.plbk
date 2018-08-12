@@ -1,0 +1,121 @@
+#
+# jenkins_host.plbk
+#
+# Configures a new Agave Jenkins host with plugins to run the default management jobs,
+# Optional authorization against an existing Agave installation.
+#
+# Usage:
+#
+# Start the containers:
+# $ ansible-playbook -i host_files/sandbox_hosts jenkins_host.plbk
+#
+# Stop the containers:
+# $ ansible-playbook -i host_files/sandbox_hosts jenkins_host.plbk
+
+- name: gather all hosts information
+  hosts: jenkins
+
+- name: configure docker-ce host
+  import_playbooks: docker_ce_host.plbk
+
+- hosts: jenkins
+  become: yes
+
+  tasks:
+    - name: Updating hosts file with jenkins hostname
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ansible_ssh_host}} {{jenkins_hostname}}"
+        owner: root
+        group: root
+        mode: 0644
+
+
+- hosts: jenkins
+  become: yes
+
+  vars:
+    #jenkins_hostname: "{{jenkins_hostname}}"
+    jenkins_plugins:
+      - slack
+      - greenballs
+      - ansible
+      - docker
+      - ssh
+      - bitbucket
+      - github
+      - ssh-agent
+      - build-pipeline
+      - bitbucket-approve
+      - bitbucket-build-status-notifier
+      - jira
+      - wso20-oauth
+      - clone-workspace-scm
+      - credentials-binding
+      - docker-buildstep
+      - git-changelog
+      - github-organization-folder
+      - http-post-plugin
+      - hudson-post-build
+      - node-and-label-parameter
+      - performance
+      - pipeline
+      - post-build-script
+      - shared-workspace
+      - shelve-project
+      - ssh-slaves
+      - buildgraph-view
+     jenkins_home: "/storage/jenkins"
+#    jenkins_admin_username: "{{jenkins_admin_username}}"
+#    jenkins_admin_password: "{{jenkins_admin_password}}"
+#    jenkins_token: "{{jenkins_admin_token}}"
+#    jenkins_repo_url: ''
+#    jenkins_version: "2.135"
+#    jenkins_init_changes:
+#      - option: "JENKINS_ARGS"
+#        value: "--prefix=jenkins"
+#      - option: "JENKINS_JAVA_OPTIONS"
+#        value: "{{ jenkins_java_options }}"
+  roles:
+    - role: geerlingguy.java
+      tags:
+        - jenkins
+
+    - role: geerlingguy.jenkins
+      tags:
+        - jenkins
+
+- hosts: jenkins
+  become: yes
+
+  tasks:
+    - name: "Checkout Agave Deployer repository from git"
+      git:
+        repo: "git@github.com:agaveplatform/deployer.git"
+        dest: "/var/lib/jenkins/agave-deployer"
+        ssh_opts: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+      tags:
+        - ansible
+
+    - name: "Install Agave Deployer repository dependencies"
+      pip:
+        requirements: /var/lib/jenkins/agave-deployer/requirements.txt
+      tags:
+        - ansible
+
+    - name: "Install Agave Deployer galaxy roles"
+      shell: ansible-galaxy install -r galaxy.yml
+      args:
+          chdir: /var/lib/jenkins/agave-deployer
+      tags:
+        - ansible
+
+    - name: "Installing ansible.cfg file"
+      file:
+        backup: yes
+        remote_src: yes
+        src: /var/lib/jenkins/aems-ansible/ansible.cfg
+        dest: /etc/ansible/ansible.cfg
+      become: yes
+      tags:
+        - ansible

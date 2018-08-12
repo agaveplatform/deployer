@@ -36,6 +36,10 @@ You can see these example hosts present in the ``[auth]``, ``[core]``, and ``[db
 
     # the name of your tenant.
     tenant_id=sandbox
+    agave_tenant_id=sandbox
+
+    # the public hostname or ip of your installation
+    tenant_public_domain_or_ip=sandbox.agaveplatform.org
 
     # The name of the core service config file to read in.
     core_config_file=sandbox
@@ -96,6 +100,10 @@ You can see these example hosts present in the ``[auth]``, ``[core]``, and ``[db
 
     # the name of your tenant.
     tenant_id=sandbox
+    agave_tenant_id=sandbox
+
+    # the public hostname or ip of your installation
+    tenant_public_domain_or_ip=sandbox.agaveplatform.org
 
     # The name of the core service config file to read in.
     core_config_file=sandbox
@@ -171,6 +179,10 @@ You can see these example hosts present in the ``[auth]``, ``[core_api]``, and `
     vars:
       # the name of your tenant.
       tenant_id: sandbox
+      agave_tenant_id: sandbox
+
+      # the public hostname or ip of your installation
+      tenant_public_domain_or_ip: sandbox.agaveplatform.org
 
       # The name of the core service config file to read in.
       core_config_file: sandbox

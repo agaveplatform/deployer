@@ -1,0 +1,282 @@
+---
+################################################################################
+#
+#   os_provision_ci.plbk
+#
+#   Provisions a Jenkins server with a 200GB block storage volume and
+#   appropriate security groups.
+#
+#   Authenitication is handled through the openstacksdk auth mechanisms, so
+#   eithe rsource your openstackrc file prior to running the playbook, or
+#   configure your clouds.yaml file to point to your openstack cloud.
+#
+#   @see jenkins_host.plbk to install and configure jenkins to manage an
+#   Agave tenant.
+#
+################################################################################
+
+- name: Setup Major Variables in Local Host's Facts
+  hosts: local
+
+  vars:
+
+    agave_namespace: agave_ci_sandbox
+    agave_security_group_namespace: agave_ci_sandbox
+
+    os_public_key: "{{ansible_env['HOME']}}/.ssh/id_rsa.pub"
+    os_private_key: "{{ansible_env['HOME']}}/.ssh/id_rsa"
+    os_flavor: m1.medium
+    os_image: 8c80e6da-a3f1-4ba2-afb2-d107ef3387f1
+    os_instance_username: centos
+
+    os_network_cidr: 10.10.9.0/24
+    os_network_allocation_pool_start: 10.10.9.2
+    os_network_allocation_pool_end: 10.10.9.254
+    os_network_gateway_ip: 10.10.9.1
+
+  tasks:
+
+    - name: Set Facts Collected Environment
+      tags:
+        - setup
+      set_fact:
+
+        agave_namespace: "{{agave_namespace}}"
+        agave_security_group_namespace: "{{agave_security_group_namespace}}"
+
+        os_image: "{{os_image}}"
+        os_flavor: "{{os_flavor}}"
+        os_instance_username: "{{os_instance_username}}"
+        os_jenkins_vm_name:  "{{agave_namespace}}.ops.jenkins"
+        os_jenkins_security_group: "{{agave_security_group_namespace}}.jenkins"
+
+        os_skip_floating_ip: False
+
+        os_network: "{{agave_namespace}}_net"
+        os_subnet: "{{agave_namespace}}_subnet"
+        os_network_cidr: "{{ os_network_cidr }}"
+        os_network_allocation_pool_start: "{{ os_network_allocation_pool_start }}"
+        os_network_allocation_pool_end: "{{ os_network_allocation_pool_end }}"
+        os_network_gateway_ip: "{{ os_network_gateway_ip  }}"
+
+        os_keyname: "{{agave_namespace}}-key"
+        os_key_file: "{{os_public_key}}"
+        os_key_file_src: "{{os_private_key}}"
+
+
+#- name: Provision Network and Security Groups
+#  hosts: local
+#
+#  roles:
+#    - role: os_network_creator
+#      tags:
+#        - network
+
+- name: Create Jenkins Security Group
+  hosts: local
+
+  tasks:
+    - name: Make Agave Security Groups
+      os_security_group:
+        name: "{{item}}"
+        state: present
+      loop:
+        - "{{os_jenkins_security_group}}"
+
+    - name: Set Jenkins Remote IP Rules
+      os_security_group_rule:
+        security_group: "{{os_jenkins_security_group}}"
+        state: present
+        direction: "{{item.direction}}"
+        ethertype: "{{item.ethertype}}"
+        protocol: "{{item.protocol}}"
+        port_range_min: "{{item.port_range_min}}"
+        port_range_max: "{{item.port_range_max}}"
+        remote_ip_prefix: "{{item.remote_ip_prefix}}"
+      loop:
+        - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 22 , port_range_max: 22 , remote_ip_prefix: 0.0.0.0/0 }
+        - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 80 , port_range_max: 80 , remote_ip_prefix: 0.0.0.0/0 }
+        - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 443 , port_range_max: 443 , remote_ip_prefix: 0.0.0.0/0 }
+        - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 8080 , port_range_max: 8080 , remote_ip_prefix: 0.0.0.0/0 }
+        - { direction: ingress , ethertype: IPv4 , protocol: tcp , port_range_min: 8443 , port_range_max: 8443 , remote_ip_prefix: 0.0.0.0/0 }
+
+
+- name: Provision Jenkins VM Instances
+  hosts: local
+
+  roles:
+    - role: os_instance_creator
+      tags:
+        - instance
+      vars:
+        os_vm_name: "{{os_jenkins_vm_name}}"
+        os_security_groups:
+          - "{{os_jenkins_security_group}}"
+        os_instance_group: jenkins
+        os_instance_extra_groups:
+          - jenkins
+          - ops
+          - build
+
+- name: Set up Created Inventory and Check VM Readiness
+  hosts: local
+
+  tasks:
+    - debug:
+        var: agave_namespace
+        verbosity: 0
+      tags:
+        - inventory
+        - instance
+
+    - name: "Collect Facts on Created VMs in {{agave_namespace}} Namespace"
+      os_server_facts:
+        server: "{{os_jenkins_vm_name}}"
+      tags:
+        - inventory
+        - instance
+        - hosts
+
+    - name: Add Created VMs to In-Memory Inventory
+      add_host:
+        name: "{{item.public_v4}}"
+        groups: "{{ item.name.split('.') }}"
+        ansible_ssh_private_key_file: "{{os_key_file_src}}"
+        ansible_ssh_host: "{{item.public_v4}}"
+        ansible_ssh_user: "{{os_instance_username}}"
+        ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+      loop: "{{openstack_servers}}"
+      tags:
+        - inventory
+        - instance
+        - hosts
+
+    - name: Wait for SSH
+      loop: "{{openstack_servers}}"
+      wait_for:
+        host: "{{item.public_v4}}"
+        port: 22
+        state: started
+        connect_timeout: 10
+        timeout: 300
+      tags:
+        - instance
+        - inventory
+
+    - name: generate inventory file
+      debug: var=groups
+      tags:
+        - hosts
+        - instance
+        - inventory
+
+- name: Create and format a block storage volume to persist Jenkins data
+  hosts: local
+  gather_facts: False
+  become: False
+  tasks:
+
+  - name: create 200g test volume
+    os_volume:
+      state: present
+      size: 200
+      display_name: "{{os_jenkins_vm_name}}_volume"
+    register: jenkins_cinder_volume
+    tags:
+      - volume
+
+  - debug:
+     var: jenkins_cinder_volume
+    tags:
+      - volume
+
+  - set_fact:
+      cinder_volume: "{{jenkins_cinder_volume.id}}"
+      cinder_fs: "ext4"
+    tags:
+      - volume
+
+  - name: Attach the volume to the VM
+    os_server_volume:
+      state: present
+      server: "{{os_jenkins_vm_name}}"
+      volume: "{{jenkins_cinder_volume.id}}"
+    register: volume_attachment
+    tags:
+      - volume
+
+
+  - debug:
+     var: jenkins_cinder_volume
+    tags:
+      - volume
+
+  - set_fact:
+      attached_device: >-
+        {{ volume_attachment['attachments']|json_query("[?volume_id=='" + cinder_volume + "'].device | [0]") }}
+    when: volume_attachment.changed
+    tags:
+      - volume
+
+  - set_fact:
+      attached_device: "{{ jenkins_cinder_volume.volume.attachments[0].device}}"
+    when: volume_attachment.changed == False
+    tags:
+      - volume
+
+
+
+  - name: Initializing file system on block volume
+    delegate_to: "{{ groups['jenkins'][0] }}"
+    become: yes
+    tags:
+      - volume
+      - format
+
+    block:
+      - name: Wait for the device to appear
+        wait_for: path={{ attached_device }}
+
+      - name: Create the mount directory for mounting the volume
+        file:
+          path: "/storage"
+          state: directory
+        register: cinder_mount_dir
+
+      - name: Format the device
+        filesystem:
+          fstype: "{{ cinder_fs }}"
+          dev: "{{ attached_device }}"
+  #      when: jenkins_cinder_volume.changed
+
+
+      - name: Mount the device
+        mount:
+          name: "{{ cinder_mount_dir.path }}"
+          src: "{{ attached_device }}"
+          state: mounted
+          fstype: "{{ cinder_fs }}"
+
+      - name: Change mode on the filesystem
+        file:
+          path: "{{ cinder_mount_dir.path }}"
+          state: directory
+          recurse: true
+
+#    - name: Unmount the device
+#      mount:
+#        name: "{{ cinder_mount_dir.path }}"
+#        src: "{{ attached_device }}"
+#        state: absent
+#        fstype: "{{ cinder_fs }}"
+#
+#    - name: Delete the temp directory
+#      file:
+#        name: "{{ cinder_mount_dir.path }}"
+#        state: absent
+#
+#  - name: Detach the volume from the VM
+#    os_server_volume:
+#      state: absent
+#      server: "{{ groups['masters'][0] }}"
+#      volume: "{{ cinder_volume }}"

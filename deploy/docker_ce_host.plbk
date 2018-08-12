@@ -39,25 +39,12 @@
       get_url:
         dest: /etc/profile.d/docker.aliases.sh
         url: https://bitbucket.org/!api/2.0/snippets/deardooley/9KL4X/8cda45426572de3ff43a8da07f12e5ee95f73b5d/files/docker.aliases
-        force: yes
-
-    - name: add execute permission to docker aliases
-      file:
-        path: /etc/profile.d/docker.aliases.sh
-        owner: root
-        group: root
         mode: 01755
-
+        force: yes
 
     - name: install docker-compose bash completion
       get_url:
         url: https://raw.githubusercontent.com/docker/compose/1.21.2/contrib/completion/bash/docker-compose
         dest: /etc/bash_completion.d/docker-compose
-        force: yes
-
-    - name: add execute permission to docker-compose bash completion
-      file:
-        path: /etc/bash_completion.d/docker-compose
-        owner: root
-        group: root
         mode: 01755
+        force: yes
