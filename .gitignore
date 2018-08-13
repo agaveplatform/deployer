@@ -33,3 +33,6 @@ local/vagrant/3-host/Vagrantfile
 /lib
 /include
 pip-selfcheck.json
+/deploy/roles/zaxos.docker-ce-ansible-role/
+/deploy/roles/geerlingguy.java/
+/deploy/roles/geerlingguy.jenkins/
