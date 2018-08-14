@@ -1,0 +1,34 @@
+---
+# tasks file for roles/jenkins_host
+
+- name: "Create deployment directory"
+  file:
+    path: "{{ jenkins_host_deployment_dir }}"
+    state: directory
+
+- name: "Copy Traefik config template to host"
+  template:
+    src: jenkins.toml.j2
+    dest: "{{ jenkins_host_deployment_dir }}/jenkins.toml"
+
+- name: "Copy docker compose file to host"
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ jenkins_host_deployment_dir }}/docker-compose.yml"
+
+- name: "Generate self-signed certificates for the reverse proxy"
+  include_tasks: create_tls_certs.yml
+
+- name: "Pull the Docker images"
+  shell: docker-compose pull
+  args:
+    chdir: /home/apim/jenkins/traefik
+  environment:
+    COMPOSE_HTTP_TIMEOUT: 20000
+
+- name: "Start the reverse proxy"
+  shell: docker-compose up -d --force-recreate
+  args:
+    chdir: /home/apim/jenkins/traefik
+  environment:
+    COMPOSE_HTTP_TIMEOUT: 20000

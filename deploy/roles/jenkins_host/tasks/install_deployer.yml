@@ -1,0 +1,31 @@
+---
+# Adds the deployer to the remote host and configus the default
+# ansible configuration file
+- name: "Checkout Agave Deployer repository from git"
+  git:
+    repo: "https://github.com/agaveplatform/deployer.git"
+    dest: "{{ jenkins_home }}/agave-deployer"
+  tags:
+    - ansible
+
+- name: "Install Agave Deployer repository dependencies"
+  pip:
+    requirements: "{{ jenkins_home }}/agave-deployer/requirements.txt"
+  tags:
+    - ansible
+
+- name: "Install Agave Deployer galaxy roles"
+  shell: ansible-galaxy install -r galaxy.yml
+  args:
+      chdir: "{{ jenkins_home }}/agave-deployer/deploy"
+  tags:
+    - ansible
+
+- name: "Installing ansible.cfg file to JENKINS_HOME"
+  copy:
+    backup: yes
+    remote_src: yes
+    src: "{{ jenkins_home }}/agave-deployer/deploy/ansible.cfg"
+    dest: "{{ jenkins_home }}/.ansible.cfg"
+  tags:
+    - ansible

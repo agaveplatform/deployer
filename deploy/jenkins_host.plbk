@@ -16,26 +16,42 @@
   hosts: jenkins
 
 - name: configure docker-ce host
-  import_playbooks: docker_ce_host.plbk
+  import_playbook: docker_ce_host.plbk
+  vars:
+    update_docker_version: true
+    update_docker_compose_version: true
+
 
 - hosts: jenkins
   become: yes
 
   tasks:
-    - name: Updating hosts file with jenkins hostname
+    - name: Updating remote /etc/hosts file with jenkins hostname
       lineinfile:
         path: /etc/hosts
-        line: "{{ansible_ssh_host}} {{jenkins_hostname}}"
+        line: "{{ansible_ssh_host}} {{jenkins_public_hostname_or_ip}}"
         owner: root
         group: root
         mode: 0644
+      tags:
+        - jenkins
 
+    - name: Ensure JENKINS_HOME is present
+      file:
+        path: "{{ jenkins_home }}"
+        state: directory
+        mode: 0740
+        owner: jenkins
+        group: jenkins
+      tags:
+        - jenkins
 
-- hosts: jenkins
+- name: Installing jenkins on remote host
+  hosts: jenkins
   become: yes
 
   vars:
-    #jenkins_hostname: "{{jenkins_hostname}}"
+    jenkins_hostname: "{{jenkins_public_hostname_or_ip}}"
     jenkins_plugins:
       - slack
       - greenballs
@@ -49,7 +65,7 @@
       - bitbucket-approve
       - bitbucket-build-status-notifier
       - jira
-      - wso20-oauth
+      - wso2id-oauth
       - clone-workspace-scm
       - credentials-binding
       - docker-buildstep
@@ -65,57 +81,57 @@
       - shelve-project
       - ssh-slaves
       - buildgraph-view
-     jenkins_home: "/storage/jenkins"
-#    jenkins_admin_username: "{{jenkins_admin_username}}"
-#    jenkins_admin_password: "{{jenkins_admin_password}}"
-#    jenkins_token: "{{jenkins_admin_token}}"
-#    jenkins_repo_url: ''
-#    jenkins_version: "2.135"
-#    jenkins_init_changes:
-#      - option: "JENKINS_ARGS"
-#        value: "--prefix=jenkins"
-#      - option: "JENKINS_JAVA_OPTIONS"
-#        value: "{{ jenkins_java_options }}"
+      - metrics
+    java_packages:
+        - java-1.8.0-openjdk
+    java_home: /usr/lib/jvm/java-1.8.0
+
   roles:
     - role: geerlingguy.java
       tags:
         - jenkins
+        - java
+      when: "ansible_os_family == 'RedHat'"
+
+
+    - role: geerlingguy.java
+      tags:
+        - jenkins
+        - java
+      when: "ansible_os_family == 'Debian'"
+      java_packages:
+        - openjdk-8-jdk
 
     - role: geerlingguy.jenkins
       tags:
         - jenkins
 
-- hosts: jenkins
+    - role: jenkins_host
+      tags:
+        - jenkins
+        - traefik
+
+
+- name: Install CLI and API keys
+  hosts: jenkins
   become: yes
 
   tasks:
-    - name: "Checkout Agave Deployer repository from git"
-      git:
-        repo: "git@github.com:agaveplatform/deployer.git"
-        dest: "/var/lib/jenkins/agave-deployer"
-        ssh_opts: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+    - name: Installing the Agave CLI
+      include_role:
+        name: agave_cli
+      vars:
+        agave_cli_install_globally: true
       tags:
-        - ansible
+        - cli
 
-    - name: "Install Agave Deployer repository dependencies"
-      pip:
-        requirements: /var/lib/jenkins/agave-deployer/requirements.txt
+    - name: Generating Agave client application keys for Jenkins host
+      include_role:
+        name: agave_client_application
+      vars:
+        agave_client_application_name: jenkins
+        agave_client_application_description: "Jenkins CI server for the Agave {{agave_tenant_id}} tenant"
+        agave_client_application_callback_url: "https://{{ jenkins_public_hostname_or_ip }}"
       tags:
-        - ansible
-
-    - name: "Install Agave Deployer galaxy roles"
-      shell: ansible-galaxy install -r galaxy.yml
-      args:
-          chdir: /var/lib/jenkins/agave-deployer
-      tags:
-        - ansible
-
-    - name: "Installing ansible.cfg file"
-      file:
-        backup: yes
-        remote_src: yes
-        src: /var/lib/jenkins/aems-ansible/ansible.cfg
-        dest: /etc/ansible/ansible.cfg
-      become: yes
-      tags:
-        - ansible
+        - cli
+        - client_application
