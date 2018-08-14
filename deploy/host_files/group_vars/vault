@@ -1,0 +1,13 @@
+---
+# Secrets for jenkins server. Each variable corresponds to a
+# variable without the "vault_" prefix in the "vars" file
+# within this folder.
+#
+# This should be encrypted using vault when not editing.
+# The file will be automatically decrypted by ansible-vault
+# whenenver this group's hosts
+# are accessed.
+#
+vault_jenkins_admin_username: admin
+vault_jenkins_admin_password: admin
+vault_jenkins_token:

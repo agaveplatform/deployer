@@ -1,7 +1,7 @@
 ---
 # tasks file for agave_cli
 
-- name: Checkout the Agave CLI from git
+- name: "Checkout the Agave CLI from {{agave_cli_git_repository}}"
   git:
     repo: "{{agave_cli_git_repository}}"
     dest: "{{agave_cli_deployment_directory}}"
@@ -11,11 +11,20 @@
 
 - name: Add the CLI variables to the default environment
   template:
-    src: agave_cli_environment.sh
+    src: agave_cli_environment.sh.j2
     dest: "{{agave_cli_environment_directory}}/agave_cli_environment.sh"
     mode: 01755
 
+- name: Initialize the CLI environment for the given tenant
+  shell: ". $HOME/.bashrc && tenants-init -V -H https://{{tenant_public_domain_or_ip}}/tenants -t {{tenant_id}}"
+#  environment:
+#    AGAVE_JSON_PARSER: "{{agave_cli_json_parser}}"
+#    AGAVE_TENANTS_API_BASEURL: "https://{{tenant_public_domain_or_ip}}/tenants"
+  register: tenants_init_response
+  ignore_errors: yes
 
+- debug:
+    var: tenants_init_response.stdout
 
-
-
+- debug:
+    var: tenants_init_response.stderr

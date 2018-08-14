@@ -16,3 +16,4 @@ groups:
   mongodb: "{{server_vars['metadata']['group'] == 'db' && ( 'mongodb' in server_vars['metadata']['extra_groups'].split(',')) }}"
   queue: "{{server_vars['metadata']['group'] == 'db' && ( 'queue' in server_vars['metadata']['extra_groups'].split(',')) }}"
   postman: "{{server_vars['metadata']['group'] == 'postman'"
+  jenkins: "{{server_vars['metadata']['group'] == 'jenkins'"

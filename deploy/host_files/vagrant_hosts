@@ -5,7 +5,7 @@
 # the name of your tenant.
 tenant_id=sandbox
 agave_tenant_id=sandbox
-tenant_public_domain_or_ip=192.168.205.10
+tenant_public_domain_or_ip=sandbox.agaveplatform.org
 
 # The name of the core service config file to read in.
 core_config_file=sandbox

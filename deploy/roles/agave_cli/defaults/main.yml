@@ -1,10 +1,17 @@
 ---
 # defaults file for agave_cli
 
+# Should the cli be installed and placed in the environment of
+# all users
 agave_cli_install_globally: false
 
-agave_cli_git_repository: git@github.com:agaveplatform/agave-cli.git
+# The repo to use. Fork if you have another you prefer to use
+agave_cli_git_repository: https://github.com/agaveplatform/agave-cli.git
 
+# CLI branch to use. Develop is the latest and generally preferred for
+# these things
 agave_cli_version: develop
 
+# Default JSON parser for the CLI. jq is the preference and is installed
+# on all hosts by default when the `agave_host` role is run.
 agave_cli_json_parser: jq
