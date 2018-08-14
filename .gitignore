@@ -9,7 +9,8 @@ apim.priv.key
 *.cer
 *.vagrant
 *.iml
-build/
+/build
+/docs/build/doctrees
 tmp/
 deploy/inventory
 deployer-validation.bash
@@ -36,3 +37,7 @@ pip-selfcheck.json
 /deploy/roles/zaxos.docker-ce-ansible-role/
 /deploy/roles/geerlingguy.java/
 /deploy/roles/geerlingguy.jenkins/
+/docs/build/html/Testing.html
+/docs/build/html/Introduction.html
+/docs/build/html/Validation.html
+/docs/build/html/Deploy.html

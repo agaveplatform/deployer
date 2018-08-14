@@ -1,0 +1,811 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>System Requirements &mdash; Agave Platform Documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Preparing Your Hosts" href="host-preparation.html" />
+    <link rel="prev" title="Planning your installation" href="planning-your-installation.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Agave Platform
+          
+
+          
+            
+            <img src="../_static/agave-platform-logo-white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Getting Started/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Getting Started/sandbox.html">Setting up a Sandbox</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/core-concepts.html">Core Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/infrastructure-components.html">Infrastructure Components</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Installing Agave</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="planning-your-installation.html">Planning your installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">System Requirements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#minimum-hardware-requirements">Minimum Hardware Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#production-level-hardware-requirements">Production Level Hardware Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#environment-requirements">Environment Requirements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dns-requirements">DNS Requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#network-access-requirements">Network Access Requirements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#required-ports">Required Ports</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#persistent-storage">Persistent Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cloud-provider-considerations">Cloud Provider Considerations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="host-preparation.html">Preparing Your Hosts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuring-your-inventory-file.html">Customizing Inventory Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example-inventory-files.html">Example Inventory Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="running-install.html">Running Installation Playbooks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Building Images</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Building Images/index.html">Building Images</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Agave Platform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>System Requirements</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/Installing Agave/prerequisites.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="system-requirements">
+<h1>System Requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline">¶</a></h1>
+<p>The following sections identify the hardware specifications and system-level requirements of all hosts within your OpenShift Origin environment.</p>
+<div class="section" id="minimum-hardware-requirements">
+<h2>Minimum Hardware Requirements<a class="headerlink" href="#minimum-hardware-requirements" title="Permalink to this headline">¶</a></h2>
+<p>The system requirements vary per host type:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="79%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Host Type</th>
+<th class="head">System Requirements</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>auth</td>
+<td><div class="first line-block">
+<div class="line">* Physical or virtual system, or an instance running on a public or private IaaS.</div>
+</div>
+<div class="line-block">
+<div class="line">* Base OS: CentOS 7.4.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 4 vCPU (additional are strongly recommended).</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 8 GB RAM (additional memory is strongly recommended, especially if</div>
+<div class="line">streaming and push notification service is co-located on auth).</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 20 GB hard disk space for the file system containing /var/.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 1 GB hard disk space for the file system containing /usr/local/bin/.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 1 GB hard disk space for the file system containing the system’s</div>
+<div class="line">temporary directory.</div>
+</div>
+<div class="last line-block">
+<div class="line">* An additional minimum 60 GB unallocated space per system running containers</div>
+<div class="line">for Docker’s storage back end; see Configuring Docker Storage. Additional</div>
+<div class="line">space might be required, depending on the size and number of containers that</div>
+<div class="line">run on the node.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>core</td>
+<td><div class="first line-block">
+<div class="line">* Physical or virtual system, or an instance running on a public or private IaaS.</div>
+</div>
+<div class="line-block">
+<div class="line">* Base OS: CentOS 7.4.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 8 vCPU (additional are strongly recommended).</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 16 GB RAM (additional memory is strongly recommended, especially if</div>
+<div class="line">both worker and service containers are running on the host).</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 20 GB hard disk space for the file system containing /var/.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 1 GB hard disk space for the file system containing /usr/local/bin/.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 100 GB hard disk space for the file system containing /home.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 1 GB hard disk space for the file system containing the system’s</div>
+<div class="line">temporary directory.</div>
+</div>
+<div class="last line-block">
+<div class="line">* An additional minimum 60 GB unallocated space per system running containers</div>
+<div class="line">for Docker’s storage back end; see Configuring Docker Storage. Additional</div>
+<div class="line">space might be required, depending on the size and number of containers that</div>
+<div class="line">run on the node.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>persistence</td>
+<td><div class="first line-block">
+<div class="line">* Physical or virtual system, or an instance running on a public or private IaaS.</div>
+</div>
+<div class="line-block">
+<div class="line">* Base OS: CentOS 7.4.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 6 vCPU (additional are strongly recommended). <a class="footnote-reference" href="#id3" id="id1">[1]</a> <a class="footnote-reference" href="#id4" id="id2">[2]</a></div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 8 GB RAM (additional memory is strongly recommended, especially if</div>
+<div class="line">streaming and push notification service is co-located on auth).</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 20 GB hard disk space for the file system containing /var/.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 1 GB hard disk space for the file system containing /usr/local/bin/.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 60 GB hard disk space for the file system containing /home.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 1 GB hard disk space for the file system containing the system’s</div>
+<div class="line">temporary directory.</div>
+</div>
+<div class="last line-block">
+<div class="line">* An additional minimum 20 GB unallocated space per system running containers</div>
+<div class="line">for Docker’s storage back end; see Configuring Docker Storage. Additional</div>
+<div class="line">space might be required, depending on the size and number of containers that</div>
+<div class="line">run on the node.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>web</td>
+<td><div class="first line-block">
+<div class="line">* Physical or virtual system, or an instance running on a public or private IaaS.</div>
+</div>
+<div class="line-block">
+<div class="line">* Base OS: CentOS 7.4.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 2 vCPU (additional are strongly recommended).</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 4 GB RAM (additional as needed with web traffic).</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 20 GB hard disk space for the file system containing /var/.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 1 GB hard disk space for the file system containing /usr/local/bin/.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 1 GB hard disk space for the file system containing the system’s</div>
+<div class="line">temporary directory.</div>
+</div>
+<div class="last line-block">
+<div class="line">* An additional minimum 20 GB unallocated space per system running containers</div>
+<div class="line">for Docker’s storage back end; see Configuring Docker Storage. Additional</div>
+<div class="line">space might be required, depending on the size and number of containers that</div>
+<div class="line">run on the node.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>postman</td>
+<td><div class="first line-block">
+<div class="line">* Physical or virtual system, or an instance running on a public or private IaaS.</div>
+</div>
+<div class="line-block">
+<div class="line">* Base OS: CentOS 7.4.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 2 vCPU</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 4 GB RAM.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 20 GB hard disk space for the file system containing /var/.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 1 GB hard disk space for the file system containing /usr/local/bin/.</div>
+</div>
+<div class="line-block">
+<div class="line">* Minimum 1 GB hard disk space for the file system containing the system’s</div>
+<div class="line">temporary directory.</div>
+</div>
+<div class="last line-block">
+<div class="line">* An additional minimum 40 GB unallocated space per system running containers</div>
+<div class="line">for Docker’s storage back end; see Configuring Docker Storage. Additional</div>
+<div class="line">space might be required, depending on the size and number of containers that</div>
+<div class="line">run on the node.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>See <a class="reference external" href="https://docs.mongodb.com/manual/administration/production-notes/#prod-notes-ram">MongoDB production notes</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>See <a class="reference external" href="https://severalnines.com/resources/webinars/our-guide-mysql-mariadb-performance-tuning">MariaDB performance tuning</a></td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="production-level-hardware-requirements">
+<h2>Production Level Hardware Requirements<a class="headerlink" href="#production-level-hardware-requirements" title="Permalink to this headline">¶</a></h2>
+<p>Test or sample environments function with the minimum requirements. For production environments, the following recommendations apply:</p>
+<p><strong>Auth Hosts</strong>
+In a highly available Agave Platform deployment, an Auth component host should have, in addition to the minimum requirements in the table above, 2 CPU core and 4 GB of memory for the shared file system and synchronization taskss. Therefore, the recommended size of an Auth component host would be the minimum requirements of 4 CPU cores and 8 GB of RAM, plus 2 CPU cores and 4 GB of RAM, totaling 6 CPU cores and 12 GB of RAM.</p>
+<p>See the <a href="#id15"><span class="problematic" id="id16">`Platform Limits`_</span></a> section for more information.</p>
+<p><strong>Core Hosts</strong>
+The size of a core host depends on the expected size of its workload. As an Agave Platform administrator, you will need to calculate the expected workload, then add about 20 percent for bursting and overhead. For production environments, allocate enough resources so that a single container failure does not affect your maximum capacity.</p>
+<p>For more information, see <a class="reference external" href="../Installing%20Agave/planning-your-installation.html#sizing-considerations">Sizing Considerations</a> and <a href="#id17"><span class="problematic" id="id18">`Platform Limits`_</span></a>.</p>
+<p><strong>Persistence Hosts</strong>
+In a production environment, the size of the persistence host depends on the requirements of the database or queue it is hosting. The persistence components should never be deployed on a single host in a production environment. At the minimum, they should each be run on their own host and managed independently by an experience database administrator.</p>
+<p>More information on clustering and tuning MariaDB, MongoDB, and RabbitMQ can be found on their respective websites.</p>
+</div>
+<div class="section" id="environment-requirements">
+<h2>Environment Requirements<a class="headerlink" href="#environment-requirements" title="Permalink to this headline">¶</a></h2>
+<p>The following section defines the requirements of the environment containing your Agave Platform deployment. This includes networking considerations and access to external services, such as Git repository access, storage, and cloud infrastructure providers.</p>
+<div class="section" id="dns-requirements">
+<h3>DNS Requirements<a class="headerlink" href="#dns-requirements" title="Permalink to this headline">¶</a></h3>
+<p>The Agave Platform requires a publicly resolvable hostnames for each host. Within the platform, this can be managed through the setting of <cite>/etc/hosts</cite> files on the hosts. For production environments, valid DNS entries for each host should be created and included in the inventory files.</p>
+<p>By default, containers receive their DNS configuration file (/etc/resolv.conf) from their host. For the Science API data services and workers, passive communication channels often need to be configured to complete file operations. In these cases it it important that the host has a publicly resolvable ip address that the container knows about and can be accessed from the outside world. For this reason, the inventory files should include the ip of the host rather than hostname as the value of each host’s <code class="docutils literal"><span class="pre">ansible_ssh_host</span></code> variable.</p>
+<p>If you do not have a properly functioning DNS environment, you could experience failure with:</p>
+<ul class="simple">
+<li>Installation via the reference Ansible-based scripts</li>
+<li>Resolution of PostIts url from the Science APIs</li>
+<li>Third-party transfers over FTP, SFTP, and GridFTP.</li>
+<li>Download of files through their public URLs.</li>
+<li>Communication between the API Manager and backend services.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="network-access-requirements">
+<h2>Network Access Requirements<a class="headerlink" href="#network-access-requirements" title="Permalink to this headline">¶</a></h2>
+<p>A shared network must exist between the master and node hosts. If you plan to configure multiple masters for high-availability using standard cluster installation process, you must also select an IP to be configured as your virtual IP (VIP) during the installation process. The IP that you select must be routable between all of your nodes, and if you configure using a FQDN it should resolve on all nodes.</p>
+<div class="section" id="required-ports">
+<h3>Required Ports<a class="headerlink" href="#required-ports" title="Permalink to this headline">¶</a></h3>
+<p>The Agave Platform installation delegates firewall management to the host and Docker Engine. If your network configuration uses an external firewall, such as a hardware-based firewall, you must ensure infrastructure components can communicate with each other through specific ports that act as communication endpoints for certain processes or services.</p>
+<p>Ensure the following ports required by Agave are open on your network and configured to allow access between hosts. Some ports are optional depending on your configuration and usage.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ol class="last upperalpha simple" start="12">
+<li>indicates the marked port is also used in loopback mode, enabling the master to communicate with itself.</li>
+</ol>
+</div>
+<table border="1" class="colwidths-given docutils" id="id5">
+<caption><span class="caption-text">Auth to World</span><a class="headerlink" href="#id5" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Port(s)</th>
+<th class="head">Traffic</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>80, 443</td>
+<td>TCP</td>
+<td>Required for basic web traffic</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="colwidths-given docutils" id="id6">
+<caption><span class="caption-text">Auth to Auth</span><a class="headerlink" href="#id6" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Port(s)</th>
+<th class="head">Traffic</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>8080 (L)</td>
+<td>TCP</td>
+<td>Required for communication with API Pubisher and Store</td>
+</tr>
+<tr class="row-odd"><td><div class="first last line-block">
+<div class="line">8443 (L)</div>
+<div class="line">9000</div>
+</div>
+</td>
+<td>TCP</td>
+<td>Required for communication with API Pubisher and Store</td>
+</tr>
+<tr class="row-even"><td>9000 (L)</td>
+<td>TCP</td>
+<td>Required for profile service configuration during deployments</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="colwidths-given docutils" id="id7">
+<caption><span class="caption-text">Auth to Core</span><a class="headerlink" href="#id7" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Port(s)</th>
+<th class="head">Traffic</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>80, 443</td>
+<td>TCP</td>
+<td>Required for HTTP traffic to the backend APIs</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="colwidths-given docutils" id="id8">
+<caption><span class="caption-text">Auth to Persistence</span><a class="headerlink" href="#id8" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Port(s)</th>
+<th class="head">Traffic</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>389</td>
+<td>TCP</td>
+<td>Required for LDAP access</td>
+</tr>
+<tr class="row-odd"><td>3301</td>
+<td>TCP</td>
+<td>Required for access to Auth MariaDB instance</td>
+</tr>
+<tr class="row-even"><td>11300</td>
+<td>TCP</td>
+<td>Required for beanstalkd access</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="colwidths-given docutils" id="id9">
+<caption><span class="caption-text">Core to World</span><a class="headerlink" href="#id9" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Port(s)</th>
+<th class="head">Traffic</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>52920-52940</td>
+<td>TCP</td>
+<td>Optional JMX ports for stats and remote debugging</td>
+</tr>
+<tr class="row-odd"><td>30000-30111</td>
+<td>TCP</td>
+<td>Optional passive data channel port range for FTP and FTPS connections</td>
+</tr>
+<tr class="row-even"><td><div class="first last line-block">
+<div class="line">50000-50999</div>
+<div class="line">52900-52999</div>
+</div>
+</td>
+<td>TCP</td>
+<td>Optional passive data channel port ranges for GridFTP connections</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="colwidths-given docutils" id="id10">
+<caption><span class="caption-text">Core to Core</span><a class="headerlink" href="#id10" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Port(s)</th>
+<th class="head">Traffic</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>80 or 443 (L)</td>
+<td>UDP</td>
+<td>Required for load balanced communication between core hosts</td>
+</tr>
+<tr class="row-odd"><td>8440-8499 (L)</td>
+<td>TCP</td>
+<td>Required for HTTP requests within a Host</td>
+</tr>
+<tr class="row-even"><td>8070-8099 (L)</td>
+<td>TCP</td>
+<td>Required for TLS requests within a Host</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="colwidths-given docutils" id="id11">
+<caption><span class="caption-text">Core to Persistence</span><a class="headerlink" href="#id11" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Port(s)</th>
+<th class="head">Traffic</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>389</td>
+<td>TCP</td>
+<td>Required for LDAP access</td>
+</tr>
+<tr class="row-odd"><td>3301</td>
+<td>TCP</td>
+<td>Required for access to Auth MariaDB instance</td>
+</tr>
+<tr class="row-even"><td>3306</td>
+<td>TCP</td>
+<td>Required for access to Core MariaDB instance</td>
+</tr>
+<tr class="row-odd"><td>9000</td>
+<td>TCP</td>
+<td>Required for access to MongoDB access</td>
+</tr>
+<tr class="row-even"><td>11300</td>
+<td>TCP</td>
+<td>Required for beanstalkd access</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="colwidths-given docutils" id="id12">
+<caption><span class="caption-text">Persistence to Persistence</span><a class="headerlink" href="#id12" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Port(s)</th>
+<th class="head">Traffic</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>3306, 3301</td>
+<td>TCP</td>
+<td>MariaDB client access</td>
+</tr>
+<tr class="row-odd"><td>4567</td>
+<td>UDP, TCP</td>
+<td><div class="first last line-block">
+<div class="line">MariaDB replication traffic, multicast replication uses both UDP transport</div>
+<div class="line">and TCP on this port.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>4568</td>
+<td>TCP</td>
+<td>MariaDB incremental state updates</td>
+</tr>
+<tr class="row-odd"><td>4444</td>
+<td>TCP</td>
+<td>Misc state transfer updates</td>
+</tr>
+<tr class="row-even"><td>27017</td>
+<td>TCP</td>
+<td>Primary MongoDB mongos/mongod port</td>
+</tr>
+<tr class="row-odd"><td>27018</td>
+<td>TCP</td>
+<td>Primary MongoDB shard server port</td>
+</tr>
+<tr class="row-even"><td>27019</td>
+<td>TCP</td>
+<td>Primary MongoDB config server port</td>
+</tr>
+<tr class="row-odd"><td>9000</td>
+<td>TCP</td>
+<td>MongoDB client access</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="colwidths-given docutils" id="id13">
+<caption><span class="caption-text">IaaS Deployments</span><a class="headerlink" href="#id13" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Port(s)</th>
+<th class="head">Traffic</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>22</td>
+<td>TCP</td>
+<td>Required for SSH by the installer or system administrator.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="colwidths-given docutils" id="id14">
+<caption><span class="caption-text">Aggregated Logging</span><a class="headerlink" href="#id14" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Port(s)</th>
+<th class="head">Traffic</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>9200 (L)</td>
+<td>TCP</td>
+<td><div class="first last line-block">
+<div class="line">Optional: For Elasticsearch API use. Required to be internally open on any</div>
+<div class="line">infrastructure nodes so Kibana is able to retrieve logs for display.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>9880</td>
+<td>TCP</td>
+<td>Optional: fluentd HTTP port</td>
+</tr>
+<tr class="row-even"><td>24224</td>
+<td>TCP</td>
+<td>Optional: fluentd forwarder</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="persistent-storage">
+<h2>Persistent Storage<a class="headerlink" href="#persistent-storage" title="Permalink to this headline">¶</a></h2>
+<p>Persistent storage is configured by default through volume mounts onto the component hosts. For multi-host deployments, Docker volumes are used to mount MFS storage into the containers.</p>
+</div>
+<div class="section" id="cloud-provider-considerations">
+<h2>Cloud Provider Considerations<a class="headerlink" href="#cloud-provider-considerations" title="Permalink to this headline">¶</a></h2>
+<p>There are certain aspects to take into consideration if installing OpenShift Origin on a cloud provider. Consult the respective could provider security group documentation for more information on how to configure the above port ranges for access in your environment.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For OpenStack deployments, the <code class="docutils literal"><span class="pre">os_create_hosts.plbk</span></code> playbook will configure the appropriate security groups for you.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="host-preparation.html" class="btn btn-neutral float-right" title="Preparing Your Hosts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="planning-your-installation.html" class="btn btn-neutral" title="Planning your installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Rion Dooley.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

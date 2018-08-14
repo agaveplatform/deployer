@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Building Images &mdash; Agave Platform Documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Running Installation Playbooks" href="../Installing Agave/running-install.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Agave Platform
+          
+
+          
+            
+            <img src="../_static/agave-platform-logo-white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Getting Started/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Getting Started/sandbox.html">Setting up a Sandbox</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/core-concepts.html">Core Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/infrastructure-components.html">Infrastructure Components</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Installing Agave</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Installing Agave/planning-your-installation.html">Planning your installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Installing Agave/prerequisites.html">System Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Installing Agave/host-preparation.html">Preparing Your Hosts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Installing Agave/configuring-your-inventory-file.html">Customizing Inventory Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Installing Agave/example-inventory-files.html">Example Inventory Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Installing Agave/running-install.html">Running Installation Playbooks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Building Images</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Building Images</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#auth-components">Auth Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#apim">APIM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#profiles-api">Profiles API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clients-api">Clients API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#persistence-components">Persistence Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mysql-mariadb">MySQL/MariaDB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mongodb">MongoDB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#beanstalkd">beanstalkd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#redis">Redis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#science-api-components">Science API Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#java-base-image">Java base image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#php-base-image">PHP base image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#python-base-image">Python base image</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Agave Platform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Building Images</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/Building Images/index.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="building-images">
+<span id="building-images"></span><h1>Building Images<a class="headerlink" href="#building-images" title="Permalink to this headline">¶</a></h1>
+<p>All of the Agave Platform's components run within Docker containers. The containers are all built independently with vanilla configurations and pushed into the Docker Hub public registry. This section serves as a point of reference for build instructions for the different infrastructure components.</p>
+<div class="section" id="auth-components">
+<span id="auth-components"></span><h2>Auth Components<a class="headerlink" href="#auth-components" title="Permalink to this headline">¶</a></h2>
+<p>In order to facilitate multi-purpose use, the auth base images are built with configuration file templates in the Jinja2 format. The templates are listed and compiled at run time using a simple template compilation system provided in the image <code class="docutils literal"><span class="pre">agaveplatform/template_compiler</span></code>. As a result, many of the auth base images either directly or indirectly decend from this image. The Dockerfile for <code class="docutils literal"><span class="pre">agaveplatform/template_compiler</span></code> is contained within the <code class="docutils literal"><span class="pre">template_compiler</span></code> folder of the <a class="reference external" href="https://github.com/agaveplatform/base-images">Agave base images repository</a>. Its image must be built first before any other images can be built.</p>
+<p>The template system expects two special files to be loaded into the container. First is the <code class="docutils literal"><span class="pre">/templates</span></code> file at the root of the container. This should be a text file that contains a list of file paths (relative to the container) that should be compiled. Second the <code class="docutils literal"><span class="pre">/values.yml</span></code> file, also at the root of the container, containing the key/value pairs that should be used to compile the temaples. It is a standard yaml file and as such can be commented, etc.</p>
+<div class="section" id="apim">
+<span id="apim"></span><h3>APIM<a class="headerlink" href="#apim" title="Permalink to this headline">¶</a></h3>
+<p>The APIM image is built from the Dockerfile in the <a class="reference external" href="https://github.com/agaveplatform/apim">agaveplatform/apim</a> respository.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><strong>Note:</strong> This is a particularly large repository due to the size of the APIM binary distribution needed to build the image.</p>
+</div>
+</div>
+<div class="section" id="profiles-api">
+<span id="profiles-api"></span><h3>Profiles API<a class="headerlink" href="#profiles-api" title="Permalink to this headline">¶</a></h3>
+<p>The Profiles service is built from the Dockerfile in the <a class="reference external" href="https://github.com/agaveplatform/pyprofiles-api">agaveplatform/pyprofiles-api</a> repository.</p>
+</div>
+<div class="section" id="clients-api">
+<span id="clients-api"></span><h3>Clients API<a class="headerlink" href="#clients-api" title="Permalink to this headline">¶</a></h3>
+<p>The Clients service is built from the Dockerfile in the <a class="reference external" href="https://github.com/agaveplatform/pyprofiles-api">agaveplatform/clients-api</a> repository.</p>
+</div>
+</div>
+<div class="section" id="persistence-components">
+<span id="persistence-components"></span><h2>Persistence Components<a class="headerlink" href="#persistence-components" title="Permalink to this headline">¶</a></h2>
+<p>The persistence images all derive from their respective trusted images within the Docker Hub Marketplace. The versions of the images in the <a class="reference external" href="https://github.com/agaveplatform/base-images">Agave base images repository</a> have custom entrypoints added to enable configuration through consistent environment variables. The Dockerfiles for each of the persistence images is located within the respective folder within the <a class="reference external" href="https://github.com/agaveplatform/base-images">Agave base images repository</a>.</p>
+<div class="section" id="mysql-mariadb">
+<span id="mysql-mariadb"></span><h3>MySQL/MariaDB<a class="headerlink" href="#mysql-mariadb" title="Permalink to this headline">¶</a></h3>
+<p>The MySQL image is actually based on MariaDB. MariaDB is a drop-in replacement for MySQL with several attractive features around thread pooling, JSON performance, clustering, and alternative storage engines.</p>
+</div>
+<div class="section" id="mongodb">
+<span id="mongodb"></span><h3>MongoDB<a class="headerlink" href="#mongodb" title="Permalink to this headline">¶</a></h3>
+<p>The MongoDB images are based on the 2.6 and 3.6 versions of the <a class="reference external" href="https://hub.docker.com/_/mongo/">official Mongo image</a>. Both version are extended to support creation of multiple databases, implicit security, and environment based account creation.</p>
+</div>
+<div class="section" id="beanstalkd">
+<span id="beanstalkd"></span><h3>beanstalkd<a class="headerlink" href="#beanstalkd" title="Permalink to this headline">¶</a></h3>
+<p>The beanstalkd image is a stock installation of beanstalkd on Alpine linux.</p>
+</div>
+<div class="section" id="redis">
+<span id="redis"></span><h3>Redis<a class="headerlink" href="#redis" title="Permalink to this headline">¶</a></h3>
+<p>The redis image is the default Redis image with support for password protection via environment variables.</p>
+</div>
+</div>
+<div class="section" id="science-api-components">
+<span id="science-api-components"></span><h2>Science API Components<a class="headerlink" href="#science-api-components" title="Permalink to this headline">¶</a></h2>
+<p>The Science APIs are implemented as a collection of polygot microservices. While each service runs independently of the others, all the services leverage a common set of libraries for connection pooling, caching, authentication, and persistence. Because of this, building individual APIs is not currently supported or recommended. Due to the complex interactions between services and contracts required for communication, the Science APIs are build, versioned, published, and deployed together from an automated build system included in the in the <a class="reference external" href="https://github.com/agaveplatform/science-apis">Science API Github repository</a>. This ensures consistency between the components and simplifies both integration and regression testing across the platform.</p>
+<div class="section" id="java-base-image">
+<span id="java-base-image"></span><h3>Java base image<a class="headerlink" href="#java-base-image" title="Permalink to this headline">¶</a></h3>
+<p>All Java APIs run in a Tomcat 8 servlet container running Java 8. The Dockerfile adds custom libraries and configurations for log redirection, CORS, connection pooling, JCE extensions, and JMX support. Support for dynamicaly set classpath, JVM, and Tomcat environment variables are supported as well as custom debug and redirect logging options. The <code class="docutils literal"><span class="pre">agaveplatform/java-api-base</span></code> image is built from the <a class="reference external" href="https://github.com/agaveplatform/java-api-base">agaveplatform/java-api-base</a> Github repository.</p>
+</div>
+<div class="section" id="php-base-image">
+<span id="php-base-image"></span><h3>PHP base image<a class="headerlink" href="#php-base-image" title="Permalink to this headline">¶</a></h3>
+<p>All PHP APIs are served by Apache 2.4 with PHP5.6. The Dockerfile adds support for composer, custom logging, and extensions for beanstalkd, Redis, mysqli, mongodb, etc. The <code class="docutils literal"><span class="pre">agaveplatform/php-api-base</span></code> image is built from the <a class="reference external" href="https://github.com/agaveplatform/php-api-base">agaveplatform/php-api-base</a> Github repository.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">All PHP API will be replaced with Java implementations or updated to NGINX/PHP-FPM 7.x in the near future.</p>
+</div>
+</div>
+<div class="section" id="python-base-image">
+<span id="python-base-image"></span><h3>Python base image<a class="headerlink" href="#python-base-image" title="Permalink to this headline">¶</a></h3>
+<p>All Python APIs extend the trusted Python 3.6 image in the Docker Hub and use the long term support version of uwsgi to expose the API via an external application server. Each Agave Python API  builds from scratch starting with the <code class="docutils literal"><span class="pre">python:3.6</span></code> image. See the Dockerfiles in the relevant API repositories for details.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../Installing Agave/running-install.html" class="btn btn-neutral" title="Running Installation Playbooks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Rion Dooley.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

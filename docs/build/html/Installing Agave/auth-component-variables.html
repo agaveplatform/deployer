@@ -1,0 +1,807 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Auth Components &mdash; Agave Platform Documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Agave Platform
+          
+
+          
+            
+            <img src="../_static/agave-platform-logo-white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Getting Started/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Getting Started/sandbox.html">Setting up a Sandbox</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/core-concepts.html">Core Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/infrastructure-components.html">Infrastructure Components</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Installing Agave</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="planning-your-installation.html">Planning your installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prerequisites.html">System Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="host-preparation.html">Preparing Your Hosts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuring-your-inventory-file.html">Customizing Inventory Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example-inventory-files.html">Example Inventory Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="running-install.html">Running Installation Playbooks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Building Images</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Building Images/index.html">Building Images</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Agave Platform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Auth Components</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/Installing Agave/auth-component-variables.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="auth-components">
+<h1>Auth Components<a class="headerlink" href="#auth-components" title="Permalink to this headline">¶</a></h1>
+<p>Agave is a multi-tenant platform, and each tenant deploys a dedicated auth component while the other components (core and persistence) are shared across tenants. The Ansible installer can support the installation and management of multiple tenants. Each tenant is identified by the value of <code class="docutils literal"><span class="pre">tenant_id</span></code> provided in the inventory file. The default values for the tenant_id is “sandbox”.</p>
+<p>The following tables describe variables for use with the Ansible installer that can be used to customize the Auth components:</p>
+<table border="1" class="colwidths-given docutils" id="id9">
+<caption><span class="caption-text">Auth component Playbook variables</span><a class="headerlink" href="#id9" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="30%" />
+<col width="15%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Variable</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>tenant_id</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">A unique id for this tenant.</div>
+<div class="line"><em>Note: This will be replaced by the ``agave_tenant_id``</em></div>
+<div class="line"><a href="#id1"><span class="problematic" id="id2">*</span></a>field in the near future. Both are currently *</div>
+<div class="line"><em>required.</em></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_tenant_id</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">A unique id for this tenant.</div>
+<div class="line"><em>Note: This will be replace the ``tenant_id``</em></div>
+<div class="line"><a href="#id3"><span class="problematic" id="id4">*</span></a>field in the near future. Both are currently *</div>
+<div class="line"><em>required.</em></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>tenant_public_domain_or_ip</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">The public domain name or ip address of the</div>
+<div class="line">auth server. This is the address you will use</div>
+<div class="line">to connect to your installation.</div>
+<div class="line"><em>required.</em></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_env</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">(staging/prod). The Agave environment used for</div>
+<div class="line">this tenant. Determines the core services that</div>
+<div class="line">will be invoked. Note that the IP address for the</div>
+<div class="line">core services can be resolved by docker compose</div>
+<div class="line">using the extra_hosts stanza for platform</div>
+<div class="line">deployments that are not in DNS.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>host</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">The public domain that the platform should listen</div>
+<div class="line">to  API requests on. For example, if this value is</div>
+<div class="line"><code class="docutils literal"><span class="pre">api.example.org</span></code>, then the core apps service</div>
+<div class="line">will be available at <code class="docutils literal"><span class="pre">https://api.example.org/apps/v2</span></code>.</div>
+<div class="line"><br /></div>
+<div class="line"><a href="#id5"><span class="problematic" id="id6">*</span></a>Note: This will be replace by the *</div>
+<div class="line"><em>``tenant_public_domain_or_ip`` field in the near future.</em></div>
+<div class="line"><em>required.</em></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>tenant_admin_role</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">The name of the tenant admine role.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_profiles_url</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">URL for the profiles service. When the tenant uses</div>
+<div class="line">the Agave hosted identity, this URL should be of</div>
+<div class="line">the form</div>
+<div class="line"><code class="docutils literal"><span class="pre">profiles.&lt;tenant_id&gt;.agave.tacc.utexas.edu/profiles</span></code></div>
+<div class="line">and will be resolved automatically; however, for</div>
+<div class="line">other tenants such as Cyverse, this URL will be</div>
+<div class="line">different.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>haproxy_auth_version</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Version of the HA Proxy auth service to use</div>
+<div class="line">(Defaults to latest).</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>apim_httpd_version</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Version of the auth httpd service to use</div>
+<div class="line">(Ddefaults to latest).</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>apim19_base_version</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Version of APIM 1.9 auth service to use</div>
+<div class="line">(Defaults to latest).</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_id_dedicated_version</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Version of the Agave ID auth service to use</div>
+<div class="line">(Defaults to latest).</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_clients_dedicated_version</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Version of the Agave clients auth service to use</div>
+<div class="line">(Defaults to latest).</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>admin_services_nginx_version</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Version of the admin nginx auth service to use</div>
+<div class="line">(Defaults to latest).</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>flask_admin_services_version</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Version of the admin auth service to use</div>
+<div class="line">(Defaults to latest).</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>update_auth_dns</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether or not to update the <code class="docutils literal"><span class="pre">/etc/hosts</span></code> file</div>
+<div class="line">with the location of the auth mysql server for the</div>
+<div class="line">auth containers. Use this when the host name/domain</div>
+<div class="line">for the mysql server is not in DNS.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>core_api_protocol</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">(http or https). Protocol the auth services will</div>
+<div class="line">use when communicating with the core services. Use</div>
+<div class="line"><code class="docutils literal"><span class="pre">http</span></code> unless the auth services must communicate</div>
+<div class="line">with the core services across a firewall.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>update_apim_core_dns</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether or not to update the /etc/hosts file with</div>
+<div class="line">the location of the core services within the APIM</div>
+<div class="line">container. Use this when the host name/domain for</div>
+<div class="line">the core services are not in DNS. NOTE: the APIM</div>
+<div class="line">now routes all requests to</div>
+<div class="line"><code class="docutils literal"><span class="pre">&lt;tenant_id&gt;.api.&lt;agave_env&gt;.agaveapi.co</span></code></div>
+<div class="line">so this is the value that must be in DNS.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>core_host</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">IP of the core host. Used only when</div>
+<div class="line"><strong>update_apim_core_dns</strong> is true.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>deploy_admin_password_grant</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Provides a grant type for delegating credentials on</div>
+<div class="line">behalf of other users.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>access_token_validity_time</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Time, in seconds, that OAuth access_tokens are valid.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>apim_increase_global_timeout</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether or not to increase the APIM’s global</div>
+<div class="line">timeout config for APIs to respond. For very</div>
+<div class="line">large file uploads, it is possible that the</div>
+<div class="line">APIs will time out before responding to APIM,</div>
+<div class="line">resulting in a 502. However, setting this to</div>
+<div class="line">True will increase the timeout for <em>all</em> APIs.</div>
+<div class="line">It will be possible to just increase the files</div>
+<div class="line">API timeout in a future release.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>deploy_custom_oauth_app</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether to deploy a custom-branded version of the</div>
+<div class="line">OAuth login application. If true, install the</div>
+<div class="line"><code class="docutils literal"><span class="pre">authenticationendpoint</span></code> application (in a</div>
+<div class="line">directory with the same name) within the tenant</div>
+<div class="line">directory.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>boutique_apis</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">(Optional). A YAML list of API names from the</div>
+<div class="line">catalog of extended APIs available in the platform</div>
+<div class="line">(e.g., admin_services). Each API must be defined</div>
+<div class="line">as a template in the boutique_apis role, and the</div>
+<div class="line">name listed must match the name of the template</div>
+<div class="line">file minus the extension (e.g. <code class="docutils literal"><span class="pre">admin_services</span></code></div>
+<div class="line">for <code class="docutils literal"><span class="pre">admin_services.json.j2</span></code>).</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>ha_deployment</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">For use in h/a deployments of the auth component</div>
+<div class="line">requiring multiple hosts. Value True will deploy</div>
+<div class="line">an HA Proxy instance on each auth host to</div>
+<div class="line">facilitate an active-active architecture. Requires</div>
+<div class="line">additional configuration, see below.</div>
+<div class="line"><br /></div>
+<div class="line"><a href="#id7"><span class="problematic" id="id8">*</span></a>Note: <cite>ha_deployment=True</cite> is required, as the</div>
+<div class="line">deployment playbooks currently depend on it.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>hap_servers</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">YAML mapping of servers to use for HAProxy. At</div>
+<div class="line">least two entries are required, though it is</div>
+<div class="line">possible to run both servers on the same host</div>
+<div class="line">using IP addresses and ports on the Docker0</div>
+<div class="line">interface</div>
+<div class="line"><br /></div>
+<div class="line">Each entry must have the following properties:</div>
+<div class="line">* <strong>name</strong>: Name for the server; must be unique.</div>
+<div class="line">* <strong>ip</strong>: IP for the server, addressable by the</div>
+<div class="line">* <strong>port</strong>: Http port for the httpd instance for</div>
+<div class="line-block">
+<div class="line">this server. Must be reachable by</div>
+<div class="line">the HAProxy container(s).</div>
+</div>
+<div class="line">* <strong>ssl_port</strong>: Https port for the httpd instance</div>
+<div class="line-block">
+<div class="line">for this server. Must be reachable by the</div>
+<div class="line">HAProxy container(s).</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>mysql_host</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">The host of the Auth MySQL server</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>mysql_port</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">The port of the Auth MySQL server</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>use_hosted_id</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether or not to use Agave hosted identity</div>
+<div class="line">services. Cannont be used when the <code class="docutils literal"><span class="pre">use_hosted_id</span></code></div>
+<div class="line">setting is True. Use this config when Agave will</div>
+<div class="line">be administering its own LDAP.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>use_remote_userstore</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether to configure a remote userstore. Use this</div>
+<div class="line">config when the LDAP will be administered by a</div>
+<div class="line">third party.</div>
+<div class="line">* Cannot be used when the* <strong>use_hosted_id</strong></div>
+<div class="line"><em>setting is True. Currently, this configuration</em></div>
+<div class="line"><em>supports read only LDAP databases.</em></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_id_read_only</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether the hosted id service should run in read</div>
+<div class="line">only mode.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>hosted_id_domain_name</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">A unique id for the agaveldap hosted userstore.</div>
+<div class="line"><em>Use this config when Agave will be administering</em></div>
+<div class="line"><em>its own LDAP.</em></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>remote_id_domain_name</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">A unique id for the remote userstore.</div>
+<div class="line"><em>Use this config when the LDAP will be administered</em></div>
+<div class="line"><em>by a third party.</em></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>ldap_name</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">URL or service discovery token for the hosted LDAP</div>
+<div class="line">instance (including port).</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>auth_ldap_bind_dn</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Account to bind to the LDAP db.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>ldap_base_search_dn</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Base search directory for user accounts.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_id_check_jwt</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Whether or not to check the JWT; When this is False,</div>
+<div class="line">certain features will not be available such as the</div>
+<div class="line">“me” lookup feature since these features rely on</div>
+<div class="line">profile information in the JWT.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>jwt_header</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Actual header name that will show up in</div>
+<div class="line">request.META; value depends on APIM</div>
+<div class="line">configuration, in particular the tenant id</div>
+<div class="line">specified in api-manager.xml.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_id_apim_pub_key</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Absolute path to the public key of the APIM</div>
+<div class="line">instance; used for verifying the signature of the</div>
+<div class="line">JWT.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_id_user_admin_role</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Role required to make updates to the LDAP database.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_id_check_user_admin_role</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether or not the <code class="docutils literal"><span class="pre">agave_id_user_admin_role</span></code></div>
+<div class="line">before allowing updates to the LDAP db.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_id_app_base</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Sets the base URL for the hypermedia responses;</div>
+<div class="line">Typically this should be the same as host but</div>
+<div class="line">should include the protocol.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>cert_file</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Should be a path relative to the httpd directory</div>
+<div class="line">contained within the tenant directory for this</div>
+<div class="line">tenant: e.g. <code class="docutils literal"><span class="pre">deploy/tenants/dev_staging/httpd</span></code></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>cert_key_file</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Should be a path relative to the httpd directory</div>
+<div class="line">contained within the tenant directory for this</div>
+<div class="line">tenant.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>ssl_ca_cert_file</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Add when mounting in a CA cert (not used for</div>
+<div class="line">self-signed certs). Should be a path relative to</div>
+<div class="line">the httpd directory contained within the tenant</div>
+<div class="line">directory for this tenant.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>use_custom_ldap</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Use this setting when using a remote userstore</div>
+<div class="line">and the ldap has a different schema then the hosted</div>
+<div class="line">Agave LDAP (for example, the iPlant and TACC LDAPs).</div>
+<div class="line"><em>Note: Only certain schemas are supported. See the</em></div>
+<div class="line"><a class="reference external" href="https://github.com/agaveplatform/pyprofiles-api">agaveplatform/pyprofiles-api</a> Github repo for more</div>
+<div class="line">details.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_id_create_notifications</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether or not the auth services should send</div>
+<div class="line">notifications to beanstalk (see settings below).</div>
+<div class="line">The auth services must have access to the</div>
+<div class="line">beanstalk IP and port.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>beanstalk_server</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">IP address of beanstalk instance.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>beanstalk_port</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Port of beanstalk instance.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>beanstalk_tube</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Beanstalk tube name that the auth services will send</div>
+<div class="line">messages to.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>beanstalk_srv_code</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Code for the service to use when generating messages.</div>
+<div class="line">There is one code per core service.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>tenant_uuid</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">The UUID of the tenant; this is only used by the</div>
+<div class="line">components when sending messages to beanstalk.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>virtualhosts</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">A yaml list of collections for configuring the</div>
+<div class="line">virtualhosts that the auth services will listen</div>
+<div class="line">on. Defining multiple configuration collections</div>
+<div class="line">allows the tenant auth server to respond to multiple</div>
+<div class="line">domains (e.g. <code class="docutils literal"><span class="pre">agave.example.com</span></code> and</div>
+<div class="line"><code class="docutils literal"><span class="pre">sandbox.tenants.dev.agaveplatform.org</span></code>). Each</div>
+<div class="line">configuration collection should define the</div>
+<div class="line">following fields:</div>
+<div class="line">* <strong>server_name</strong>: The domain to respond to.</div>
+<div class="line">* <strong>base_cert_path</strong>: The directory inside the</div>
+<div class="line-block">
+<div class="line">httpd container that will hold the certs. This</div>
+<div class="line">can be anything, and the agave_id container</div>
+<div class="line">will create the directory if it does not exist,</div>
+<div class="line">but it must be defined.</div>
+</div>
+<div class="line">* <strong>cert_file</strong>: The cert file used by httpd;</div>
+<div class="line-block">
+<div class="line">this file must be installed within the <code class="docutils literal"><span class="pre">httpd</span></code></div>
+<div class="line">folder within the tenant folder.</div>
+</div>
+<div class="line">* <strong>cert_key_file</strong>: The cert key file used by</div>
+<div class="line-block">
+<div class="line">httpd; this file must be installed within the</div>
+<div class="line"><code class="docutils literal"><span class="pre">httpd</span></code> folder within the tenant folder.</div>
+</div>
+<div class="line">* <strong>ssl_ca_cert_file</strong>: The CA bundle file used</div>
+<div class="line-block">
+<div class="line">by httpd; this file must be installed within the</div>
+<div class="line"><code class="docutils literal"><span class="pre">httpd</span></code> folder within the tenant folder.</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>deploy_admin_services</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether to deploy the tenant admin services</div>
+<div class="line">(Defaults to True).</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>boutique_apis</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">(Optional) A YAML list of strings representing</div>
+<div class="line">additional APIs to deploy. Each API in the list</div>
+<div class="line">should be an API recognized by the <code class="docutils literal"><span class="pre">boutique_apis</span></code></div>
+<div class="line">role. These are the officially supported boutique</div>
+<div class="line">APIs. Additional APIs can be added to a the set</div>
+<div class="line">of officially supported APIs by simply adding an</div>
+<div class="line">&lt;api&gt;.json.j2 template to the</div>
+<div class="line"><code class="docutils literal"><span class="pre">roles/boutique_apis/templates</span></code></div>
+<div class="line">directory. The JSON should be formatted as</div>
+<div class="line">required by the Admin services <code class="docutils literal"><span class="pre">/apis</span></code> service.</div>
+<div class="line"><br /></div>
+<div class="line"><em>Note: this role requires the admin services to</em></div>
+<div class="line"><em>be deployed on the auth host.</em></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Rion Dooley.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

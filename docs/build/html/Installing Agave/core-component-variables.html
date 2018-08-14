@@ -1,0 +1,1302 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Core Components &mdash; Agave Platform Documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Agave Platform
+          
+
+          
+            
+            <img src="../_static/agave-platform-logo-white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Getting Started/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Getting Started/sandbox.html">Setting up a Sandbox</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/core-concepts.html">Core Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/infrastructure-components.html">Infrastructure Components</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Installing Agave</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="planning-your-installation.html">Planning your installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prerequisites.html">System Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="host-preparation.html">Preparing Your Hosts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuring-your-inventory-file.html">Customizing Inventory Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example-inventory-files.html">Example Inventory Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="running-install.html">Running Installation Playbooks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Building Images</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Building Images/index.html">Building Images</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Agave Platform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Core Components</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/Installing Agave/core-component-variables.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="core-components">
+<h1>Core Components<a class="headerlink" href="#core-components" title="Permalink to this headline">¶</a></h1>
+<p>The following tables describe variables for use with the Ansible installer that can be used to configure the Core components:</p>
+<table border="1" class="colwidths-given docutils" id="id9">
+<caption><span class="caption-text">Core component Playbook variables</span><a class="headerlink" href="#id9" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="30%" />
+<col width="15%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Variable</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>tenant_id</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">A unique id for this tenant.</div>
+<div class="line"><em>Note: This will be replaced by the ``agave_tenant_id``</em></div>
+<div class="line"><a href="#id1"><span class="problematic" id="id2">*</span></a>field in the near future. Both are currently *</div>
+<div class="line"><em>required.</em></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_tenant_id</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">A unique id for this tenant.</div>
+<div class="line"><em>Note: This will be replace the ``tenant_id``</em></div>
+<div class="line"><a href="#id3"><span class="problematic" id="id4">*</span></a>field in the near future. Both are currently *</div>
+<div class="line"><em>required.</em></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>tenant_public_domain_or_ip</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">The public domain name or ip address of the</div>
+<div class="line">auth server. This is the address you will use</div>
+<div class="line">to connect to your installation.</div>
+<div class="line"><em>required.</em></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>host</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">The public domain that the platform should listen</div>
+<div class="line">to  API requests on. For example, if this value is</div>
+<div class="line"><code class="docutils literal"><span class="pre">api.example.org</span></code>, then the core apps service</div>
+<div class="line">will be available at <code class="docutils literal"><span class="pre">https://api.example.org/apps/v2</span></code>.</div>
+<div class="line"><br /></div>
+<div class="line"><a href="#id5"><span class="problematic" id="id6">*</span></a>Note: This will be replace by the *</div>
+<div class="line"><em>``tenant_public_domain_or_ip`` field in the near future.</em></div>
+<div class="line"><em>required.</em></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>mysql_core_host</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Host or ip of the core services MySQL database.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>mysql_core_port</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Port of the core services MySQL database.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_messaging_provider</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">The type of message queue to use.</div>
+<div class="line">Default: beanstalk</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_messaging_host</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Host for message queue server.</div>
+<div class="line">Default: messaging_host</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_messaging_port</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Port for message queue server.</div>
+<div class="line">Default: messaging_port</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_smtps_provider</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Type of SMTP server to use (for sending</div>
+<div class="line">notification emails, etc.). Use “sendgrid”</div>
+<div class="line">to enable emails sent via the SendGrid API,</div>
+<div class="line">requires account info).</div>
+<div class="line">Default: sendgrid</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_smtps_host</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Host for the SMTP server. (Use</div>
+<div class="line">“smtp.sendgrid.net” if sendgrid provider is</div>
+<div class="line">configured.)</div>
+<div class="line">Default: smtp.sendgrid.net</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_smtps_port</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Port for the SMTP server.</div>
+<div class="line">Default: 587</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_smtps_auth</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether auth is required.</div>
+<div class="line">Default: true</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_smtps_from_name</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">From name used in email communications.</div>
+<div class="line">Default: Agave Notifications</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_smtps_from_address</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">From address used in email communications.</div>
+<div class="line">Default: <a class="reference external" href="mailto:no-reply&#37;&#52;&#48;agaveplatform&#46;org">no-reply<span>&#64;</span>agaveplatform<span>&#46;</span>org</a></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>deploy_core_apis</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether to deploy the front-end core APIs. Set</div>
+<div class="line">to False when running playbooks that impact</div>
+<div class="line">multiple servers and you do not want to modify</div>
+<div class="line">the core APIs.</div>
+<div class="line">Default: true</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>kill_core_containers</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether to kill and restart the core containers</div>
+<div class="line">when deploying. Setting to false allows for</div>
+<div class="line">configuration updates and rolling deployments</div>
+<div class="line">rather than a full teardown and rebuild.</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>core_docker_private_registry</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">(Optional) Address of private registry from which</div>
+<div class="line">to pull the Docker images.</div>
+<div class="line">Default:</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_docker_registry_account</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">(Optional) Username to use to access the private</div>
+<div class="line">registry.</div>
+<div class="line">Default:</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_api_only</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether to only deploy the core apis. Using this</div>
+<div class="line">feature you can deploy only the frontend API</div>
+<div class="line">to gain horizontal scaling while reducing your</div>
+<div class="line">memory consumption on the host.</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_workers_only</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether to only deploy the core workers. Using</div>
+<div class="line">this feature you can deploy worker only hosts</div>
+<div class="line">to add capacity and scale throughput.</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_version</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Version of the core services to deploy</div>
+<div class="line">Default: 2.2.6</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_hostname</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Externally resolvable public hostname where the</div>
+<div class="line">core science API reverse proxy lives.</div>
+<div class="line">Default: api.sandbox.agaveplatform.org</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_proxy_core_ip</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Hostname for the core services.</div>
+<div class="line">Default: core api host ip address</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_iplant_proxy_service</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Resolvable address of the core proxy. For single</div>
+<div class="line">core server deploys, should point to the core</div>
+<div class="line">server.</div>
+<div class="line">Default: “<a class="reference external" href="http:/">http:/</a>/&lt;core api host ip address&gt;”</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_log_service</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Internally resolvable address to the logging API</div>
+<div class="line">Default: “<a class="reference external" href="http:/">http:/</a>/&lt;core api host ip address&gt;/logging”</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_deploy_ssl_certs</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether or not to use custom SSL certs for core</div>
+<div class="line">services. If False, deployer will use stock (self-</div>
+<div class="line">signed) certs for core services. In general, this</div>
+<div class="line">is not an issue since the core services are not</div>
+<div class="line">directly exposed to external users (SNI for</div>
+<div class="line">external requests happens in the auth layer).</div>
+<div class="line">However, if you have the need to export core</div>
+<div class="line">services and/or terminate SSL in the core layer,</div>
+<div class="line">set this to True and provide ssl certs using the</div>
+<div class="line"><strong>agave_core_ssl_cert</strong>, <strong>agave_core_ssl_key</strong></div>
+<div class="line">and <strong>agave_core_ca_cert</strong>.</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_ssl_cert</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Path in the container to core ssl cert. This file</div>
+<div class="line">should be placed in the</div>
+<div class="line"><code class="docutils literal"><span class="pre">roles/agave_core/files/core-apis-ssl</span></code></div>
+<div class="line">directory.</div>
+<div class="line">Default: api.sandbox.agaveplatform.org.crt</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_ssl_key</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Path in the container to core ssl cert key. This</div>
+<div class="line">file should be placed in the</div>
+<div class="line"><code class="docutils literal"><span class="pre">roles/agave_core/files/core-apis-ssl</span></code></div>
+<div class="line">directory.</div>
+<div class="line">Default: api.sandbox.agaveplatform.org.key</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_ca_cert</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Path in the container to core ssl CA cert. This</div>
+<div class="line">file should be placed in the</div>
+<div class="line"><code class="docutils literal"><span class="pre">roles/agave_core/files/core-apis-ssl</span></code></div>
+<div class="line">directory.</div>
+<div class="line">Default:</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_deploy_httpd_balancer</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether or not to use an apache loadbalancer</div>
+<div class="line">on the core host in leu of a reverse proxy.</div>
+<div class="line">This enables an A/B HA deployment similar to</div>
+<div class="line">that done by the APIM deployment, but generally</div>
+<div class="line">suffers when services have slow response times</div>
+<div class="line">caused by remote system requests with</div>
+<div class="line">noticeable latency.</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>deploy_core_default_templates</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Whether to use the default core compose</div>
+<div class="line">templates. Set to False to use a git repository</div>
+<div class="line-block">
+<div class="line">of compose files or True to use the default</div>
+</div>
+<div class="line">templates.</div>
+<div class="line"><br /></div>
+<div class="line"><em>Note:This variable must be set in the</em></div>
+<div class="line"><code class="docutils literal"><span class="pre">core_configs.yml</span></code> <strong>AS WELL AS</strong> <em>in the inventory</em></div>
+<div class="line"><em>file for each core host. See the</em> <code class="docutils literal"><span class="pre">staging_hosts</span></code></div>
+<div class="line"><em>file for an example.</em></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_compose_repo_uri</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">URI of the git repository containing the core</div>
+<div class="line">compose files (e.g.,</div>
+<div class="line"><cite>git&#64;gitlab.com:devops/core-compose.git</cite>)</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>core_compose_repo_key_file</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">File name for the SSH key to use to access the</div>
+<div class="line">git repository.</div>
+<div class="line"><a href="#id7"><span class="problematic" id="id8">*</span></a>Note: It is assumed that this file is in</div>
+<div class="line"><code class="docutils literal"><span class="pre">roles/agave_core_compose_repo/files</span></code></div>
+<div class="line">so it should be mounted there.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_compose_repo_name</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">The name of the git repository containing the</div>
+<div class="line">core compose files (e.g. “core-compose”).</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>core_compose_repo_path</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Relative path inside the git repo to use for the</div>
+<div class="line">compose files. Note: Set this variable for each</div>
+<div class="line">core host in the inventory file.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_java_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">The default memory limit set for each of the</div>
+<div class="line">Java core service containers. This is over-</div>
+<div class="line">ridden by each individual service.</div>
+<div class="line">Default: 2048m</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_php_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">The default memory limit set for each of the</div>
+<div class="line">PHP core service containers. This is over-</div>
+<div class="line">ridden by each individual service.</div>
+<div class="line">Default: 1024m</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_allow_relay_transfer</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">If true, smaller files will be proxied with</div>
+<div class="line">a GET and PUT in all data transfers. Otherwise,</div>
+<div class="line">they will be proxied in memory via streaming</div>
+<div class="line">buffer copies. The former can be much faster</div>
+<div class="line">for bulk file operations and cross-protocol</div>
+<div class="line">transfers where dynamic window sizing and</div>
+<div class="line">parallel/striped transfers</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_max_relay_transfer_size</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">Max file size in GB that can be relayed. Any</div>
+<div class="line">file larger than this will be copied in memory</div>
+<div class="line">through streaming buffers. If this is enabled,</div>
+<div class="line">then the host must have sufficient disk for every</div>
+<div class="line">worker process that moves data to simultaneously</div>
+<div class="line">be copying data.</div>
+<div class="line">Default: 1</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_max_page_size</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">Maximum number of results to return in a single</div>
+<div class="line">request.</div>
+<div class="line">Default: 250</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_default_page_size</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">Default number of results to return in a single</div>
+<div class="line">request when the <em>limit</em> query parameter has</div>
+<div class="line">not been passed in the HTTP request.</div>
+<div class="line">Default: 100</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_drain_all_queues</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">If true, no workers will be started on the</div>
+<div class="line">target host. This effectively turns a container</div>
+<div class="line">into an API only container. If set to true,</div>
+<div class="line">there must be a worker container with this</div>
+<div class="line">value set to true or no async tasks such as</div>
+<div class="line">job submission, monitoring, notifications, etc</div>
+<div class="line">will be processed.</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_dedicated_tenant_id</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">When running multiple denants within a single</div>
+<div class="line">deployment, setting this value to a tenant</div>
+<div class="line">code will force all core components with this</div>
+<div class="line">setting to only accept tasks for the named</div>
+<div class="line">tenant. Negation is also supported by</div>
+<div class="line">prepending the tenant code with an exclamation</div>
+<div class="line">mark.</div>
+<div class="line"><br /></div>
+<div class="line"><em>Note: Setting this value will not preclude</em></div>
+<div class="line"><em>other tenants from accepting work for this</em></div>
+<div class="line"><em>tenant.</em></div>
+<div class="line">Default:</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_dedicated_system_ids</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Set to a comma-separated list of Agave</div>
+<div class="line">systems to restirct all components with this</div>
+<div class="line">setting to restrict work to the named list.</div>
+<div class="line">Negation is supported by prepending the tenant</div>
+<div class="line">code with an exclamation mark. Exclusions</div>
+<div class="line">will take priority over inclusions.</div>
+<div class="line"><br /></div>
+<div class="line"><em>Note: Setting this value will not preclude</em></div>
+<div class="line"><em>other tenants from accepting work for this</em></div>
+<div class="line"><em>tenant.</em></div>
+<div class="line">Default:</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_dedicated_user_ids</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Set to a comma-separated list of Agave</div>
+<div class="line">usernames to restirct all components with this</div>
+<div class="line">setting to restrict work to the named users.</div>
+<div class="line">Negation is supported by prepending the tenant</div>
+<div class="line">code with an exclamation mark. Exclusions</div>
+<div class="line">will take priority over inclusions.</div>
+<div class="line"><br /></div>
+<div class="line"><em>Note: Setting this value will not preclude</em></div>
+<div class="line"><em>other tenants from accepting work for this</em></div>
+<div class="line"><em>tenant.</em></div>
+<div class="line">Default:</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_jobs_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for the jobs container. This</div>
+<div class="line">should be at least 8GB for a worker.</div>
+<div class="line">API only deployment can be significantly</div>
+<div class="line">less. This value Will bound xmx in the</div>
+<div class="line">JVM was well. General rule of thumb is</div>
+<div class="line">0.5 core and 1GB memory per data-centric</div>
+<div class="line">task per container. High job rates can</div>
+<div class="line">grow JVM system utilization upwards of</div>
+<div class="line">1CPU and 2GB memory per transfer task,</div>
+<div class="line">so plan accordingly.</div>
+<div class="line"><br /></div>
+<div class="line">If your resources allow, set</div>
+<div class="line">agave_core_jobs_mem_limit to False to</div>
+<div class="line">uncap the memory on this container.</div>
+<div class="line">Default: 8192m</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>core_deploy_jobs</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the Jobs container be deployed.</div>
+<div class="line">Default: true</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_job_max_staging_tasks</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">The maximum number of job statging</div>
+<div class="line">tasks to run concurrently.</div>
+<div class="line">Default: 5</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_job_max_archiving_tasks</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">The maximum number of job archiving</div>
+<div class="line">tasks to run concurrently.</div>
+<div class="line">Default: 5</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_job_max_monitoring_tasks</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">The maximum number of job monitoring</div>
+<div class="line">tasks to run concurrently.</div>
+<div class="line">Default: 2</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_job_max_submission_tasks</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">The maximum number of job submission</div>
+<div class="line">tasks to run concurrently.</div>
+<div class="line">Default: 1</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_files_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for the files container. This</div>
+<div class="line">should be at least 8GB for a worker. API</div>
+<div class="line">only deployment can be significantly</div>
+<div class="line">less. This value Will bound xmx on the</div>
+<div class="line">JVM was well. General rule of thumb is</div>
+<div class="line">0.5 core and 1GB memory per data-centric</div>
+<div class="line">task per container. High job rates can</div>
+<div class="line">grow JVM system utilization upwards of</div>
+<div class="line">1CPU and 2GB memory per transfer task,</div>
+<div class="line">so plan accordingly.</div>
+<div class="line"><br /></div>
+<div class="line">If your resources allow, set</div>
+<div class="line">agave_core_files_mem_limit to False</div>
+<div class="line">to uncap the memory on this container.</div>
+<div class="line">Default: 8192m</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>core_deploy_files</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the Files container be deployed.</div>
+<div class="line">Default: true</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_files_max_staging_tasks</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">The maximum number of file transfer</div>
+<div class="line">tasks to run concurrently.</div>
+<div class="line">Default: 5</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_files_max_transform_tasks</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">The maximum number of file transform</div>
+<div class="line">tasks to run concurrently.</div>
+<div class="line">Default: 5</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_systems_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for systems container. 2GB</div>
+<div class="line">should be enough under normal usage.</div>
+<div class="line">Default: 2048m</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>core_deploy_systems</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the Systems container be deployed.</div>
+<div class="line">Default: true</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_apps_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for apps container. 2GB</div>
+<div class="line">should be enough under normal usage. For</div>
+<div class="line">single host deployments and worker</div>
+<div class="line">containers, this can be bumped up to 4GB</div>
+<div class="line">based on the number of publishing and</div>
+<div class="line">cloning tasks.</div>
+<div class="line">Default: 4096m</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>core_deploy_apps</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the Apps container be deployed.</div>
+<div class="line">Default: true</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_apps_max_publishing_tasks</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">The maximum number of app publishing</div>
+<div class="line">tasks to run concurrently.</div>
+<div class="line">Default: 1</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_apps_max_cloning_tasks</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">The maximum number of apps cloning tasks</div>
+<div class="line">to run concurrently.</div>
+<div class="line">Default: 1</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_monitors_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for monitors container. 2GB</div>
+<div class="line">should be enough under normal usage. For</div>
+<div class="line">single host deployments and worker</div>
+<div class="line">containers, this can be bumped up to 8GB</div>
+<div class="line">based on the number of monitoring tasks</div>
+<div class="line">and frequency with which they run.</div>
+<div class="line">Default: 4096m</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>core_deploy_monitors</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the Monitors container be deployed.</div>
+<div class="line">Default: true</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_monitor_min_check_interval</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">The minimum time between checks that users</div>
+<div class="line">can configure.</div>
+<div class="line">Default: 0</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_monitors_max_tasks</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">The maximum number of monitoring tasks to</div>
+<div class="line">run concurrently.</div>
+<div class="line">Default: 1</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_monitors_max_retries</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">The maximum number of retires attempts</div>
+<div class="line">the service will make when performing a</div>
+<div class="line">synchronous monitoring check initiated</div>
+<div class="line">by the user.</div>
+<div class="line">Default: 3</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_profiles_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for custom profiles container.</div>
+<div class="line">2GB should be enough under normal usage. Add</div>
+<div class="line">containers if you run out of memory.</div>
+<div class="line">Default: 1024m</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_deploy_custom_profiles</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the Profiles container be deployed.</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_tags_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for tags API container.</div>
+<div class="line">2GB should be enough under normal usage. Add</div>
+<div class="line">containers if you run out of memory.</div>
+<div class="line">Default: 2048m</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_deploy_tags</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the Tags container be deployed.</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_uuids_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for uuids API container.</div>
+<div class="line">2GB should be enough under normal usage. Add</div>
+<div class="line">containers if you run out of memory.</div>
+<div class="line">Default: 2048m</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_deploy_uuids</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the uuids container be deployed.</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_postits_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for posttis API container.</div>
+<div class="line">2GB should be enough under normal usage. Add</div>
+<div class="line">containers if you run out of memory.</div>
+<div class="line">Default: 2048m</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_deploy_posttis</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the posttis container be deployed.</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_usage_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for usage API container.</div>
+<div class="line">2GB should be enough under normal usage. Add</div>
+<div class="line">containers if you run out of memory.</div>
+<div class="line">Default: 1024m</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_deploy_usage</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the usage container be deployed.</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_tenants_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for tenants API container.</div>
+<div class="line">2GB should be enough under normal usage. Add</div>
+<div class="line">containers if you run out of memory.</div>
+<div class="line">Default: 1024m</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_deploy_tenants</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the tenants container be deployed.</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_logging_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for the logging container. PHP</div>
+<div class="line">services rarely need more than 2GB.</div>
+<div class="line">Default: 1024m</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_deploy_logging</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the logging API be deployed.</div>
+<div class="line">Default: true</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_docs_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for the documentation container.</div>
+<div class="line">This should almost never need more than 512m</div>
+<div class="line">Default: 512m</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_deploy_docs</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the API documentation be deployed.</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_metadata_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for metadata container. 4GB</div>
+<div class="line">should be enough under normal usage. If</div>
+<div class="line">request size is particularly large, bump</div>
+<div class="line">the memory by a couple gig. Anything over</div>
+<div class="line">4GB, and you should scale out the</div>
+<div class="line">containers rather than bumping this one</div>
+<div class="line">in size.</div>
+<div class="line">Default: 4096m</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_deploy_metadata</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the metadata API be deployed.</div>
+<div class="line">Default: true</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_metadata_db_host</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Mongo host for core services.</div>
+<div class="line">Default: same as mongodb_host</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_metadata_db_port</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Mongo port for core services.</div>
+<div class="line">Default: same as mongodb_port</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_metadata_db_user</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Mongo user for core services.</div>
+<div class="line">Default: same as mongodb_user</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_notifications_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for notifications container. 2GB</div>
+<div class="line">should be enough under normal usage. Split</div>
+<div class="line">out a worker container and bump threads</div>
+<div class="line">before bumping memory above 4GB. The load</div>
+<div class="line">here comes from event processing, not the</div>
+<div class="line">API.</div>
+<div class="line">Default: 2048m</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>core_deploy_notifications</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the Notifications container be deployed.</div>
+<div class="line">Default: true</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_notifications_max_notification_tasks</strong></td>
+<td>int</td>
+<td><div class="first last line-block">
+<div class="line">The number of notification processing</div>
+<div class="line">workers to start up.</div>
+<div class="line">Default: 2</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_notification_queue</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Beanstalk queue for core services. (e.g.</div>
+<div class="line">“staging.notifications.queue”)</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_notification_topic</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Beanstalk topic for core services. (e.g.</div>
+<div class="line">“staging.notifications.topic”)</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_notification_failed_db_host</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Hostname of the mongodb to store failed</div>
+<div class="line">notification messages in.</div>
+<div class="line">Default: same as mongodb_host</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_notification_failed_db_port</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Port of the mongodb to store failed</div>
+<div class="line">notification messages in.</div>
+<div class="line">Default: same as mongodb_port</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_notification_failed_db_user</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Username of the mongodb to store failed</div>
+<div class="line">notification messages in.</div>
+<div class="line">Default: same as mongodb_user</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_notification_failed_db_password</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Password of the mongodb to store failed</div>
+<div class="line">notification messages in.</div>
+<div class="line">Default: same as mongodb_password</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_notification_failed_db_scheme</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Database scheme of the mongodb to store</div>
+<div class="line">failed notification messages in.</div>
+<div class="line">Default: notifications</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_realtime_mem_limit</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Max memory for realtime container. 2GB</div>
+<div class="line">should be enough under normal usage.</div>
+<div class="line">Default: 2048m</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>core_deploy_realtime</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Should the Realtime container be deployed.</div>
+<div class="line">Default: false</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_realtime_provider</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Type of backend service to use for realtime API.</div>
+<div class="line">Currently value “fanout”, “pushpin”, and “none”</div>
+<div class="line">are supported.</div>
+<div class="line">Default: none</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_realtime_service</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Addressable location of the backend streaming</div>
+<div class="line">server for realtime API.</div>
+<div class="line">Default:</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>agave_core_realtime_service_realm_id</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Realm id when using the fanout backend.</div>
+<div class="line">Default:</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>agave_core_realtime_service_realm_key</strong></td>
+<td>string</td>
+<td><div class="first last line-block">
+<div class="line">Realm key when using the fanout backend.</div>
+<div class="line">Default:</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><strong>core_deploy_stats</strong></td>
+<td>bool</td>
+<td><div class="first last line-block">
+<div class="line">Whether to deploy the stats container.</div>
+<div class="line"><em>Note: This container is currently optimized</em></div>
+<div class="line"><em>for Agave’s production environment and</em></div>
+<div class="line"><em>requires a Pingdom account, among other</em></div>
+<div class="line"><em>configurations.</em></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Rion Dooley.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

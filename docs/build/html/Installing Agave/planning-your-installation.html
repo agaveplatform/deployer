@@ -1,0 +1,544 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Planning your installation &mdash; Agave Platform Documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="System Requirements" href="prerequisites.html" />
+    <link rel="prev" title="Infrastructure Components" href="../Architecture/infrastructure-components.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Agave Platform
+          
+
+          
+            
+            <img src="../_static/agave-platform-logo-white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Getting Started/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Getting Started/sandbox.html">Setting up a Sandbox</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/core-concepts.html">Core Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/infrastructure-components.html">Infrastructure Components</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Installing Agave</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Planning your installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction-to-installing-agave">Introduction to Installing Agave</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#initial-planning">Initial Planning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#on-premises-versus-cloud-providers">On-premises Versus Cloud Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sizing-considerations">Sizing Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#environment-scenarios">Environment Scenarios</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#auth-core-and-persistence-components-on-one-system">Auth, Core, and Persistence Components on One System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auth-and-persistence-on-a-single-system-core-on-multiple-systems">Auth and Persistence on a Single System, Core on Multiple Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#single-auth-single-persistence-and-multiple-core-systems">Single Auth, Single Persistence, and Multiple Core Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multiple-auth-hosts-using-native-ha-multiple-core-service-hosts-and-clustered-persistence">Multiple Auth hosts Using Native HA, Multiple Core service hosts, and Clustered Persistence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multiple-auth-hosts-using-native-ha-multiple-core-service-hosts-and-clustered-persistence">Multiple Auth hosts Using Native HA, Multiple Core service hosts, and Clustered Persistence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multiple-auth-hosts-using-native-ha-multiple-core-service-hosts-and-hosted-persistence">Multiple Auth hosts Using Native HA, Multiple Core service hosts, and Hosted Persistence</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#file-path-locations">File Path Locations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#storage-requirements">Storage Requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="prerequisites.html">System Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="host-preparation.html">Preparing Your Hosts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuring-your-inventory-file.html">Customizing Inventory Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example-inventory-files.html">Example Inventory Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="running-install.html">Running Installation Playbooks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Building Images</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Building Images/index.html">Building Images</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Agave Platform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Planning your installation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/Installing Agave/planning-your-installation.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="planning-your-installation">
+<span id="planning-your-installation"></span><h1>Planning your installation<a class="headerlink" href="#planning-your-installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction-to-installing-agave">
+<span id="introduction-to-installing-agave"></span><h2>Introduction to Installing Agave<a class="headerlink" href="#introduction-to-installing-agave" title="Permalink to this headline">¶</a></h2>
+<p>To install Agave in production environments, Agave provides an installation method (the installer) implemented using Ansible playbooks. Familiarity with Ansible is assumed, however this installation guide will provide you with the information to help you create an inventory file that represents your environment and desired Agave Platform configuration, then run the installation using the Ansible CLI tooling.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can read more about Ansible and its basic usage in the [official documentation](<a class="reference external" href="http://docs.ansible.com/ansible/">http://docs.ansible.com/ansible/</a>).</p>
+</div>
+</div>
+<div class="section" id="initial-planning">
+<span id="initial-planning"></span><h2>Initial Planning<a class="headerlink" href="#initial-planning" title="Permalink to this headline">¶</a></h2>
+<p>When installing the Agave Platform for a production environment, several factors influence installation. Consider the following questions as you read through this guide:</p>
+<ul class="simple">
+<li>What kind of traffic do you anticipate receiving? The <a class="reference external" href="#sizing-considerations">Sizing Considerations</a> section provides limits for hosts and containers based on traffic type and duration so you can calculate how large your environment needs to be.</li>
+<li>How much data do you plan to move through the platform? The <a class="reference external" href="#sizing-considerations">Sizing Considerations</a> section provides limits for hosts and containers based on data access and throughput so you can calculate how large your environment needs to be.</li>
+<li>What are the nature and duration of the computation you intend to run through Agave? The <a class="reference external" href="#sizing-considerations">Sizing Considerations</a> section provides guidelines for hosts and containers based on job throughput so you can determine how large your environment needs to be.</li>
+<li>How many hosts do you require in the cluster? The <a class="reference external" href="#environment-scenarios">Environment Scenarios</a> section provides multiple examples of Single Master and Multiple Master configurations.</li>
+<li>Is high availability (HA) for the platform or science API services required? High availability is recommended for fault tolerance. In this situation, you might aim to use the <a class="reference external" href="#multiple-auth-hosts-using-native-ha-multiple-core-service-hosts-and-clustered-persistence">Multiple Auth hosts Using Native HA, Multiple Core service hosts, and Clustered Persistence</a> example as a basis for your environment.</li>
+<li>Which identity provider do you use for authentication? If you already use a supported identity provider, it is a best practice to configure Agave's Auth components to use that identity provider during installation.</li>
+</ul>
+</div>
+<div class="section" id="on-premises-versus-cloud-providers">
+<span id="on-premises-versus-cloud-providers"></span><h2>On-premises Versus Cloud Providers<a class="headerlink" href="#on-premises-versus-cloud-providers" title="Permalink to this headline">¶</a></h2>
+<p>Agave can be installed on-premises or hosted on public or private clouds. Ansible playbooks can help you with automating the provisioning and installation processes. For information, see Running Installation Playbooks.</p>
+</div>
+<div class="section" id="sizing-considerations">
+<span id="sizing-considerations"></span><h2>Sizing Considerations<a class="headerlink" href="#sizing-considerations" title="Permalink to this headline">¶</a></h2>
+<p>Determine the nature and duration of the traffic, data, and computation your tenant is expected to support. Concurrent API requests, data movement, and job throughput influences the number of hosts and containers you will need in your setup. See <a class="reference external" href="https://github.com/rtfd/recommonmark/tree/master/doc/Scaling%20and%20Performance/platform-limits.html">Platform Limits</a> for the latest guidelines on capacity planning for your tenant.</p>
+</div>
+<div class="section" id="environment-scenarios">
+<span id="environment-scenarios"></span><h2>Environment Scenarios<a class="headerlink" href="#environment-scenarios" title="Permalink to this headline">¶</a></h2>
+<p>This section outlines different examples of scenarios for your Agave environment. Use these scenarios as a basis for planning your own Agave Platform deployment, based on your sizing needs.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Moving from a single auth host to HA after installation is not supported by the deployer at this time.</p>
+</div>
+<p>For information on updating labels, see Updating Labels on Nodes.</p>
+<div class="section" id="auth-core-and-persistence-components-on-one-system">
+<span id="auth-core-and-persistence-components-on-one-system"></span><h3>Auth, Core, and Persistence Components on One System<a class="headerlink" href="#auth-core-and-persistence-components-on-one-system" title="Permalink to this headline">¶</a></h3>
+<p>Agave can be installed on a single system for a development environment only. An all-in-one environment is not considered a production environment and should not be attempted on a laptop.</p>
+</div>
+<div class="section" id="auth-and-persistence-on-a-single-system-core-on-multiple-systems">
+<span id="auth-and-persistence-on-a-single-system-core-on-multiple-systems"></span><h3>Auth and Persistence on a Single System, Core on Multiple Systems<a class="headerlink" href="#auth-and-persistence-on-a-single-system-core-on-multiple-systems" title="Permalink to this headline">¶</a></h3>
+<p>The following table describes an example environment for a single auth host (with persistence services co-located) and two core nodes:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="42%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Host Name</th>
+<th class="head">Infrastructure Component to Install</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>auth.agave</td>
+<td>Auth + persistence</td>
+</tr>
+<tr class="row-odd"><td>api.core.agave</td>
+<td>Science API frontend services</td>
+</tr>
+<tr class="row-even"><td>worker.core.agave</td>
+<td>Science API backend worker</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="single-auth-single-persistence-and-multiple-core-systems">
+<span id="single-auth-single-persistence-and-multiple-core-systems"></span><h3>Single Auth, Single Persistence, and Multiple Core Systems<a class="headerlink" href="#single-auth-single-persistence-and-multiple-core-systems" title="Permalink to this headline">¶</a></h3>
+<p>The following table describes an example environment for a single auth system, single persistence system, and two core API systems:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="42%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Host Name</th>
+<th class="head">Infrastructure Component to Install</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>auth.agave</td>
+<td>Auth</td>
+</tr>
+<tr class="row-odd"><td>db.agave</td>
+<td>Persistence</td>
+</tr>
+<tr class="row-even"><td>api.core.agave</td>
+<td>Science API frontend services</td>
+</tr>
+<tr class="row-odd"><td>worker.core.agave</td>
+<td>Science API backend worker</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is the minimum recommended production configuration.</p>
+</div>
+</div>
+<div class="section" id="multiple-auth-hosts-using-native-ha-multiple-core-service-hosts-and-clustered-persistence">
+<span id="multiple-auth-hosts-using-native-ha-multiple-core-service-hosts-and-clustered-persistence"></span><h3>Multiple Auth hosts Using Native HA, Multiple Core service hosts, and Clustered Persistence<a class="headerlink" href="#multiple-auth-hosts-using-native-ha-multiple-core-service-hosts-and-clustered-persistence" title="Permalink to this headline">¶</a></h3>
+<p>The following describes an example environment for two load balanced Auth systems running native HA, a standalone realtime service for websocket notfications, 2 independent 3 host MariaDB clusters, 3 host sharded MongoDB cluster, 3 host RabbitMQ cluster with mirrored queues, three load balanced Science API systems, and 2 backend Science API workers systems.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="42%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Host Name</th>
+<th class="head">Infrastructure Component to Install</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>apim[1-2].auth.agave</td>
+<td>Auth with native HAP load balancer</td>
+</tr>
+<tr class="row-odd"><td>lb.auth.agave</td>
+<td>Auth load balancer</td>
+</tr>
+<tr class="row-even"><td>realtime.auth.agave</td>
+<td>Cloud hosted streaming + push notification service</td>
+</tr>
+<tr class="row-odd"><td>mongo[1-3].nosql.agave</td>
+<td>MongoDB Shard, Collection, and Mongos Replica Set</td>
+</tr>
+<tr class="row-even"><td>auth[1-3].db.agave</td>
+<td>Auth MariaDB cluster</td>
+</tr>
+<tr class="row-odd"><td>core[1-3].db.agave</td>
+<td>Core MariaDB cluster</td>
+</tr>
+<tr class="row-even"><td>rabbit[1-3].queue.agave</td>
+<td>Message Queue</td>
+</tr>
+<tr class="row-odd"><td>lb.core.agave</td>
+<td>Science API load balancer</td>
+</tr>
+<tr class="row-even"><td>api[1-3].core.agave</td>
+<td>Science API frontend services</td>
+</tr>
+<tr class="row-odd"><td>worker[1-2].core.agave</td>
+<td>Science API backend worker</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Clustering and management of MongoDB, RabbitMQ, and MariaDB are beyond the scope of this document.</p>
+</div>
+</div>
+<div class="section" id="multiple-auth-hosts-using-native-ha-multiple-core-service-hosts-and-clustered-persistence">
+<span id="id1"></span><h3>Multiple Auth hosts Using Native HA, Multiple Core service hosts, and Clustered Persistence<a class="headerlink" href="#multiple-auth-hosts-using-native-ha-multiple-core-service-hosts-and-clustered-persistence" title="Permalink to this headline">¶</a></h3>
+<p>The following describes an example environment for HA Auth with external IS, APIM, and tenant services, a standalone realtime service for websocket notfications, 2 independent 3 host MariaDB clusters, 3 host sharded MongoDB cluster, 3 host RabbitMQ cluster with mirrored queues, three load balanced Science API systems, and 2 backend Science API workers systems.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="42%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Host Name</th>
+<th class="head">Infrastructure Component to Install</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>apim[1-2].auth.agave</td>
+<td>Auth with native HAP load balancer</td>
+</tr>
+<tr class="row-odd"><td>is[1-2].auth.agave</td>
+<td>IS + Key manager</td>
+</tr>
+<tr class="row-even"><td>gateway[1-2].auth.agave</td>
+<td>Gateway traffic manager</td>
+</tr>
+<tr class="row-odd"><td>api.auth.agave</td>
+<td>Tenant services</td>
+</tr>
+<tr class="row-even"><td>lb.auth.agave</td>
+<td>Auth load balancer</td>
+</tr>
+<tr class="row-odd"><td>realtime.auth.agave</td>
+<td>Cloud hosted streaming + push notification service</td>
+</tr>
+<tr class="row-even"><td>mongo[1-3].nosql.agave</td>
+<td>MongoDB Shard, Collection, and Mongos Replica Set</td>
+</tr>
+<tr class="row-odd"><td>auth[1-3].db.agave</td>
+<td>Auth MariaDB cluster</td>
+</tr>
+<tr class="row-even"><td>core[1-3].db.agave</td>
+<td>Core MariaDB cluster</td>
+</tr>
+<tr class="row-odd"><td>rabbit[1-3].queue.agave</td>
+<td>Message Queue</td>
+</tr>
+<tr class="row-even"><td>lb.core.agave</td>
+<td>Science API load balancer</td>
+</tr>
+<tr class="row-odd"><td>api[1-3].core.agave</td>
+<td>Science API frontend services</td>
+</tr>
+<tr class="row-even"><td>worker[1-2].core.agave</td>
+<td>Science API backend worker</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="multiple-auth-hosts-using-native-ha-multiple-core-service-hosts-and-hosted-persistence">
+<span id="multiple-auth-hosts-using-native-ha-multiple-core-service-hosts-and-hosted-persistence"></span><h3>Multiple Auth hosts Using Native HA, Multiple Core service hosts, and Hosted Persistence<a class="headerlink" href="#multiple-auth-hosts-using-native-ha-multiple-core-service-hosts-and-hosted-persistence" title="Permalink to this headline">¶</a></h3>
+<p>The following describes an example environment for HA Auth with external IS, APIM, and tenant services, a standalone realtime service for websocket notfications, 2 independent 3 host MariaDB clusters, 3 host sharded MongoDB cluster, 3 host RabbitMQ cluster with mirrored queues, three load balanced Science API systems, and 2 backend Science API workers systems.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Host Name</th>
+<th class="head">Infrastructure Component to Install</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>apim[1-2].auth.agave</td>
+<td>Auth with native HAP load balancer</td>
+</tr>
+<tr class="row-odd"><td>is[1-2].auth.agave</td>
+<td>IS + Key manager</td>
+</tr>
+<tr class="row-even"><td>gateway[1-2].auth.agave</td>
+<td>Gateway traffic manager</td>
+</tr>
+<tr class="row-odd"><td>api.auth.agave</td>
+<td>Tenant services</td>
+</tr>
+<tr class="row-even"><td>api[1-3].core.agave</td>
+<td>Science API frontend services</td>
+</tr>
+<tr class="row-odd"><td>worker[1-2].core.agave</td>
+<td>Science API backend workers</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Host Name</th>
+<th class="head">Hosted infrastructure component</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>auth-1234567890.region.elb.amazonaws.com</td>
+<td>Auth load balancer</td>
+</tr>
+<tr class="row-odd"><td>core-1234567890.region.elb.amazonaws.com</td>
+<td>Science API load balancer</td>
+</tr>
+<tr class="row-even"><td>12345.fanout.io</td>
+<td>Cloud hosted streaming + push notification service</td>
+</tr>
+<tr class="row-odd"><td>atlas.us-east-1.compute.amazonaws.com</td>
+<td>Atlas Managed MongoDB cluster</td>
+</tr>
+<tr class="row-even"><td>mariadb.12345.us-east-1.rds.amazonaws.com</td>
+<td>Shared Amazon RDS MariaDB cluster</td>
+</tr>
+<tr class="row-odd"><td>mq-aws-eu-west-1-1.iron.io</td>
+<td>IronMQ Message Queue</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="file-path-locations">
+<span id="file-path-locations"></span><h2>File Path Locations<a class="headerlink" href="#file-path-locations" title="Permalink to this headline">¶</a></h2>
+<p>All Agave Platform configuration files are placed in <code class="docutils literal"><span class="pre">/home/apim</span></code> directory during installation and will survive os upgrades. Unless logging is configuration to write to syslog, log data will be written to the <code class="docutils literal"><span class="pre">/var/log/agave</span></code> directory, and managed via the <em>logrotate</em> utility.</p>
+</div>
+<div class="section" id="storage-requirements">
+<span id="storage-requirements"></span><h2>Storage Requirements<a class="headerlink" href="#storage-requirements" title="Permalink to this headline">¶</a></h2>
+<p>Agave's Science APIs can, at times, cache significant data to the local disk during transfers and transformation requests. The data will be written to the <code class="docutils literal"><span class="pre">/home/apim/scratch</span></code> directory and cleaned up after each operation. Ensure that you have enough space on the root file system before deploying the Science APIs, or configure an alternative location to use as scratch space. See the System Requirements section for details.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="prerequisites.html" class="btn btn-neutral float-right" title="System Requirements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../Architecture/infrastructure-components.html" class="btn btn-neutral" title="Infrastructure Components" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Rion Dooley.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

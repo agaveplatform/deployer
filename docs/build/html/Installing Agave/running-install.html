@@ -1,0 +1,415 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Running Installation Playbooks &mdash; Agave Platform Documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Building Images" href="../Building Images/index.html" />
+    <link rel="prev" title="Example Inventory Files" href="example-inventory-files.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Agave Platform
+          
+
+          
+            
+            <img src="../_static/agave-platform-logo-white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Getting Started/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Getting Started/sandbox.html">Setting up a Sandbox</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/core-concepts.html">Core Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/infrastructure-components.html">Infrastructure Components</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Installing Agave</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="planning-your-installation.html">Planning your installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prerequisites.html">System Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="host-preparation.html">Preparing Your Hosts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuring-your-inventory-file.html">Customizing Inventory Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example-inventory-files.html">Example Inventory Files</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Running Installation Playbooks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#before-initiating-installation">Before Initiating Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cloud-installation">Cloud installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#openstack-provider">OpenStack Provider</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-installation-playbooks">Running the Installation Playbooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-individual-component-playbooks">Running Individual Component Playbooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verifying-the-installation">Verifying the Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#check-the-api-publisher-web-interface">Check the API Publisher Web Interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-postman-tests">Run Postman Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#uninstalling-the-agave-platform">Uninstalling The Agave Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#known-issues">Known Issues</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Building Images</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Building Images/index.html">Building Images</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Agave Platform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Running Installation Playbooks</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/Installing Agave/running-install.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="running-installation-playbooks">
+<h1>Running Installation Playbooks<a class="headerlink" href="#running-installation-playbooks" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="before-initiating-installation">
+<h2>Before Initiating Installation<a class="headerlink" href="#before-initiating-installation" title="Permalink to this headline">¶</a></h2>
+<p>Before installing Agave Platform, you must first:</p>
+<ul class="simple">
+<li>See the <a class="reference external" href="./prerequisites.html">Prerequisites</a> and <a class="reference external" href="./host-preparation.html">Host Preparation</a> topics to prepare your hosts. This includes verifying system and environment requirements per component type and properly installing and configuring the Docker service. It also includes installing Ansible version 2.4 or later, as the installation method is based on Ansible playbooks and as such requires directly invoking Ansible.</li>
+<li>See the <a class="reference external" href="./configuring-your-inventory-file.html">Configuring Your Inventory File</a> topic to define your environment and desired Agave Platform component configurations. This inventory file will be used to initiate the installation, and should be saved and maintained for future platform upgrades as well.</li>
+</ul>
+</div>
+<div class="section" id="cloud-installation">
+<h2>Cloud installation<a class="headerlink" href="#cloud-installation" title="Permalink to this headline">¶</a></h2>
+<p>Agave Platform VMs can be provisioned in a cloud environment. You can use Ansible playbooks to automate defining of your cloud hosted infrastructure and applying post-provision configuration for the supported cloud providers.</p>
+<div class="section" id="openstack-provider">
+<h3>OpenStack Provider<a class="headerlink" href="#openstack-provider" title="Permalink to this headline">¶</a></h3>
+<p>The Agave Platform installer comes with playbooks for provisioning hosts on an OpenStack cloud and managing them through a dynamic inventory.  See the <a class="reference internal" href="#running-individual-component-playbooks">Running Individual Component Playbooks</a> section for more information.</p>
+</div>
+</div>
+<div class="section" id="running-the-installation-playbooks">
+<h2>Running the Installation Playbooks<a class="headerlink" href="#running-the-installation-playbooks" title="Permalink to this headline">¶</a></h2>
+<p>The installer uses modularized playbooks allowing administrators to install specific components as needed. By breaking up the roles and playbooks, there is better targeting of ad hoc administration tasks. This results in an increased level of control during installations and results in time savings. The playbooks and their ordering are detailed below in <a class="reference internal" href="#running-individual-component-playbooks">Running Individual Component Playbooks</a>.</p>
+<p>After you have <a class="reference external" href="./configuring-your-inventory-file.html#configuring-ansible">configured Ansible</a> by defining an inventory file in <code class="docutils literal"><span class="pre">/etc/ansible/hosts</span></code>, run the installation playbook via Ansible using either the native <code class="docutils literal"><span class="pre">ansible-playbook`</span></code> command or containerized installer.</p>
+<div class="admonition danger">
+<p class="first admonition-title">Danger</p>
+<p class="last">Do not run Agave Platform playbooks under nohup. Using nohup with the playbooks causes file descriptors to be created and not closed. Therefore, the system can run out of files to open and the playbook will fail.</p>
+</div>
+<p>To run the Agave Platform installerm, run the <code class="docutils literal"><span class="pre">deploy_agave.yml</span></code> playbook to initiate the platform installation. Use the following command, specifying -i if your inventory file located somewhere other than <code class="docutils literal"><span class="pre">/etc/ansible/hosts</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># ansible-playbook [-i /path/to/inventory] \</span>
+    <span class="o">~/</span><span class="n">agave</span><span class="o">-</span><span class="n">deployer</span><span class="o">/</span><span class="n">deploy</span><span class="o">/</span><span class="n">deploy_agave</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>If for any reason the installation fails, before re-running the installer, see <a class="reference internal" href="#known-issues">Known Issues</a> to check for any specific instructions or workarounds.</p>
+<p>The installer caches playbook configuration values for 10 minutes, by default. If you change any system, network, or inventory configuration, and then re-run the installer within that 10 minute period, the new values are not used, and the previous values are used instead. You can delete the contents of the cache, which is defined by the fact_caching_connection value in the /etc/ansible/ansible.cfg file. An example of this file is shown in Recommended Installation Practices.</p>
+</div>
+<div class="section" id="running-individual-component-playbooks">
+<h2>Running Individual Component Playbooks<a class="headerlink" href="#running-individual-component-playbooks" title="Permalink to this headline">¶</a></h2>
+<p>The main installation playbook <code class="docutils literal"><span class="pre">~/agave-deployer/deploy/deploy_agave.yml</span></code> runs a set of individual component playbooks in a specific order, and the installer reports back at the end what phases you have gone through. If the installation fails during a phase, you are notified on the screen along with the errors from the Ansible run.</p>
+<p>After you resolve the issue, rather than run the entire installation over again, you can pick up from the failed phase. You must then run each of the remaining playbooks in order:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># ansible-playbook [-i /path/to/inventory] &lt;playbook_file_location&gt;</span>
+</pre></div>
+</div>
+<p>The following table is sorted in order of when each individual component playbook is run:</p>
+<table border="1" class="colwidths-given docutils" id="id1">
+<caption><span class="caption-text">Individual Component Playbook Run Order</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="38%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Playbook Name</th>
+<th class="head">File Location</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Host Configuration</td>
+<td>~/agave-deployer/deploy/docker_host.plbk</td>
+</tr>
+<tr class="row-odd"><td>MySQL Database Install</td>
+<td>~/agave-deployer/deploy/deploy_mysql_db.plbk</td>
+</tr>
+<tr class="row-even"><td>NoSQL Database Install</td>
+<td>~/agave-deployer/deploy/deploy_nosql_db.plbk</td>
+</tr>
+<tr class="row-odd"><td>Core Components Install</td>
+<td>~/agave-deployer/deploy/deploy_core.plbk</td>
+</tr>
+<tr class="row-even"><td>Migrate Core DB</td>
+<td>~/agave-deployer/deploy/core_migrations.plbk</td>
+</tr>
+<tr class="row-odd"><td>Migrate Auth DB</td>
+<td>~/agave-deployer/deploy/load_auth_mysql.plbk</td>
+</tr>
+<tr class="row-even"><td>Auth Components Install</td>
+<td>~/agave-deployer/deploy/deploy_auth.plbk</td>
+</tr>
+<tr class="row-odd"><td>Default Account Install</td>
+<td>~/agave-deployer/deploy/load_ldap_users.plbk</td>
+</tr>
+<tr class="row-even"><td>Boutique API Install</td>
+<td>~/agave-deployer/deploy/register_boutique_apis.plbk</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="verifying-the-installation">
+<h2>Verifying the Installation<a class="headerlink" href="#verifying-the-installation" title="Permalink to this headline">¶</a></h2>
+<p>After the installation completes:</p>
+<div class="section" id="check-the-api-publisher-web-interface">
+<h3>Check the API Publisher Web Interface<a class="headerlink" href="#check-the-api-publisher-web-interface" title="Permalink to this headline">¶</a></h3>
+<p>Verify that the APIM is running and services are present by opening the Auth component host URL in your web browser. For example, for an Auth host with a host name of sandbox.example.com, the publisher console would be found at <a class="reference external" href="https://sandbox.example.com/publisher">https://sandbox.example.com/publisher</a></p>
+</div>
+<div class="section" id="run-postman-tests">
+<h3>Run Postman Tests<a class="headerlink" href="#run-postman-tests" title="Permalink to this headline">¶</a></h3>
+<p>A suite of Postman tests is bundled with the installer. Before running them, you should add another group to your inventory file containing <code class="docutils literal"><span class="pre">localhost</span></code> and customizing any of the Postman test variables you see fit.</p>
+<p>An example inventory file with the Postman config is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">postman</span><span class="p">:</span><span class="nb">vars</span><span class="p">]</span>
+
+<span class="c1"># The hostname or ip of the linux server the newman tests will</span>
+<span class="c1"># register with Agave and use to run all data and compute tests</span>
+<span class="n">newman_agave_test_system_host</span><span class="o">=</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">205.12</span>
+
+<span class="c1"># The sftp port on which Agave should connect to `newman_agave_test_system_host`</span>
+<span class="c1"># during the tests</span>
+<span class="n">newman_agave_test_system_port</span><span class="o">=</span><span class="mi">22</span>
+
+<span class="c1"># The username with which Agave should connect to `newman_agave_test_system_host`</span>
+<span class="c1"># during the tests</span>
+<span class="n">newman_agave_test_system_username</span><span class="o">=</span><span class="n">vagrant</span>
+
+<span class="c1"># The virtual home directory to use in the system definition when Agave interacts</span>
+<span class="c1"># with `newman_agave_test_system_host`</span>
+<span class="n">newman_agave_test_system_homedir</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">vagrant</span>
+
+<span class="c1"># The public key allowing connections to `newman_agave_test_system_host`</span>
+<span class="n">newman_agave_test_system_public_key_file</span><span class="o">=~/.</span><span class="n">ssh</span><span class="o">/</span><span class="n">id_rsa</span><span class="o">.</span><span class="n">pub</span>
+
+<span class="c1"># The private key Agave should use to connect to `newman_agave_test_system_host`</span>
+<span class="n">newman_agave_test_system_private_key_file</span><span class="o">=~/.</span><span class="n">ssh</span><span class="o">/</span><span class="n">id_rsa</span>
+
+
+<span class="p">[</span><span class="n">postman</span><span class="p">]</span>
+<span class="n">localhost</span> <span class="n">ansible_connection</span><span class="o">=</span><span class="n">local</span>
+</pre></div>
+</div>
+<p>Once you have updated your inventory file, you can run the tests by invoking the <code class="docutils literal"><span class="pre">~/agave-deployer/deploy/run_postman.plbk</span></code> playbook.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># ansible-playbook [-i /path/to/inventory] \</span>
+    <span class="o">~/</span><span class="n">agave</span><span class="o">-</span><span class="n">deployer</span><span class="o">/</span><span class="n">deploy</span><span class="o">/</span><span class="n">run_postman</span><span class="o">.</span><span class="n">plbk</span> <span class="o">-</span><span class="n">l</span> <span class="n">postman</span>
+</pre></div>
+</div>
+<p>Once the tests complete, you will see a tabular output of the results printed to stdout. Reports in XML, JSON, and HTML are also available in the <code class="docutils literal"><span class="pre">~/agave-deployer/deploy/tmp/agave*/reports</span></code> folder.</p>
+</div>
+</div>
+<div class="section" id="uninstalling-the-agave-platform">
+<h2>Uninstalling The Agave Platform<a class="headerlink" href="#uninstalling-the-agave-platform" title="Permalink to this headline">¶</a></h2>
+<p>You can uninstall Agave hosts in your environment by running the docker_cleanup.yml playbook. This playbook deletes Agave Platform content installed by Ansible, including:</p>
+<ul class="simple">
+<li>Configuration</li>
+<li>Containers</li>
+<li>Default templates and volumes</li>
+<li>Images</li>
+<li>Custom logs &amp; loggers</li>
+<li>Service user account</li>
+<li>Service user home directory</li>
+</ul>
+<p>The playbook will delete content for any hosts defined in the inventory file that you specify when running the playbook. If you want to uninstall the Agave Platfrom across all hosts in your deployment, run the playbook using the inventory file you used when installing Agave initially or ran most recently:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># ansible-playbook [-i /path/to/inventory] \</span>
+    <span class="o">~/</span><span class="n">agave</span><span class="o">-</span><span class="n">deployer</span><span class="o">/</span><span class="n">deploy</span><span class="o">/</span><span class="n">docker_cleanup</span><span class="o">.</span><span class="n">plbk</span>
+</pre></div>
+</div>
+<p>When the playbook completes, all Agave Platform content should be removed from any specified hosts.</p>
+</div>
+<div class="section" id="known-issues">
+<h2>Known Issues<a class="headerlink" href="#known-issues" title="Permalink to this headline">¶</a></h2>
+<p>When SELinux is enabled on the host, the installer can choke when fetching data from HTTPS resources. We believe this is due to the python-selinux module not being present in the default python path. To work around this, reboot the host after the first failure and try again.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Building Images/index.html" class="btn btn-neutral float-right" title="Building Images" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="example-inventory-files.html" class="btn btn-neutral" title="Example Inventory Files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Rion Dooley.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

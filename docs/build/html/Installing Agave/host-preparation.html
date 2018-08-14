@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Preparing Your Hosts &mdash; Agave Platform Documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Customizing Inventory Files" href="configuring-your-inventory-file.html" />
+    <link rel="prev" title="System Requirements" href="prerequisites.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Agave Platform
+          
+
+          
+            
+            <img src="../_static/agave-platform-logo-white.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Getting Started/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Getting Started/sandbox.html">Setting up a Sandbox</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Architecture</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/core-concepts.html">Core Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Architecture/infrastructure-components.html">Infrastructure Components</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Installing Agave</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="planning-your-installation.html">Planning your installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prerequisites.html">System Requirements</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Preparing Your Hosts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setting-path">Setting PATH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ensuring-host-access">Ensuring Host Access</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-base-packages">Installing Base Packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-docker">Installing Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuring-docker-storage">Configuring Docker Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#managing-container-logs">Managing Container Logs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuring-your-inventory-file.html">Customizing Inventory Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example-inventory-files.html">Example Inventory Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="running-install.html">Running Installation Playbooks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Building Images</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Building Images/index.html">Building Images</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Agave Platform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Preparing Your Hosts</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/Installing Agave/host-preparation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="preparing-your-hosts">
+<h1>Preparing Your Hosts<a class="headerlink" href="#preparing-your-hosts" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="setting-path">
+<h2>Setting PATH<a class="headerlink" href="#setting-path" title="Permalink to this headline">¶</a></h2>
+<p>The PATH for the root user on each host must contain the following directories:</p>
+<ul class="simple">
+<li>/bin</li>
+<li>/sbin</li>
+<li>/usr/bin</li>
+<li>/usr/sbin</li>
+</ul>
+<p>These should all be included by default in a fresh CentOS 7.x installation.</p>
+</div>
+<div class="section" id="ensuring-host-access">
+<h2>Ensuring Host Access<a class="headerlink" href="#ensuring-host-access" title="Permalink to this headline">¶</a></h2>
+<p>The Agave Platform installer requires a user that has access to all hosts b jcvbp. If you want to run the installer as a non-root user, passwordless sudo rights must be configured on each destination host.</p>
+<p>For example, you can generate an SSH key on the host where you will invoke the installation process:</p>
+<p># ssh-keygen
+Do not use a password.</p>
+<p>An easy way to distribute your SSH keys is by using a bash loop:</p>
+<div class="code shell highlight-default"><div class="highlight"><pre><span></span># for host in auth.agave  core.agave  db.agave ; do \
+      ssh-copy-id -i ~/.ssh/id_rsa.pub $host; \
+  done
+</pre></div>
+</div>
+<p>Modify the host names in the above command according to your configuration.</p>
+</div>
+<div class="section" id="installing-base-packages">
+<h2>Installing Base Packages<a class="headerlink" href="#installing-base-packages" title="Permalink to this headline">¶</a></h2>
+<p>The Agave Platform installer will install all necessary packages on the host on first run. On each subsequent run, the installer will ensure the packages are present and up to date. The following packages will be installed:</p>
+<ul class="simple">
+<li>libselinux-python</li>
+<li>git</li>
+<li>cronie</li>
+<li>net-tools</li>
+<li>bind-utils</li>
+<li>iftop</li>
+<li>bash-completion</li>
+<li>psacct</li>
+</ul>
+</div>
+<div class="section" id="installing-docker">
+<h2>Installing Docker<a class="headerlink" href="#installing-docker" title="Permalink to this headline">¶</a></h2>
+<p>The Agave Platform installer will also install and configure the Docker daemon on the hosts. Only trusted registries are enabled by default. If you will be pulling images from a registry with a self-signed cert, or cert signed by an untrusted CA, you should add the ip address or subnet of any insecure registries you plan to use to the <code class="docutils literal"><span class="pre">docker_insecure_registries</span></code> list variable in your inventory file. This will tell the installer to include those values as <code class="docutils literal"><span class="pre">--insecure-registry</span></code> parameters to the Docker daemon startup command on each host. The –insecure-registry option instructs the Docker daemon to trust any Docker registry on the indicated subnet, rather than requiring a certificate.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">...</span>
+
+<span class="p">[</span><span class="n">agave</span><span class="p">:</span><span class="nb">vars</span><span class="p">]</span>
+
+<span class="o">...</span>
+
+<span class="n">docker_insecure_registries</span><span class="p">:</span>
+    <span class="o">-</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">205.12</span>
+    <span class="o">-</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">205.0</span><span class="o">/</span><span class="mi">32</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Once this value is set, changing it will require restarting the Docker service on each host. This will result in all running containers being stopped. Keep this in mind when deciding to use an insecure registry for your images.</p>
+</div>
+</div>
+<div class="section" id="configuring-docker-storage">
+<h2>Configuring Docker Storage<a class="headerlink" href="#configuring-docker-storage" title="Permalink to this headline">¶</a></h2>
+<p>The containers running the components of the Agave Platform are stored in Docker’s storage back end. This storage is ephemeral and separate from any persistent storage allocated to meet the needs of your applications. With Ephemeral storage, container-saved data is lost when the container is removed. With persistent storage, container-saved data remains if the container is removed.</p>
+<p>The Agave Platform installer configures persistent storage for each system that runs a container daemon. In HA installations, the persistent storage will leverage a NFS mount on each host. In standard installations, container data will be persisted using volume mounts to the host file system.</p>
+</div>
+<div class="section" id="managing-container-logs">
+<h2>Managing Container Logs<a class="headerlink" href="#managing-container-logs" title="Permalink to this headline">¶</a></h2>
+<p>The Agave Platform installer will configure Docker to use the <code class="docutils literal"><span class="pre">json-file</span></code> logging driver by default. You can manage this by configuring Docker’s <a class="reference external" href="https://docs.docker.com/config/containers/logging/json-file/">json-file</a> logging driver to restrict the max log file size to 5MB and a maximum of 5 files.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Future versions of the installer will consolidate all logging into a <a class="reference external" href="https://www.fluentd.org">fluentd</a> forwarder running natively on the host. You will then have the option of consuming the fluentd stream in your preferred tool. Until then, logs are written to local disk and rotated via <code class="docutils literal"><span class="pre">logrotate</span></code>.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="configuring-your-inventory-file.html" class="btn btn-neutral float-right" title="Customizing Inventory Files" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="prerequisites.html" class="btn btn-neutral" title="System Requirements" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Rion Dooley.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>
