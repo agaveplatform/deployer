@@ -1,47 +1,74 @@
-# Agave Deployer #
+# Agave Ansible Deployer
 
-## Overview ##
-This project is used to build images and deploy containers that make up the Agave Platform. An instance of the platform
-is made up of servers dedicated to running containers from one of three components:
-* Auth - identity and access management services
-* Core - core science APIs
-* Persistence - Databases, Queues and other Third-Party services
-A common, minimal deployment runs the full suite of containers from each component on a dedicated virtual machine (vm).
+> This project deploys a sandbox installation of the [Agave Platform](https://agaveapi.co/). This should not be used as-is for production deployments.  
 
-Agave is a multi-tenant platform, with each tenant running its own, dedicated version of the auth services. This project
-houses the necessary tenant-specific configurations needed to deploy those services, Each tenant
-runs its own VM (the "tenant vm") of containers to handle auth and API management as well as other third party services.
-There are base images for all the services, and then each tenant overlays the base images with special configurations
-specific to that tenant. To increase availability in production (or other environments),
-multiple instances of the tenant vm can be run behind a load balancer.
+Please see the project [Documentation](https://agaveplatform.github.io/deployer) for detailed guides on deploying the platform.
+ 
+## Table of Contents
+
+- [Install](#install)
+- [Security](#security)
+- [Usage](#usage)
+- [Contribute](#contribute)
+- [License](#license)
 
 
-## Build ##
-All base images for containers used in the Auth layer are built directly from Dockerfiles that reside in the corresponding
-directory within base_images. Images are also regularly pushed to the Docker Hub so that deployments can be carried out
-without a prerequisite build step.
+## Install
+The Agave Ansible Deployer's dependencies are managed with pip. Use the included `requirements.txt` file to install them.
 
+```
+git clone https://github.com/agaveplatform/deployer.git agave-deployer
+cd agave-deployer
+pip install -r requirements
+```
+The Deployer also leverages several public roles from Ansible Galaxy. Use the included `deploy/galaxy.yml` file to install them.
 
-## Creating a New Tenant ##
-To create a new tenant, add a directory within deploy/tenants whose name is <tenant id>. Immediately within that
-directory, create two files: <tenant_id>.yml and <tenant_id>_passwords. <tenant_id>.yml contains all public configurations
-for the tenant while <tenant_id>_passwords contains sensitive
-data and will remain outside version control.
+```
+cd deploy
+ansible-galaxy install -r galaxy.yml
+```
 
-Within the <tenant_id> directory, a directory called `apis` should be created to hold the definition files of any
-boutique APIs that are needed.
+Once the dependencies and Ansible Galaxy roles are imported, copy the example password files into place.
 
-Finally, create a subdirectory httpd within the <tenant_id> directory with the apache .crt and .key
-files needed. See the dev_staging directory for examples.
+```
+cp agave_core_configs/sandbox_passwords-example agave_core_configs/sandbox_passwords
+cp tenants/sandbox/sandbox_passwords-example tenants/sandbox/sandbox_passwords
+```
 
+You are now ready to configure and install a new instance of the Agave Platform. Please consult the [Agave Ansible Deployer Documentation](https://agaveplatform.github.io/deployer) for a detailed instructions.
+ 
+## Security
+Sensitive information such as the `sandbox_password` files you copied into place should never be stored in plain text. We recommend using [Ansible Vault](https://docs.ansible.com/ansible/2.5/user_guide/vault.html). To encrypt your password files with Vault, run the following commands. 
 
-## Deploy ##
-Deployment of tenant containers is done using Ansible playbooks. This project contains playbooks needed for deploying
-and managing containers in staging and production as well as a directory of hosts files used for inventory. There are
-two main playbooks: new_tenant.plbk and update_tenant.plbk. In addition to deploying the auth containers, the
-new_tenant.plbk will create databases and load data into the configured MySQL database. The update_tenant.plbk will
-pull the latest images from Docker Hub, remove all running containers, and start new ones.
+> If this is your first time running Vault, you will be prompted for a master pass phrase that will be used to encrypt and decrypt all your files. Do not lose this phrase, as it is required to decrypt your data when you run the various playbooks. 
 
+```
+ansible-vault encrypt agave_core_configs/sandbox_passwords tenants/sandbox/sandbox_passwords
+```
 
-## Documentation ##
-Additional documentation is being developed within the docs directory using Sphinx.
+If you need to edit the files, you can securely do so using Vault. Once you save them, they will be re-encrypted and stored back in their original location. 
+
+```
+ansible-vault encrypt agave_core_configs/sandbox_passwords tenants/sandbox/sandbox_passwords
+``` 
+
+## Usage
+
+See the [Setting up a sandbox](https://agaveplatform.github.io/deployer/build/html/Getting%20Started/sandbox.html) secion of the documentation for instructions on building, testing, and deploying the Agave Platform.
+ 
+## Contribute
+
+We welcomes contributions from anyone and everyone. Please refer to the project style guidelines and guidelines for submitting patches and additions. In general, we follow the "fork-and-pull" Git workflow.
+
+1. Fork the repo on GitHub
+2. Clone the project to your own machine
+3. Commit changes to your own branch
+4. Push your work back up to your fork
+5. Submit a Pull request so that we can review your changes
+
+***NOTE:*** Be sure to merge the latest from "upstream" before making a pull request!
+
+## License
+
+[BSD 3-Clause](../LICENSE)
+
