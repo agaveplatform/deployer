@@ -12,6 +12,7 @@
     baseurl: http://download.fedoraproject.org/pub/epel/$releasever/$basearch/
     gpgcheck: no
 
+
 - name: Install Basic Software
   yum: name={{item}} state=present
   with_items:
@@ -28,6 +29,3 @@
 
 - name: Upgrade Python
   pip: name=python state=latest
-
-- name: Install Shade
-  pip: name=shade state=present

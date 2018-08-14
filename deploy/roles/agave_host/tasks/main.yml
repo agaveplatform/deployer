@@ -112,13 +112,19 @@
   file: path=/home/apim mode=0750
   become: yes
 
+- name: install jq binary
+  get_url:
+    url: https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
+    dest: /usr/local/bin/jq
+    mode: 0755
+  become: yes
+
 - name: add common RHEL software packages
   yum: name='{{ item }}' state=present update_cache=yes
   become: yes
   when: ansible_os_family == "RedHat"
   with_items:
       - ntp
-      - jq
 
 - name: add common Debian software packages
   apt: name='{{ item }}' state=present update_cache=yes
@@ -126,7 +132,7 @@
   when: ansible_os_family == "Debian"
   with_items:
       - ntp
-      - jq
+
 
 - name: ensure services enabled
   service: name='{{ item }}' state=started enabled=yes
