@@ -1,0 +1,50 @@
+---
+# tasks file for roles/agave_client_application
+# Tenant should already be initialized by the `agave_cli` role,
+# so here we just create a new set of client keys
+
+
+- name: List tenants
+  shell: "/usr/local/agave-cli/bin/tenants-list -V -H https://{{tenant_public_domain_or_ip}}/tenants"
+  register: tenants_list_response
+
+#- name: Initialize the CLI environment for the given tenant
+#  shell: ". $HOME/.bashrc && tenants-init -V -H https://{{tenant_public_domain_or_ip}}/tenants -t {{tenant_id}}"
+#  ingnore_errors: yes
+#  environment:
+#    AGAVE_USERNAME: "{{ admin }}"
+#    AGAVE_PASSWORD: "{{ apim_admin_pass }}"
+#    AGAVE_CACHE_DIR: "{{ jenkins_home }}/.agave"
+#    AGAVE_TENANT: "{{ tenant_id }}"
+#    AGAVE_TENANTS_API_BASEURL: "https://{{ tenant_public_domain_or_ip }}/tenants"
+
+- name: "Destroying exiting client {{ agave_client_application_name }}, if present"
+  shell: . $HOME/.bashrc && clients-delete {{ agave_client_application_name | quote  }}
+  args:
+    executable: /bin/bash
+  environment:
+    AGAVE_USERNAME: admin
+    AGAVE_PASSWORD: "{{ apim_admin_pass }}"
+#    AGAVE_CACHE_DIR: "{{ jenkins_home }}/.agave"
+
+- name: "Creating new client {{ agave_client_application_name }}"
+  shell: . $HOME/.bashrc && clients-create -S -v -N {{ agave_client_application_name   }} \
+    -C {{ agave_client_application_callback_url | quote  }} \
+    -D {{ agave_client_application_description | quote  }}
+  args:
+    executable: /bin/bash
+  environment:
+    AGAVE_USERNAME: admin
+    AGAVE_PASSWORD: "{{ apim_admin_pass }}"
+#    AGAVE_CACHE_DIR: "{{ jenkins_home }}/.agave"
+  register: clients_create_response
+
+- set_fact:
+    client_key: "{{ (clients_create_response.stdout | from_json)['consumerKey'] }}"
+
+- set_fact:
+    client_secret: "{{ (clients_create_response.stdout | from_json)['consumerSecret'] }}"
+
+- debug:
+    var: clients_create_response.stdout
+#    msg: "Created new client for {{tenant_id}} tenant. clientKey: {{client_key}} clientSecret: {{client_secret}}"
