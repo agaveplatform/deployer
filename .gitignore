@@ -19,6 +19,7 @@ jupyterhub-swarm.bash
 deploy/host_files/*_hosts
 !deploy/host_files/sandbox_hosts
 !deploy/host_files/vagrant_hosts
+!deploy/host_files/group_vars
 
 deploy/roles/fluentd
 local/vagrant/4-host
@@ -26,7 +27,6 @@ local/vagrant/3-host
 local/vagrant/2-host
 local/vagrant/2-host/Vagrantfile
 local/vagrant/3-host/Vagrantfile
-/deploy/host_files/openstack.yml
 
 # ignore virutalenv
 /.Python
