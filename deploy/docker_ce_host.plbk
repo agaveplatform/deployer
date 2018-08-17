@@ -20,7 +20,7 @@
 
 ---
 
-  # deploy and start containers
+  # Install docker, docker compose, and helpers
 - hosts: agave
   become: yes
   roles:
@@ -30,9 +30,21 @@
 
 
   tasks:
-    - name: install docker compose
-      pip: name=docker-compose state=present
+    - name: "Install Docker compose"
+      shell: curl -kL https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/bin/docker-compose
       when: update_docker_compose_version
+      tags:
+        - docker
+        - docker-compose
+
+    - name: "Ensure execute permission on the compose binary"
+      file:
+        path: /usr/bin/docker-compose
+        mode: 01755
+      when: update_docker_compose_version
+      tags:
+        - docker
+        - docker-compose
 
     # Aliases, completion, helpers for docker and docker compose
     - name: install docker aliases
@@ -41,6 +53,9 @@
         url: https://bitbucket.org/!api/2.0/snippets/deardooley/9KL4X/8cda45426572de3ff43a8da07f12e5ee95f73b5d/files/docker.aliases
         mode: 01755
         force: yes
+      tags:
+        - docker
+        - docker-aliases
 
     - name: install docker-compose bash completion
       get_url:
@@ -48,3 +63,6 @@
         dest: /etc/bash_completion.d/docker-compose
         mode: 01755
         force: yes
+      tags:
+        - docker
+        - bash-completion

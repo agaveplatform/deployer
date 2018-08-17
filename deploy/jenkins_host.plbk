@@ -41,8 +41,6 @@
         path: "{{ jenkins_home }}"
         state: directory
         mode: 0740
-        owner: jenkins
-        group: jenkins
       tags:
         - jenkins
 
@@ -82,6 +80,8 @@
       - ssh-slaves
       - buildgraph-view
       - metrics
+      - cobertura
+      - clover
     java_packages:
         - java-1.8.0-openjdk
     java_home: /usr/lib/jvm/java-1.8.0
