@@ -1,0 +1,35 @@
+---
+
+- name: Setting directory for ssl certificates
+  set_fact:
+    togo_ssl_directory: "{{togo_static_deployment_directory}}/ssl"
+    
+- name: Ensure ssl directory exists for remote self-signed TLS certs
+  file:
+    path: "{{togo_ssl_directory}}"
+    state: directory
+
+- name: Generate RSA Key
+  command: openssl genrsa \
+    -out "{{togo_ssl_directory}}/{{ agave_togo_static_tls_key_file }}" 2048
+  args:
+    creates: "{{togo_ssl_directory}}/{{ agave_togo_static_tls_key_file }}"
+
+- name: Generate CSR
+  command: openssl req \
+    -new \
+    -subj "/C/US/ST=TX/L=Austin/O=AgavePlatform/CN={{ togo_public_hostname_or_ip }}" \
+    -key "{{togo_ssl_directory}}/{{agave_togo_static_tls_key_file}}" \
+    -out "{{togo_ssl_directory}}/{{agave_togo_static_tls_key_file}}.csr"
+  args:
+    creates: "{{togo_ssl_directory}}/{{agave_togo_static_tls_key_file}}.csr"
+
+- name: Generate self-signed OpenSSL certificate
+  command: openssl req \
+    -x509 \
+    -days 1825 \
+    -key "{{togo_ssl_directory}}/{{agave_togo_static_tls_key_file}}" \
+    -in "{{togo_ssl_directory}}/{{agave_togo_static_tls_key_file}}.csr" \
+    -out "{{togo_ssl_directory}}/{{agave_togo_static_tls_cert_file}}"
+  args:
+    creates: "{{togo_ssl_directory}}/{{agave_togo_static_tls_cert_file}}"

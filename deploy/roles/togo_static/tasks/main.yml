@@ -1,59 +1,75 @@
 ---
-
-- set_fact:
-    agave_togo_static_url: "{{ host|default('togo.agaveplatform.org') }}"
-  when: agave_togo_static_url is undefined
+- name: Setting deployment directory
+  set_fact:
+    togo_static_deployment_directory: "{{agave_togo_static_deployment_directory}}"
 
 - name: ensure directories are present
   file: path={{ item }} state=directory
-  become: yes
-  become_user: apim
-  become_method: sudo
-  with_items:
-      - /home/apim/togo
+  loop:
+      - "{{togo_static_deployment_directory}}"
+      - "{{togo_static_deployment_directory}}/ssl"
+
+- name: Copy existing tls certs to remote host
+  copy:
+    src: "{{ item }}"
+    dest: "{{togo_static_deployment_directory}}/ssl/{{ item | basename }}"
+  loop:
+    - "{{ agave_togo_static_tls_key_file }}"
+    - "{{ agave_togo_static_tls_cert_file }}"
+  when: deploy_custom_tls_certs == True
+
+- name: Generate tls certs on remote host
+  include_tasks: create_tls_certs.yml
+  when: deploy_custom_tls_certs == False
 
 - name: Compile implicit.js template with tenant and oauth2 configurations
-  template: src=docker-compose.yml.j2 dest=/home/apim/togo/docker-compose.yml
-  become: yes
-  become_user: apim
-  become_method: sudo
+  template:
+    src: implicit.js.j2
+    dest: "{{togo_static_deployment_directory}}/implicit.js"
 
+- name: Compile traefik config template
+  template:
+    src: traefik.toml.j2
+    dest: "{{togo_static_deployment_directory}}/traefik.toml"
 
 - name: Compile docker_compose template
-  template: src=docker-compose.yml.j2 dest=/home/apim/togo/docker-compose.yml
-  become: yes
-  become_user: apim
-  become_method: sudo
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{togo_static_deployment_directory}}/docker-compose.yml"
 
   # note: this should almost never be used; exception is when wanting to competely start from scratch.
-- name: pull the latest images
-  shell: docker-compose -f /home/apim/togo/docker-compose.yml pull --ignore-pull-failures
+- name: Pull the latest images
+  shell: docker-compose -f {{togo_static_deployment_directory}}/docker-compose.yml pull --ignore-pull-failures
   ignore_errors: yes
-  become: yes
-  become_user: apim
-  become_method: sudo
-  when: remove_all_togo_containers
+  when: remove_all_togo_containers|bool
   environment:
       COMPOSE_HTTP_TIMEOUT: 2000
 
 - name: Remove all existing togo containers
-  shell: docker-compose -f /home/apim/togo/docker-compose.yml down
+  shell: docker-compose -f {{ togo_static_deployment_directory }}/docker-compose.yml down
   ignore_errors: yes
-  become: yes
-  become_user: apim
-  become_method: sudo
-  when: remove_all_togo_containers
+  when: remove_all_togo_containers|bool
   environment:
       COMPOSE_HTTP_TIMEOUT: 2000
 
-- pause: seconds=30
-  when: remove_all_togo_containers
-
+- name: Waiting for containers to clear before restarting.
+  pause: seconds=30
+  when: remove_all_togo_containers|bool
 
 - name: Start ToGo stack
-  shell: docker-compose -f /home/apim/togo/docker-compose.yml up -d
-  become: yes
-  become_user: apim
-  become_method: sudo
+  shell: docker-compose -f {{ togo_static_deployment_directory }}/docker-compose.yml up -d
   environment:
       COMPOSE_HTTP_TIMEOUT: 2000
+#
+#- name: Waiting for ToGo container to come online
+#  become: no
+#  wait_for:
+#    host: "http://{{ togo_public_hostname_or_ip }}"
+#    port: 80
+#    delay: 5
+#    search_regex: '<html>'
+#  delegate_to: localhost
+
+- name: "Printing connectivity information"
+  debug:
+    msg: "ToGo is available at https://{{togo_public_hostname_or_ip}}/app"

@@ -109,14 +109,17 @@ beanstalk_srv_code: 0001-001
 tenant_uuid: 0001411570898814
 
 # list of additional APIs to automatically subscribe clients to
-#agave_clients_additional_apis:
+agave_clients_additional_apis:
+    - name: Tenants
+      version: v2
+      provider: admin
+    - name: Tags
+      version: v2
+      provider: admin
+    - name: UUIDs
+      version: v2
+      provider: admin
 #    - name: Realtime
-#      version: v2
-#      provider: admin
-#    - name: Tags
-#      version: v2
-#      provider: admin
-#    - name: UUIDs
 #      version: v2
 #      provider: admin
 # -------------

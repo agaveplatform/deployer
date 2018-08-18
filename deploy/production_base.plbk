@@ -9,7 +9,6 @@
 # Example invocation:
 # $ ansible-playbook -i host_files/prod_hosts production_base.plbk -e newrelic_license_key=abc123
 
-
 ---
 
 - name: gather all hosts information

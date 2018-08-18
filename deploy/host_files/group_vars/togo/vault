@@ -1,0 +1,20 @@
+---
+#
+# Group Secret File
+# group: jenkins
+#
+# Secrets for deploying and managing jenkins inventory.
+#
+# Each variable in this file corresponds to a variable in the "vars" file
+# without the "vault_" prefix.
+#
+# This file should be encrypted using Ansible Vault when not editing.
+# This file is loaded and before any other file in this directory, thus
+# this file will be decrypted in memory by Ansible Vault and its contents
+# made available for use elsewhere in the project. For more information
+# on Ansible Vault and variable precedence, see the official
+# Ansible documentation.
+#
+# * http://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable
+# * http://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html#best-practices-for-variables-and-vaults
+#

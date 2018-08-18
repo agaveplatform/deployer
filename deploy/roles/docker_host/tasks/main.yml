@@ -6,14 +6,10 @@
 - name: Add docker group
   group: name=docker state=present
   become: yes
-  become_user: root
-  become_method: sudo
 
 - name: Add user to docker group
   user: name={{ agave_linux_user_name }} generate_ssh_key=yes state=present groups=docker
   become: yes
-  become_user: root
-  become_method: sudo
 
 #- name: Flush iptables INPUT Chain
 #  command: /usr/sbin/iptables -F INPUT
@@ -28,42 +24,30 @@
 - name: Ensure docker is not running
   service: name=docker state=stopped
   become: yes
-  become_user: root
-  become_method: sudo
   when: update_docker_version or update_docker_compose_version
   ignore_errors: yes
 
 - include_tasks: main-ubuntu.yml
   become: yes
-  become_user: root
-  become_method: sudo
   when: ansible_os_family == "Debian"
 
 - include_tasks: main-centos.yml
   become: yes
-  become_user: root
-  become_method: sudo
   when: ansible_os_family == "RedHat"
 
 - name: Ensure docker is not running
   service: name=docker state=stopped
   become: yes
-  become_user: root
-  become_method: sudo
   when: update_docker_version or update_docker_compose_version
 
 - name: Install docker compose
   shell: curl -skL -o /usr/bin/docker-compose https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64
   become: yes
-  become_user: root
-  become_method: sudo
   when: update_docker_compose_version
 
 - name: Set permissions on docker compose binary
   acl: permissions="rx" name=/usr/bin/docker-compose state=present etype=user entity=apim
   become: yes
-  become_user: root
-  become_method: sudo
   when: update_docker_compose_version
 
 # todo - need to check this
@@ -71,33 +55,25 @@
   command: /usr/sbin/iptables -F INPUT
 #  ignore_errors: yes
   become: yes
-  become_user: root
-  become_method: sudo
 
 - name: Ensure docker is running
   service: name=docker state=started enabled=yes
   become: yes
-  become_user: root
-  become_method: sudo
 
 # Aliases, completion, helpers for docker and docker compose
 - name: Install docker aliases into user's .bashrc.d directory
   shell: curl -skL -o /etc/profile.d/docker.aliases https://gist.githubusercontent.com/deardooley/011ce72d1e2ad3c03045879f0ea41b25/raw/25ff4601c6ec851c3048cfd02e7b9ced80ecbaeb/docker.aliases.sh
   become: yes
-  become_method: sudo
 
 - name: Add execute permission to docker aliases
   file:
     path: /etc/profile.d/docker.aliases
     mode: 01755
   become: yes
-  become_method: sudo
 
 - name: Install docker-compose bash completion
   shell: curl -skL -o /etc/bash_completion.d/docker-compose https://raw.githubusercontent.com/docker/compose/1.21.2/contrib/completion/bash/docker-compose
   become: yes
-  become_user: root
-  become_method: sudo
 
 - name: Add execute permission to docker-compose bash completion
   file:
@@ -106,5 +82,3 @@
     group: root
     mode: 01755
   become: yes
-  become_user: root
-  become_method: sudo

@@ -18,6 +18,7 @@
 - name: configure docker-ce host
   import_playbook: docker_ce_host.plbk
   vars:
+    hostlist: jenkins
     update_docker_version: true
     update_docker_compose_version: true
 

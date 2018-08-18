@@ -8,15 +8,80 @@
 
 ---
 
+- name: gather all hosts information
+  hosts: togo
 
-- hosts: togo
-  roles:
-      - agave_host
-      - docker_host
-      - newrelic
-      - splunk_host
-      - logrotate
-      - togo_static
+- name: Prepare each host by installing base packages
+  import_playbook: docker_ce_host.plbk
   vars:
-      - update_docker_version: True
-      - update_docker_compose_version: True
+    hostlist: jenkins
+    clean_host: true
+    update_docker_version: true
+    update_docker_compose_version: true
+
+- name: Setup logging and logrotation on the hosts
+  import_playbook: deploy_logging.plbk
+
+- name: Install CLI and API keys
+  hosts: togo
+  become: yes
+
+  tasks:
+    - name: Installing the Agave CLI
+      include_role:
+        name: agave_cli
+      vars:
+        agave_cli_install_globally: true
+      when: agave_togo_static_generate_key | bool
+      tags:
+        - cli
+
+    - name: Generating Agave OAuth2 client application keys for ToGo
+      include_role:
+        name: agave_client_application
+      vars:
+        agave_client_application_name: "togo_{{agave_tenant_id}}_static"
+        agave_client_application_description: "Agave ToGo - {{agave_tenant_id}}"
+        agave_client_application_callback_url: "https://{{ togo_public_hostname_or_ip }}/auth/"
+      when: agave_togo_static_generate_key | bool
+      tags:
+        - cli
+        - client_application
+
+    - name: Ensure client key and secret are present
+      assert:
+        that:
+          - client_key is defined
+          - client_secret is defined
+        msg: "Client key and secret should be registered facts fater the client applicatin play runs"
+      when: agave_togo_static_generate_key | bool
+      tags:
+        - cli
+        - client_application
+
+    - name: Building OAuth2 implicit auth definition
+      set_fact:
+        agave_togo_static_implicit_auth_config:
+          - code: "{{ agave_tenant_id }}"
+            base_url: "https://{{ tenant_public_domain_or_ip }}"
+            client_key: "{{ client_key }}"
+            callback_url: "https://{{ togo_public_hostname_or_ip }}/auth/"
+            scope: "PRODUCTION"
+            project_url: "http://agaveplatform.org/"
+            support_url: "https://slackin.agaveapi.co/"
+            signup_url: "https://{{ tenant_public_domain_or_ip }}/create_account"
+            allow_signup: false
+      when: agave_togo_static_generate_key | bool
+      tags:
+        - client_application
+
+- name: Deploy Agave ToGo
+  hosts: togo
+  become: yes
+  become_user: apim
+
+  roles:
+    - role: togo_static
+      tags:
+        - togo
+        - static]

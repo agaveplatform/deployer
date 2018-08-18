@@ -1,4 +1,10 @@
 #logLevel = "DEBUG"
+[traefikLog]
+  filePath = "/logs/traefik.log"
+
+[accessLog]
+  filePath = "/logs/access.log"
+
 defaultEntryPoints = ["http","https"]
 [entryPoints]
   [entryPoints.http]

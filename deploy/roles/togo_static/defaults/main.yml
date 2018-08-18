@@ -1,22 +1,40 @@
 ---
 
+# Should custom tls certs be used, or should new ones be generated and staged.
+deploy_custom_tls_certs: False
+
 # should existing images be removed, or just pull and run the new one?
-remove_all_togo_containers: False
+remove_all_togo_containers: True
+
+# Should Let's Encrypt certificates be pulled for ToGo. A valid A record for tenant_public_domain_or_ip
+# is needed for this to work.
+agave_togo_static_enable_acme: False
 
 # Should a set of client keys be generated for the app based on the tenant deployment settings?
 agave_togo_static_generate_key: False
+agave_togo_static_tls_key_file: "{{ tenant_public_domain_or_ip }}.key"
+agave_togo_static_tls_cert_file: "{{ tenant_public_domain_or_ip }}.crt"
 
-# url of the togo instance.
-agave_togo_static_url: "https://togo.sandbox.agaveplatform.org"
-agave_togo_tenants_api_url: "https://sandbox.agaveplatform.org/tenants/v2"
+# should the container be run in development mode with the source being
+# mounted into the container, or just the auth config.
+agave_togo_static_mount_source_from_disk: False
+
+# where should the app be deployed
+agave_togo_static_deployment_directory: /home/apim/togo
 
 # provide implicit.js configuration options as yaml objects. These should correspond 1 for 1 with
 # the JSON configuration in togo's auth/scripts/implicit.js file.
 agave_togo_static_implicit_auth_config:
-    "sandbox":
-        client_key: "abcdefg"
-        callback_url: "https://togo.sandbox.agaveplatform.org/auth/"
-        scope: "PRODUCTION"
-        project_url: "https://agaveplatform.org/"
-        support_url: "https://slackin.agaveapi.co/"
-        signup_url: "https://sandbox.agaveplatform.org/create_account"
+  - code: "{{ agave_tenant_id }}"
+    base_url: "https://{{ tenant_public_domain_or_ip }}"
+    client_key: "{{ agave_togo_static_client_key | default('') }}"
+    callback_url: "https://{{togo_public_hostname_or_ip}}/auth/"
+    scope: "PRODUCTION"
+    project_url: "http://agaveplatform.org/"
+    support_url: "https://slackin.agaveapi.co/"
+    signup_url: "https://{{ tenant_public_domain_or_ip }}/create_account"
+    allow_signup: false
+
+# ANy additional auth configs
+agave_togo_static_additional_implicit_auth_config: {}
+

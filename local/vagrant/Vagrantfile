@@ -80,4 +80,37 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       db.vm.network "private_network", ip: "192.168.205.12"
   end
 
+  # jenkins vm definition
+  config.vm.define "agave.jenkins" do |auth|
+      auth.vm.box = "centos/7"
+      auth.vm.hostname = "jenkins"
+
+      auth.vm.provider "virtualbox" do |v|
+          v.customize [ "modifyvm", :id, "--cpus", "1" ]
+          v.customize [ "modifyvm", :id, "--memory", "2048" ]
+          # handle automatic clock skew fix when box is resumed after long sleeps.
+          # without this ntpd will not catch up on its own and you have to run
+          # sudo ntpdate ntp.ubuntu.com to resync clocks
+          v.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 10000 ]
+      end
+
+      auth.vm.network "private_network", ip: "192.168.205.14"
+  end
+
+  # jenkins vm definition
+  config.vm.define "agave.togo" do |auth|
+      auth.vm.box = "centos/7"
+      auth.vm.hostname = "togo"
+
+      auth.vm.provider "virtualbox" do |v|
+          v.customize [ "modifyvm", :id, "--cpus", "1" ]
+          v.customize [ "modifyvm", :id, "--memory", "2048" ]
+          # handle automatic clock skew fix when box is resumed after long sleeps.
+          # without this ntpd will not catch up on its own and you have to run
+          # sudo ntpdate ntp.ubuntu.com to resync clocks
+          v.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 10000 ]
+      end
+
+      auth.vm.network "private_network", ip: "192.168.205.15"
+  end
 end

@@ -19,6 +19,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - {{ jenkins_host_deployment_dir }}/jenkins.toml:/etc/traefik/traefik.toml
       - {{ jenkins_host_deployment_dir }}/ssl:/ssl
+      - {{ jenkins_host_deployment_dir }}/logs/traefik:/logs
     networks:
       - jenkins
     mem_limit: 512m

@@ -6,16 +6,16 @@
   tasks:
       - name: ensure docker is running
         service: name=docker state=started
-        sudo: yes
+        become: yes
 
       - name: remove all existing containers
         shell: docker rm -f `docker ps -aq`
-        sudo: yes
-        sudo_user: apim
+        become: yes
+        become_user: apim
         ignore_errors: yes
 
       - name: start the containers with docker compose
         shell: docker-compose -f {{ compose_file }} up -d chdir=/home/apim
-        sudo: yes
-        sudo_user: apim
+        become: yes
+        become_user: apim
 

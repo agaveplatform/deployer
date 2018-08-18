@@ -7,7 +7,7 @@
 ---
 
 - name: prepare each host by installing base packages
-  hosts: agave
+  hosts: "{{ hostlist | default('agave') }}"
   become: yes
   become_method: sudo
   

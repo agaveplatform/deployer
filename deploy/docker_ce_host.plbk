@@ -21,15 +21,40 @@
 ---
 
   # Install docker, docker compose, and helpers
-- hosts: agave
+- hosts: "{{ hostlist | default('agave') }}"
   become: yes
+
   roles:
-    - agave_host
-    - {role: zaxos.docker-ce-ansible-role, become: yes, when: update_docker_version}
-    - {role: agave_vm_manager, become: yes}
+    - role: agave_host
+      when: clean_host
+      tags:
+        - docker
+        - host
+
+    - role: zaxos.docker-ce-ansible-role
+      when: update_docker_version
+      tags:
+        - docker
+        - host
+
+    - role: agave_vm_manager
+      tags:
+        - python
+        - host
 
 
   tasks:
+
+    - name: Add service user to docker group
+      user:
+        name: "{{ agave_linux_user_name | default('apim') }}"
+        state: present
+        groups: docker
+        append: yes
+      tags:
+        - host
+        - docker
+
     - name: "Install Docker compose"
       shell: curl -kL https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/bin/docker-compose
       when: update_docker_compose_version
