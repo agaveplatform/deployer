@@ -16,18 +16,22 @@ newman_agave_tenant_base_ip=192.168.205.10
 # Vagrant db host is undersized, so we cap the mysql size accordingly
 mysql_mem_limit=512m
 
+ansible_ssh_common_args=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+ansible_ssh_user=vagrant
+
 ##############################################
 #  Agave component hosts and custom configs
 ##############################################
 
 [agave:vars]
 
-ansible_ssh_common_args=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
-ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
-ansible_ssh_user=vagrant
+#ansible_ssh_common_args=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+#ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+#ansible_ssh_user=vagrant
 
 # Leverage pipelining to speed up remote operations by reusing connections.
-pipelining=True
+#pipelining=True
 
 [agave:children]
 
