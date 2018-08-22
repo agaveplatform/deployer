@@ -41,10 +41,13 @@
 
 - set_fact:
     client_key: "{{ (clients_create_response.stdout | from_json)['consumerKey'] }}"
+  no_log: True
 
 - set_fact:
     client_secret: "{{ (clients_create_response.stdout | from_json)['consumerSecret'] }}"
+  no_log: True
 
 - debug:
     var: clients_create_response.stdout
+  no_log: True
 #    msg: "Created new client for {{tenant_id}} tenant. clientKey: {{client_key}} clientSecret: {{client_secret}}"
