@@ -6,7 +6,7 @@ Requires=docker.socket
 
 [Service]
 Type=notify
-ExecStart=/usr/bin/docker daemon -H fd:// --log-opt max-size=5M --log-opt max-file=5 {{ '--insecure-registry=' + docker_insecure_registries|join(' --insecure-registry=') if docker_insecure_registries|length > 0 else '' }}
+ExecStart=/usr/bin/docker daemon --exec-opt native.cgroupdriver=cgroupfs -H fd:// --log-opt max-size=5M --log-opt max-file=5 {{ '--insecure-registry=' + docker_insecure_registries|join(' --insecure-registry=') if docker_insecure_registries|length > 0 else '' }}
 MountFlags=slave
 LimitNOFILE=1048576
 LimitNPROC=1048576
