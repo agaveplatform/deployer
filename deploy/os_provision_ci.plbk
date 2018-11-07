@@ -26,7 +26,8 @@
     os_public_key: "{{ansible_env['HOME']}}/.ssh/id_rsa.pub"
     os_private_key: "{{ansible_env['HOME']}}/.ssh/id_rsa"
     os_flavor: m1.medium
-    os_image: 8c80e6da-a3f1-4ba2-afb2-d107ef3387f1
+    #JS-API-Featured-CentOS7-Sep-18-2018
+    os_image: 13c4976b-06ca-4df9-8664-afcb1f86cf3b
     os_instance_username: centos
 
     os_network_cidr: 10.10.9.0/24

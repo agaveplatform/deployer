@@ -1,0 +1,9 @@
+# The parent directory in which the backups will stored in a timestamped folder
+mysql_backup_dir: /tmp/mysql-backups
+
+# The list of databases to exclude from the backup
+agave_db_backup_excluded_databases:
+  - mysql
+  - information_schema
+  - sys
+  - performance_schema

@@ -83,6 +83,9 @@
       - metrics
       - cobertura
       - clover
+      - tap
+      - job-dsl
+      - xml-job-to-job-dsl
     java_packages:
         - java-1.8.0-openjdk
     java_home: /usr/lib/jvm/java-1.8.0

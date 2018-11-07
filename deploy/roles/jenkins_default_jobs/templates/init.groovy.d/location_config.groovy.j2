@@ -1,0 +1,10 @@
+import jenkins.model.*
+
+def inst = Jenkins.getInstance()
+
+def desc = inst.getDescriptor("jenkins.model.JenkinsLocationConfiguration")
+
+desc.setAdminAddress("{{ jenkins_host_smtp_admin_email }}")
+desc.setJenkinsUrl("https://{{ jenkins_hostname }}{{ jenkins_url_prefix }}/")
+
+desc.save()

@@ -1,0 +1,155 @@
+---
+
+- assert:
+    that:
+      - jenkins_admin_password != "" or jenkins_admin_token != ""
+    msg: Either admin password or token need to be provided in order to install default jobs
+
+#- name: Disable script security to allow jenkins default job dsl
+#  vars:
+#    disable_script_security: |
+#      import javaposse.jobdsl.plugin.GlobalJobDslSecurityConfiguration
+#      import jenkins.model.GlobalConfiguration
+#      println "--> disabling scripts security for job dsl scripts"
+#      GlobalConfiguration.all().get(GlobalJobDslSecurityConfiguration.class).useScriptSecruity=false
+#
+
+- name: "Running groovy script remotely using username and password"
+  jenkins_script:
+    script: "{{ lookup('file', 'files/disable_script_security.groovy') }}"
+    user: "{{ jenkins_admin_username }}"
+    password: "{{ jenkins_admin_password }}"
+    url: "http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix }}"
+  when: jenkins_admin_password != ""
+
+- name: Running groovy script remotely using token
+  jenkins_script:
+    script: "{{ lookup('file', 'files/disable_script_security.groovy') }}"
+    user: "{{ jenkins_admin_username }}"
+    password: "{{ jenkins_admin_token }}"
+    url: "http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix }}"
+  when: jenkins_admin_password == ""
+
+
+- name: Updating jekins-default-job-dsl job via username and password
+  jenkins_job:
+    config: "{{ lookup('template', 'templates/jobs/jenkins-default-job-dsl.xml.j2') }}"
+    name: jenkins-default-job-dsl
+    user: "{{ jenkins_admin_username }}"
+    password: "{{ jenkins_admin_password }}"
+    url: "http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix }}"
+    state: present
+  when: jenkins_admin_password != ""
+
+- name: Updating jekins-default-job-dsl job via token
+  jenkins_job:
+    config: "{{ lookup('template', 'templates/jobs/jenkins-default-job-dsl.xml.j2') }}"
+    name: jenkins-default-job-dsl
+    user: "{{ jenkins_admin_username }}"
+    password: "{{ jenkins_admin_token }}"
+    url: "http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix }}"
+    state: present
+  when: jenkins_admin_password == ""
+
+- name: Remotely trigger jekins-default-job-dsl job to update default Jenkins jobs
+  shell: "curl -sk -X POST http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix }}?TOKEN_NAME={{ jenkins_host_default_job_dsl_trigger_token }}&cause=Agave+Deployer+remote+run+on+update"
+  ignore_errors: yes
+
+
+
+#  loop:
+#    - "tests"
+#    - "tests/core"
+#    - "tests/core/core-unit-tests"
+#    - "tests/core/core-integration-tests"
+#    - "tests/core/core-postman-tests"
+#    - "tests/auth"
+#    - "tests/auth/auth-apim-tests"
+#    - "tests/auth/auth-admin-tests"
+#    - "tests/tooling"
+#    - "tests/tooling/cli-unit-tests"
+#    - "tests/tooling/sdk-unit-tests"
+#    - "tests/tooling/togo-unit-tests"
+#
+#    - "build"
+#    - "build/build-auth-images"
+#    - "build/build-core-images"
+#    - "build/build-db-images"
+#    - "build/build-togo-images"
+#    - "build/build-tooling-images"
+#
+#    - "release"
+#    - "release/auth"
+#    - "release/auth/auth-promote-apim"
+#    - "release/auth/auth-promote-admin-api"
+#    - "release/auth/auth-promote-profiles-api"
+#    - "release/auth/auth-promote-clients-api"
+#    - "release/core"
+#    - "release/core/core-promote-source"
+#    - "release/core/core-promote-image"
+#    - "release/core/core-promote-postman"
+#    - "release/tooling"
+#    - "release/tooling/tooling-promote-sdk"
+#    - "release/tooling/tooling-promote-cli"
+#    - "release/tooling/tooling-promote-sdk"
+#    - "release/tooling/tooling-promote-togo"
+#    - "release/tooling/tooling-promote-deployer"
+#
+#    - "update"
+#    - "update/auth/update-auth"
+#    - "update/core/update-all"
+#    - "update/core/update-apis"
+#    - "update/core/update-workers"
+#    - "update/db"
+#    - "update/db/migrate-mysql"
+#    - "update/db/migrate-mongodb"
+#    - "update/db/update-mysql"
+#    - "update/db/update-mongodb"
+#    - "update/db/update-queue"
+#    - "update/db/update-cache"
+#    - "update/db/update-ldap"
+#    - "update/tooling"
+#    - "update/tooling/update-togo"
+#    - "update/tooling/slackin"
+#    - "update/tooling/website"
+#    - "update/tooling/docs"
+#    - "update/tooling/deployer"
+#    - "update/tooling/elk"
+#
+#    - "deploy"
+#    - "deploy/hosts"
+#    - "deploy/hosts/provision_hosts"
+#    - "deploy/tenant"
+#    - "deploy/tenant/deploy_tenant"
+#    - "deploy/training"
+#    - "deploy/training/jupyter_training_cluster"
+#    - "deploy/training/rstudio_training_cluster"
+#    - "deploy/training/training_stack"
+#    - "deploy/misc"
+#    - "deploy/tooling/deploy_togo"
+#    - "deploy/tooling/deploy_jenkins"
+#    - "deploy/misc"
+#    - "deploy/misc/deploy_web_stack"
+#
+#
+#    - "backup"
+#    - "backup/logs"
+#    - "backup/logs/backup-host-logs"
+#    - "backup/logs/backup-aggregated-logs"
+#    - "backup/db"
+#    - "backup/db/backup-mongodb"
+#    - "backup/db/backup-mysql"
+#    - "backup/db/backup-website"
+#    - "backup/db/backup-togo"
+#    - "backup/tooling"
+#    - "backup/tooling/jenkins"
+#
+#    - "ops"
+#    - "ops/host"
+#    - "ops/host/clean-docker-host"
+#    - "ops/host/clean-logs"
+#    - "ops/reports"
+#    - "ops/reports/create-usage-reports"
+#    - "ops/reports/create-error-reports"
+#
+#

@@ -1,0 +1,70 @@
+#logLevel = "DEBUG"
+[traefikLog]
+  filePath = "/logs/traefik.log"
+
+[accessLog]
+  filePath = "/logs/access.log"
+
+defaultEntryPoints = ["http","https"]
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+      entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+      [[entryPoints.https.tls.certificates]]
+      CertFile = "/ssl/{{jenkins_hostname}}.crt"
+      KeyFile = "/ssl/{{jenkins_hostname}}.key"
+
+[web]
+address = ":8443"
+CertFile = "/ssl/{{jenkins_hostname}}.crt"
+KeyFile = "/ssl/{{jenkins_hostname}}.key"
+
+{% if jenkins_host_enable_acme|bool %}
+[acme]
+email = "ssl@{{ jenkins_hostname }}"
+storageFile = "/ssl/acme.json"
+onDemand = true
+entryPoint = "https"
+acmeLogging = true
+[acme.httpChallenge]
+  entryPoint = "http"
+
+[[acme.domains]]
+   main = "{{jenkins_hostname}}"
+{% endif %}
+
+[file]
+
+# Static rules. This forces Traefik to proxy requests to a single Jenkins server with SNI enabled.
+[backends]
+  [backends.backend1]
+
+    [backends.backend1.servers]
+      [backends.backend1.servers.server0]
+        url = "http://{{ ansible_ssh_host }}:{{ jenkins_http_port }}"
+        weight = 1
+
+    [backends.backend1.loadBalancer]
+      method = "drr"
+{% if jenkins_metrics_key is defined %}
+    [backends.backend1.healthCheck]
+      path = "/metrics/currentUser/{{ jenkins_metrics_key }}"
+      port = 8080
+      interval = "30s"
+{% endif %}
+
+[frontends]
+
+  [frontends.frontend1]
+    entryPoints = ["http", "https"]
+    backend = "backend1"
+    passHostHeader = true
+    passTLSCert = false
+
+    [frontends.frontend1.routes]
+      [frontends.frontend1.routes.route0]
+        rule = "Host:{{ jenkins_hostname }},{{ ansible_ssh_host }}{% if jenkins_url_prefix %};PathPrefix:{{ jenkins_url_prefix }}{% endif %}"

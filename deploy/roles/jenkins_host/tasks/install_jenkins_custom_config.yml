@@ -12,6 +12,8 @@
   loop:
     - "init.groovy.d/git_global_config.groovy.j2"
     - "init.groovy.d/location_config.groovy.j2"
+    - "init.groovy.d/metrics_key.groovy.j2"
+    - "init.groovy.d/load_credentials.groovy.j2"
 
 - name: "Copy custom smtp scripts to host"
   template:

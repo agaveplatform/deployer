@@ -1,0 +1,51 @@
+logLevel = "DEBUG"
+
+[traefikLog]
+  filePath = "/logs/traefik.log"
+
+[accessLog]
+  filePath = "/logs/access.log"
+
+defaultEntryPoints = ["http", "https"]
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+      entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+      [[entryPoints.https.tls.certificates]]
+      CertFile = "/ssl/{{ web_stack_hostname }}.cer"
+      KeyFile = "/ssl/{{ web_stack_hostname }}.key"
+
+[web]
+address = ":8443"
+ReadOnly = true
+CertFile = "/ssl/{{ web_stack_hostname }}.cer"
+KeyFile = "/ssl/{{ web_stack_hostname }}.key"
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "docker.localhost"
+watch = true
+
+[file]
+filename = "/rules.toml"
+watch = true
+
+
+{% if web_stack_host_enable_acme|bool %}
+[acme]
+email = "ssl@{{ web_stack_hostname }}"
+storageFile = "/ssl/acme.json"
+onDemand = true
+entryPoint = "https"
+acmeLogging = true
+[acme.httpChallenge]
+  entryPoint = "http"
+
+[[acme.domains]]
+  main = "{{web_stack_hostname}}"
+  sans = ["togo.{{web_stack_hostname}}","requestbin.{{web_stack_hostname}}","httpbin.{{web_stack_hostname}}","support.{{web_stack_hostname}}","docs.{{web_stack_hostname}}","slackin.{{web_stack_hostname}}"]
+{% endif %}

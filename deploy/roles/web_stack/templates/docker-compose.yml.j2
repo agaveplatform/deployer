@@ -1,0 +1,238 @@
+version: '3.2'
+
+services:
+
+  traefik:
+    image: traefik
+    command: --configFile=/traefik.toml
+    hostname: {{ web_stack_hostname }}
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8443:8443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - {{ web_stack_host_deployment_dir }}/traefik.toml:/traefik.toml
+      - {{ web_stack_host_deployment_dir }}/ssl:/ssl
+    networks:
+      - web
+      - togo
+      - proxy
+      - jsonmirror
+      - slackin
+      - changelogparser
+    labels:
+      - "traefik.enable=true"
+
+  website:
+    image: agaveapi/website:latest
+    hostname: {{ web_stack_hostname }}
+    restart: always
+    environment:
+      - 'MYSQL_DATABASE=agave-platform-website'
+      - 'MYSQL_USERNAME=agaveweb'
+      - 'MYSQL_PASSWORD=vBw8Yw72e9Jl'
+      - 'MYSQL_HOST=web.db.prod.{{ web_stack_hostname }}'
+      - 'SMTP_HUB=smtp.sendgrid.net'
+      - 'SMTP_USER='
+      - 'SMTP_PASSWORD='
+      - 'SMTP_FROM_ADDRESS=noreply@{{ web_stack_hostname }}'
+      - 'SMTP_TLS=1'
+      - 'LOG_TARGET_STDOUT='
+      - 'DISABLE_WP_CRON=true'
+      - 'WP_HTTP_BLOCK_EXTERNAL=true'
+      - 'WP_ACCESSIBLE_HOSTS='
+      - 'REDIS_HOST=redis'
+      - 'REDIS_DATABASE=22'
+      - 'SSL_CERT=/ssl/{{web_stack_hostname}}.cer'
+      - 'SSL_KEY=/ssl/{{web_stack_hostname}}.key'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=website"
+      - "traefik.frontend.rule=Host:{{ web_stack_hostname }},www.{{ web_stack_hostname }}"
+      - "traefik.frontend.passHostHeader=true"
+      - "traefik.port=80"
+      - "traefik.protocol=http"
+      - "traefik.frontend.entryPoints=https,http"
+    ports:
+      - '80'
+      - '443'
+    volumes:
+      - /var/log/splunk/website:/var/log/apache2
+      - {{ web_stack_host_deployment_dir }}/website/wp-content:/var/www/html/wp-content
+      - {{ web_stack_host_deployment_dir }}/traefik/ssl:/ssl
+    networks:
+      - web
+
+  togo:
+    image: agaveapi/agave-togo:develop
+    restart: always
+    hostname: togo.{{ web_stack_hostname }}
+    environment:
+      - 'DOCUMENT_ROOT=/var/www/html'
+      - 'LOG_TARGET_STDOUT=0'
+    ports:
+      - '8018:80'
+    volumes:
+      - '{{ web_stack_host_deployment_dir }}/togo/implicit.js:/var/www/html/auth/scripts/implicit.js:ro'
+      - '/var/log/splunk/togo:/var/log/apache2'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=togo"
+      - "traefik.frontend.rule=Host:togo.{{ web_stack_hostname }}"
+      - "traefik.port=80"
+      - "traefik.protocol=https"
+      - "traefik.frontend.entryPoints=https,http"
+    networks:
+      - togo
+
+  jsonmirror:
+    image: 'agaveapi/json-mirror:latest'
+    hostname: {{ web_stack_hostname }}
+    restart: always
+    mem_limit: 256m
+    ports:
+      - "8015:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=togo"
+      - "traefik.frontend.rule=Host:{{ web_stack_hostname }};PathPrefixStrip:/json-mirror"
+      - "traefik.port=3000"
+      - "traefik.protocol=https"
+      - "traefik.frontend.entryPoints=https,http"
+    networks:
+      - jsonmirror
+
+  dashboard:
+    image: agaveapi/stats-dashboard:latest
+    hostname: {{ web_stack_hostname }}
+    restart: always
+    mem_limit: 256m
+    ports:
+      - "8016:80"
+    volumes:
+      - '{{ web_stack_host_deployment_dir }}/traefik/ssl:/ssl:ro'
+      - '{{ agave_log_dir }}/statsdashboard:/var/log/apache2'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=togo"
+      - "traefik.frontend.rule=Host:{{ web_stack_hostname }};PathPrefixStrip:/dashboard"
+      - "traefik.port=80"
+      - "traefik.protocol=https"
+      - "traefik.frontend.entryPoints=https,http"
+    networks:
+      - web
+
+  requestbin:
+    image: agaveapi/requestbin:master
+    hostname: requestbin.{{ web_stack_hostname }}
+    mem_limit: 512m
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - 'STORAGE_BACKEND=requestbin.storage.redis.RedisStorage'
+      - 'REDIS_URL=redis://redis:6379/5000'
+    volumes:
+      - '{{ agave_log_dir }}/requestbin:/var/log/supervisor'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=togo"
+      - "traefik.frontend.rule=Host:requestbin.{{ web_stack_hostname }}"
+      - "traefik.port=5000"
+      - "traefik.protocol=https"
+      - "traefik.frontend.entryPoints=https,http"
+    networks:
+      - proxy
+  
+  httpbin:
+    image: agaveapi/httpbin:latest
+    hostname: httpbin.{{ web_stack_hostname }}
+    mem_limit: 512m
+    restart: always
+    ports:
+      - "8022:8000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=togo"
+      - "traefik.frontend.rule=Host:httpbin{{ web_stack_hostname }}"
+      - "traefik.port=8000"
+      - "traefik.protocol=https"
+      - "traefik.frontend.entryPoints=https,http"
+    networks:
+      - proxy
+
+
+  slackin:
+    image: agaveapi/slackin:latest
+    hostname: slackin.{{ web_stack_hostname }}
+    command: './bin/slackin --port 3000 agaveapi xoxp-31352532772-31355418646-31386698294-8ed3f8e7e2'
+    restart: always
+    ports:
+      - 8020:3000
+    environment:
+      SLACK_CHANNELS: ''
+      PORT: 3000
+      SLACK_SUBDOMAIN: agaveapi
+      SLACK_API_TOKEN: xoxp-31352532772-31355418646-31386698294-8ed3f8e7e2
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=togo"
+      - "traefik.frontend.rule=Host:slackin.{{ web_stack_hostname }}"
+      - "traefik.port=3000"
+      - "traefik.protocol=https"
+      - "traefik.frontend.entryPoints=https,http"
+    networks:
+      - slackin
+
+  changelogparser:
+    image: agaveapi/changelog-parser:latest
+    restart: always
+    ports:
+      - '8021:80'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=togo"
+      - "traefik.frontend.rule=Host:{{ web_stack_hostname }};PathPrefixStrip:/changelog-parser"
+      - "traefik.port=80"
+      - "traefik.protocol=https"
+      - "traefik.frontend.entryPoints=https,http"
+    networks:
+      - changelogparser
+
+
+  ########################################################################
+  # Common persistence
+  ########################################################################
+
+  reverseip:
+    image: fiorix/freegeoip
+    restart: on_failure
+    ports:
+      - "8080"
+    networks:
+      - web
+
+
+  redis:
+    image: redis:alpine
+    command: redis-server --appendonly yes
+    hostname: {{ web_stack_hostname }}
+    restart: always
+    ports:
+      - '6379'
+    volumes:
+      - {{ web_stack_host_deployment_dir }}/cache/redis:/data
+    networks:
+      - web
+      - proxy
+
+networks:
+  web:
+  togo:
+  jsonmirror:
+  slackin:
+  proxy:
+  xsede:
+  changelogparser:

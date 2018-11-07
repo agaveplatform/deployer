@@ -64,7 +64,7 @@ java_api:
     - 'REALTIME_REALM_KEY={{ agave_core_realtime_service_realm_key }}'
 {% endif %}
     - 'MAIL_SMTPS_FROM_NAME="Agave Staging Notification Service"'
-    - 'MAIL_SMTPS_FROM_ADDRESS="noreply@agaveapi.co"'
+    - 'MAIL_SMTPS_FROM_ADDRESS="noreply@{{ agave_core_hostname }}"'
     - 'MAIL_SMTPS_PROVIDER={{ agave_core_smtps_provider }}'
     - 'MAIL_SMTPS_HOST={{ agave_core_smtps_host }}'
     - 'MAIL_SMTPS_AUTH={{ agave_core_smtps_auth }}'
@@ -140,7 +140,7 @@ php_api:
     - 'MAIL_SMTPS_USER={{ agave_core_smtps_user }}'
     - 'MAIL_SMTPS_PASSWD={{ agave_core_smtps_password }}'
     - 'MAIL_SMTPS_FROM_NAME="Agave Staging Notification Service"'
-    - 'MAIL_SMTPS_FROM_ADDRESS="noreply@agaveapi.co"'
+    - 'MAIL_SMTPS_FROM_ADDRESS="noreply@{{ agave_core_hostname }}"'
 #    - 'LOG_TARGET_STDOUT=0'
     - 'IPLANT_MIN_MONITOR_REPEAT_INTERVAL={{ agave_core_monitor_min_check_interval }}'
 {% if core_deploy_ssl_certs %}

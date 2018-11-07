@@ -1,0 +1,13 @@
+---
+# defaults file for web_stack
+
+# The location to which logs will be written to disk on the host
+agave_log_dir: "/home/{{apim}}/logs"
+
+# hostname to use for the deployment host. This will be included in TLS cert
+# generation and to assign hostnames to the containers.
+web_stack_hostname: "sandbox.agaveplatform.org"
+
+# Where the dependencies and assets will be deployed on the remote host
+web_stack_deployment_dir: : "/home/{{apim}}/web_stack"
+

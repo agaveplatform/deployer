@@ -1,0 +1,21 @@
+---
+# Creates a cinder volume and optionally
+- name: "Create cinder volume"
+  os_volume:
+    state: present
+    display_name: "{{item.display_name}}"
+    display_description: "{{item.display_description}}."
+    size: "{{item.size}}"
+    image: "{{ item.image | default(omit) }}"
+    volume: "{{ item.volume | default(omit) }}"
+    snapshot_id: "{{ item.snapshot_id | default(omit) }}"
+  register: os_volume_responses
+  loop: "{{ os_volumes }}"
+  loop_control:
+    label: "{{ item.display_name }}"
+  tags:
+    - volume
+
+- name: "Set response list as a variables"
+  set_fact:
+    cinder_volumes: "{{ os_volume_responses.results }}"

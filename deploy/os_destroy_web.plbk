@@ -1,0 +1,198 @@
+---
+################################################################################
+#
+#   os_destroy_web.plbk
+#
+#   Tears down web host and security groups. Any associated volumes will
+#   be disconnected and preserved unless `delete_storage_volume` is set to
+#   True
+#
+#   REQUIRED VARIABLES:
+#   Authenitication is handled through the openstacksdk auth mechanisms, so
+#   eithe rsource your openstackrc file prior to running the playbook, or
+#   configure your clouds.yaml file to point to your openstack cloud.
+#
+################################################################################
+
+- name: Setup Major Variables in Local Host's Facts
+  hosts: local
+
+  vars:
+
+    agave_namespace: agave_ci_sandbox
+    agave_security_group_namespace: agave_ci_sandbox
+
+    os_public_key: "{{ansible_env['HOME']}}/.ssh/id_rsa.pub"
+    os_private_key: "{{ansible_env['HOME']}}/.ssh/id_rsa"
+    os_flavor: m1.medium
+    #JS-API-Featured-CentOS7-Sep-18-2018
+    os_image: 13c4976b-06ca-4df9-8664-afcb1f86cf3b
+    os_instance_username: centos
+
+    os_network_cidr: 10.10.9.0/24
+    os_network_allocation_pool_start: 10.10.9.2
+    os_network_allocation_pool_end: 10.10.9.254
+    os_network_gateway_ip: 10.10.9.1
+
+  tasks:
+
+    - name: Set Facts Collected from Prompts
+      tags:
+        - setup
+
+      set_fact:
+
+        agave_namespace: "{{agave_namespace}}"
+        agave_security_group_namespace: "{{agave_security_group_namespace}}"
+
+        os_image: "{{os_image}}"
+        os_flavor: "{{os_flavor}}"
+        os_instance_username: "{{os_instance_username}}"
+        os_web_vm_name:  "{{agave_namespace}}.ops.web"
+        os_web_security_group: "{{agave_security_group_namespace}}.web"
+
+
+        os_skip_floating_ip: False
+
+        os_network: "{{agave_namespace}}_net"
+        os_network_cidr: "{{ os_network_cidr }}"
+        os_network_allocation_pool_start: "{{ os_network_allocation_pool_start }}"
+        os_network_allocation_pool_end: "{{ os_network_allocation_pool_end }}"
+        os_network_gateway_ip: "{{ os_network_gateway_ip  }}"
+
+        os_keyname: "{{agave_namespace | regex_replace('_','-') }}-key"
+        os_key_file: "{{os_public_key}}"
+        os_key_file_src: "{{os_private_key}}"
+
+
+- name: Query for server inventory
+  hosts: local
+
+  tasks:
+    - name: "Collect Facts on Existing VMs in Namespace"
+      os_server_facts:
+        server: "{{os_web_vm_name}}"
+      tags:
+        - inventory
+        - instance
+        - hosts
+
+    - name: Add Created VMs to In-Memory Inventory
+      add_host:
+        name: "{{item.public_v4}}"
+        groups: "{{ item.name.split('.') }}"
+        ansible_ssh_private_key_file: "{{os_key_file_src}}"
+        ansible_ssh_host: "{{item.public_v4}}"
+        ansible_ssh_user: "{{os_instance_username}}"
+        ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+      loop: "{{openstack_servers}}"
+      tags:
+        - inventory
+        - instance
+        - hosts
+
+    - debug:
+       var: openstack_servers
+      tags:
+        - volume
+        - discovery
+
+    - set_fact:
+        cinder_volume_id: "{{ openstack_servers[0]['volumes'][0].id if openstack_servers[0]['volumes']|length > 0 else '' }}"
+        cinder_fs: "ext4"
+      tags:
+        - volume
+        - discovery
+
+    - debug:
+        var: cinder_volume_id
+      tags:
+        - volume
+        - discovery
+
+    - delegate_to: "{{ groups['web'][0] }}"
+      become: yes
+      tags:
+        - volume
+        - format
+      when: cinder_volume_id | bool
+
+      block:
+        - name: Lookup storage volume mount directory
+          stat:
+            path: "/storage"
+          register: stat_storage_volume_result
+          tags:
+            - volume
+            - discovery
+
+        - debug:
+           var: stat_storage_volume_result | to_nice_json
+          tags:
+            - volume
+            - discovery
+
+        - name: Unmount the device
+          mount:
+            name: "/storage"
+            src: "/dev/sdb"
+            state: absent
+            fstype: "{{ cinder_fs }}"
+          when: stat_storage_volume_result.stat.exists or stat_storage_volume_result.stat.isblk
+          ignore_errors: yes
+          tags:
+            - volume
+
+        - name: Delete the mounted target directory
+          file:
+            name: "{{ stat_storage_volume_result.stat.path }}"
+            state: absent
+          tags:
+            - volume
+
+    - name: Detach the volume from the VM
+      os_server_volume:
+        state: absent
+        server: "{{ os_web_vm_name }}"
+        volume: "{{ cinder_volume_id }}"
+      when: cinder_volume_id | bool
+      tags:
+        - volume
+
+
+    - name: Delete block volume
+      os_volume:
+        state: absent
+        display_name: "{{os_web_vm_name}}_volume"
+      when: delete_storage_volume is defined and delete_storage_volume|bool
+      tags:
+        - volume
+
+
+- name: Clean up VM instances
+  hosts: local
+
+  roles:
+    - name: Delete Website VM
+      role: os_instance_destroyer
+      vars:
+        os_vm_name: "{{os_web_vm_name}}"
+      tags:
+        - web
+        - instance
+
+
+
+- name: Clean up security groups
+  hosts: local
+
+  tasks:
+
+    - name: Delete Website Security Groups
+      os_security_group:
+        name: "{{item}}"
+        state: absent
+      loop:
+        - "{{os_web_security_group}}"
+      tags:
+        - security_groups

@@ -1,0 +1,43 @@
+---
+# tasks file for roles/web_stack
+
+- name: "Create deployment directory"
+  file:
+    path: "{{ web_stack_deployment_dir }}"
+    state: directory
+
+- name: "Copy Traefik config template to host"
+  template:
+    src: jenkins.toml.j2
+    dest: "{{ web_stack_deployment_dir }}/traefik.toml"
+
+- name: "Copy Docker Compose file to host"
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ web_stack_deployment_dir }}/docker-compose.yml"
+
+- name: "Generate self-signed certificates for the reverse proxy"
+  include_tasks: create_tls_certs.yml
+
+- name: "Pull the Docker images"
+  shell: docker-compose pull
+  args:
+    chdir: "{{ web_stack_deployment_dir }}"
+  environment:
+    COMPOSE_HTTP_TIMEOUT: 20000
+
+- name: "Start the reverse proxy"
+  shell: docker-compose up -d --force-recreate
+  args:
+    chdir: "{{ web_stack_deployment_dir }}"
+  environment:
+    COMPOSE_HTTP_TIMEOUT: 20000
+
+- name: "Wait for the web stack to start up before proceeding."
+  shell: "curl -skL -D - --max-time 5 https://{{ web_stack_hostname }}/"
+  register: result
+  until: (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1) and (result.stdout.find("Please wait while") == -1)
+  retries: 60
+  delay: 5
+  changed_when: false
+  check_mode: no

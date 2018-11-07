@@ -1,0 +1,2 @@
+# The parent directory in which the backups will stored in a timestamped folder
+mysql_backup_dir: /tmp/mysql-backups

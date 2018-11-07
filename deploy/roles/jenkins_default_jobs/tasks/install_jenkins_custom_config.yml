@@ -1,0 +1,36 @@
+---
+
+- name: "Copy Metric plugin template to host"
+  template:
+    src: jenkins.metrics.api.MetricsAccessKey.xml.j2
+    dest: "{{ jenkins_home }}/jenkins.metrics.api.MetricsAccessKey.xml"
+
+- name: "Copy custom init.groovy.d scripts to host"
+  template:
+    src: "{{item}}"
+    dest: "{{ jenkins_home}}/{{item | regex_replace('.j2$', '') }}"
+  loop:
+    - "init.groovy.d/git_global_config.groovy.j2"
+    - "init.groovy.d/location_config.groovy.j2"
+
+- name: "Copy custom smtp scripts to host"
+  template:
+    src: "init.groovy.d/smtp.groovy.j2"
+    dest: "{{ jenkins_home}}/init.groovy.d/smtp.groovy"
+  when: jenkins_host_smtp_host is defined and jenkins_host_smtp_host != ''
+
+- name: "Restart jenkins to apply the configuration updates"
+  service:
+    enabled: yes
+    state: restarted
+    name: jenkins
+  become: true
+
+- name: "Wait for Jenkins to start up before proceeding."
+  shell: "curl -D - --silent --max-time 5 http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix }}/cli/"
+  register: result
+  until: (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1) and (result.stdout.find("Please wait while") == -1)
+  retries: 60
+  delay: 5
+  changed_when: false
+  check_mode: no

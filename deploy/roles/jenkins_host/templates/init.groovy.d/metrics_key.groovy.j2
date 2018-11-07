@@ -1,0 +1,7 @@
+def instance = Jenkins.getInstance()
+
+def metrics = instance.getExtensionList(jenkins.metrics.api.MetricsAccessKey.DescriptorImpl.class)[0]
+def metricsAccessKeys = [
+        new jenkins.metrics.api.MetricsAccessKey("Traefik Health Check", "{{ jenkins_host_metric_key }}", true, false, true, true, "*")
+]
+metrics.setAccessKeys(metricsAccessKeys)

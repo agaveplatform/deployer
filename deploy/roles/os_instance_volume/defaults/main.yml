@@ -1,0 +1,19 @@
+---
+
+# Object representing an openstack cinder volume instance
+#os_instance_volume_cinder_volume: {}
+
+# name of the instance to which the volume should be attached
+#os_instance_volume_os_instance_name: {}
+
+# Shoudl the instance be attached before formatting
+os_instance_volume_attach_to_instance: true
+
+# shoudl the attached volume be formatted?
+os_instance_volume_format_volume: true
+
+# Where should the volume be mounted on the instance's file system
+os_instance_volume_mount_path: /storage
+
+# What filsystem should be configured on the volume
+os_instance_volume_filesystem: ext4

@@ -1,0 +1,14 @@
+---
+# List of volumes to register. Each item should be a dict containing the
+# following items:
+# - 'display_description': Optional description of the volume.
+# - 'display_name': Name of the volume.
+# - 'image': Optional image name or ID for boot from volume.
+# - 'scheduler_hints': Optional dict of scheduler hints pass to the volume API.
+# - 'size': Size of the volume in GB.
+# - 'snapshot_id': Optional ID of a volume snapshot from which to create the
+#   volume.
+# - 'state': Optional state of the volume, default is 'present'.
+# - 'volume': Optional name or ID of a volume from which to create the volume.
+# - 'volume_type': Optional type of the volume.
+os_volumes:

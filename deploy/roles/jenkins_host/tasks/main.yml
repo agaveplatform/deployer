@@ -1,17 +1,24 @@
 ---
 # tasks file for roles/jenkins_host
 
+- name: Install python-jenkins library
+  pip:
+    name: python-jenkins
+    state: present
+  become: yes
+  tags:
+    - jenkins-config
+
 - name: "Install Jenkins custom configurations"
   include_tasks: install_jenkins_custom_config.yml
   become: yes
   become_user: jenkins
+  tags:
+    - jenkins-config
 
 - name: "Deploy Jenkins reverse proxy"
   include_tasks: install_jenkins_reverse_proxy.yml
   become: yes
   become_user: apim
-
-- name: "Install Agave deployer source on host"
-  include_tasks: install_deployer.yml
-  become: yes
-  become_user: jenkins
+  tags:
+    - jenkins-proxy

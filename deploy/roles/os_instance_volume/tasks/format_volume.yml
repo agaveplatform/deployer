@@ -1,0 +1,65 @@
+---
+# Handles formatting of filesystem on attached volume
+- name: Saving the attached device from the updated volume attachment response
+  set_fact:
+    attached_device: >-
+      {{ volume_attachment['attachments']|json_query("[?volume_id=='" + os_instance_volume_cinder_volume.id + "'].device | [0]") }}
+  when: volume_attachment is defined and volume_attachment.changed
+  tags:
+    - volume
+    - formatting
+
+- name: Saving the attached device from the instance volume list
+  set_fact:
+    attached_device: "{{ os_instance_volume_cinder_volume.volume.attachments[0].device }}"
+  when: volume_attachment is not defined or volume_attachment.changed == False
+  tags:
+    - volume
+    - formatting
+
+- debug:
+    var: attached_device
+
+- name: "Checking for attached device at {{ attached_device }}"
+  stat:
+    path: "{{ attached_device }}"
+    follow: yes
+  register: attached_device_stat_response
+
+
+# this can take a second until it shows up
+- name: "Wait for the device to appear at {{ attached_device }}"
+  wait_for:
+    path: "{{ attached_device }}"
+    state: present
+    delay: 15
+    timeout: 60
+  when: ! attached_device_stat_response.stat.exists
+
+- name: Create the mount directory for mounting the volume
+  file:
+    path: "{{ os_instance_volume_mount_path }}"
+    state: directory
+  register: cinder_volume_mount_dir
+
+- name: Format the device
+  filesystem:
+    fstype: "{{ os_instance_volume_filesystem }}"
+    dev: "{{ attached_device }}"
+  ignore_errors: true
+  when: (os_instance_volume_format_volume|bool) == false
+#  when: cinder_volume.changed
+
+- name: Mount the device
+  mount:
+    name: "{{ cinder_volume_mount_dir.path }}"
+    src: "{{ attached_device }}"
+    state: mounted
+    fstype: "{{ os_instance_volume_filesystem }}"
+
+#- name: Change mode on the filesystem
+#  file:
+#    path: "{{ cinder_volume_mount_dir.path }}"
+#    state: directory
+#    recurse: true
+#

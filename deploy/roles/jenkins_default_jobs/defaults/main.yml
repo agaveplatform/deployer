@@ -1,0 +1,25 @@
+---
+# defaults file for roles/jenkins_host
+jenkins_host_enable_acme: false
+
+# where will the traefik config and ssl certs be deployed on the host
+jenkins_host_deployment_dir: "/home/apim/jenkins/traefik"
+
+# metrics plugin api key issued by jenkins for health checks
+jenkins_host_metric_key: "{{ 99999999 | random | to_uuid }}"
+
+# Configure global git config used by jenkins
+jenkins_host_git_config_name: "Agave Jenkins CI"
+jenkins_host_git_config_email: "agaveops@{{ jenkins_hostname }}"
+
+# Jenkins mailer configuration
+jenkins_host_smtp_admin_email: "no-reply@{{ jenkins_hostname }}"
+jenkins_host_smtp_user: "{{ agave_core_smtps_user | default('') }}"
+jenkins_host_smtp_password: "{{ agave_core_smtps_password  | default('')}}"
+jenkins_host_smtp_port: "{{ agave_core_smtps_port | default('') }}"
+jenkins_host_smtp_host: "{{ agave_core_smtps_host | default('') }}"
+
+jenkins_host_update_default_job_dsl: True
+jenkins_host_default_job_dsl_repo: https://github.com/deardooley/jenkins-default-job-dsl
+jenkins_host_default_job_dsl_repo_branch: master
+jenkins_host_default_job_dsl_trigger_token: "{{ 99999999 | random | to_uuid }}"

@@ -1,0 +1,56 @@
+#
+# web_stack_host.plbk
+#
+# Configures a new Web host with docker, the project website, togo,
+# and some support services.
+#
+# Usage:
+#
+# Start the containers:
+# $ ansible-playbook -i host_files/sandbox_hosts web_stack_host.plbk
+#
+# Stop the containers:
+# $ ansible-playbook -i host_files/sandbox_hosts web_stack_host.plbk
+
+- name: gather all hosts information
+  hosts: jenkins
+
+- name: configure docker-ce host
+  import_playbook: docker_ce_host.plbk
+  vars:
+    hostlist: web
+    update_docker_version: true
+    update_docker_compose_version: true
+
+
+- hosts: web
+  become: yes
+
+  roles:
+    - role: web_stack
+
+#
+#
+#- name: Install CLI and API keys
+#  hosts: jenkins
+#  become: yes
+#
+#  tasks:
+#    - name: Installing the Agave CLI
+#      include_role:
+#        name: agave_cli
+#      vars:
+#        agave_cli_install_globally: true
+#      tags:
+#        - cli
+#
+#    - name: Generating Agave client application keys for Jenkins host
+#      include_role:
+#        name: agave_client_application
+#      vars:
+#        agave_client_application_name: jenkins
+#        agave_client_application_description: "Jenkins CI server for the Agave {{agave_tenant_id}} tenant"
+#        agave_client_application_callback_url: "https://{{ jenkins_public_hostname_or_ip }}"
+#      tags:
+#        - cli
+#        - client_application

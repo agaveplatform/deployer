@@ -16,12 +16,6 @@
 - name: Remove Agave Security Groups
   os_security_group:
     auth_type: password
-#    auth:
-#        auth_url: "{{os_authurl}}"
-#        domain_name: "{{os_domain}}"
-#        project_name: "{{os_project}}"
-#        username: "{{os_username}}"
-#        password: "{{os_password}}"
     name: "{{item}}"
     state: absent
   with_items:

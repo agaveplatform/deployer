@@ -1,0 +1,185 @@
+---
+# os_add_volume_to_instance
+# Run this playbook to attach and format a volume to an openstack instance.
+#
+# Assumptions:
+#
+# Varables:
+# `os_instance_name`: *Required* Name of the instance.
+# `attach_volume`: Should the volume should be created and attached first? Default: True
+# `os_volume_display_name`: Name of the volume. Default: "{{ os_instance_name }}_volume"
+# `os_volume_size`: Size of the volume in GB
+# `os_volume_display_description`: Description of the volume
+# `os_volume_mount_path`: Where to mount the volume, Default: /storage
+# `os_volume_filesystem`: Type of the file system. Default: ext4
+#
+# Example invocation:
+# ansible-playbook -i inventory playbooks/os_add_volume_to_instance
+#
+
+- name: Create and format a block storage volume to persist Jenkins data
+  hosts: local
+
+  vars:
+    agave_namespace: agave_ci_sandbox
+
+    attach_volume: true
+    format_volume: true
+#    os_instance_name: "{{ inventory_hostname }}"
+    os_volume_display_name: "{{ os_instance_name }}_volume"
+    os_volume_size: 100
+    os_volume_display_description: "{{ os_volume_size }}GB volume originally created by Ansible for VM {{os_instance_name}}."
+    os_volume_mount_path: /storage
+    os_volume_filesystem: ext4
+
+    os_private_key: "{{ansible_env['HOME']}}/.ssh/id_rsa"
+    os_instance_username: centos
+
+  tasks:
+
+    - name: Set Facts Collected Environment
+      set_fact:
+        os_instance_name:  "{{ os_instance_name }}"
+        attach_volume: "{{ attach_volume }}"
+        format_volume: "{{ format_volume }}"
+        os_volume_display_name: "{{ os_volume_display_name }}"
+        os_volume_display_description: "{{ os_volume_display_description }}"
+        os_volume_size: "{{ os_volume_size }}"
+        attach_volume: "{{ attach_volume|bool }}"
+
+        os_volume_mount_path: "{{ os_volume_mount_path }}"
+        os_volume_filesystem: "{{ os_volume_filesystem }}"
+        os_instance_username: "{{ os_instance_username }}"
+        os_key_file_src: "{{ os_private_key }}"
+      tags:
+        - setup
+
+    - name: "Ensure openstacksdk is installed on the target"
+      pip:
+        name: shade
+
+    - name: "Collect Facts on Existing VMs in Namespace"
+      os_server_facts:
+        server: "{{os_instance_name}}"
+      tags:
+        - inventory
+        - instance
+        - hosts
+
+    - set_fact:
+        os_instance_inventory_name: "{{item.public_v4}}"
+      loop: "{{openstack_servers}}"
+      tags:
+        - inventory
+        - instance
+        - hosts
+
+    - name: Add Created VMs to In-Memory Inventory
+      add_host:
+        name: "{{item.name}}"
+        groups: "{{ item.name.split('.') }}"
+        ansible_ssh_private_key_file: "{{os_private_key}}"
+        ansible_ssh_host: "{{item.public_v4}}"
+        ansible_ssh_user: "centos"
+        ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+      loop: "{{openstack_servers}}"
+      tags:
+        - inventory
+        - instance
+        - hosts
+
+    - debug:
+       var: openstack_servers
+      tags:
+        - volume
+        - discovery
+
+    - debug:
+       var: hostvars[os_instance_name]
+      tags:
+        - volume
+        - discovery
+
+
+- name: Create and format a block storage volume to persist Jenkins data
+  hosts: local
+  gather_facts: False
+
+  tasks:
+
+ # Creates a cinder volume and optionally
+  - name: "Create cinder volume"
+    os_volume:
+      state: present
+      display_name: "{{ os_volume_display_name }}"
+      display_description: "{{ os_volume_display_description }}"
+      size: "{{ os_volume_size }}"
+    register: cinder_volume
+    tags:
+      - volume
+
+  - debug:
+     var: cinder_volume
+    tags:
+      - volume
+
+  - name: Attach the volume to the VM
+    os_server_volume:
+      state: present
+      server: "{{os_instance_name}}"
+      volume: "{{cinder_volume.id}}"
+    register: volume_attachment
+    tags:
+      - volume
+
+
+  - debug:
+     var: volume_attachment
+    tags:
+      - volume
+
+  - set_fact:
+      attached_device: >-
+        {{ volume_attachment['attachments']|json_query("[?volume_id=='" + cinder_volume.id + "'].device | [0]") }}
+    when: volume_attachment.changed
+    tags:
+      - volume
+
+  - set_fact:
+      attached_device: "{{ cinder_volume.volume.attachments[0].device}}"
+    when: volume_attachment.changed == False
+    tags:
+      - volume
+
+
+
+  - name: Initializing file system on block volume
+    delegate_to: "{{ os_instance_name }}"
+    become: yes
+    tags:
+      - volume
+      - format
+
+    block:
+      - name: Wait for the device to appear
+        wait_for: path={{ hostvars['localhost']['attached_device'] }}
+
+      - name: Create the mount directory for mounting the volume
+        file:
+          path: "{{ hostvars['localhost']['os_volume_mount_path'] }}"
+          state: directory
+        register: cinder_mount_dir
+
+      - name: Format the device
+        filesystem:
+          fstype: "{{ hostvars['localhost']['os_volume_filesystem'] }}"
+          dev: "{{ hostvars['localhost']['attached_device'] }}"
+        when: hostvars['localhost']['format_volume']|bool
+  #      when: jenkins_cinder_volume.changed
+
+      - name: Mount the device
+        mount:
+          name: "{{ hostvars['localhost']['os_volume_mount_path'] }}"
+          src: "{{ hostvars['localhost']['attached_device'] }}"
+          state: mounted
+          fstype: "{{ hostvars['localhost']['os_volume_filesystem'] }}"

@@ -1,0 +1,34 @@
+---
+
+- set_fact:
+    cert_deployment_dir: "{{ jenkins_host_deployment_dir }}/ssl"
+
+- name: Ensure ssl directory exists for remote self-signed TLS certs
+  file:
+    path: "{{ cert_deployment_dir }}"
+    state: directory
+
+- name: Generate RSA Key
+  command: openssl genrsa \
+    -out "{{cert_deployment_dir}}/{{ jenkins_hostname }}.key" 2048
+  args:
+    creates: "{{cert_deployment_dir}}/{{ jenkins_hostname }}.key"
+
+- name: Generate CSR
+  command: openssl req \
+    -new \
+    -subj "/C/US/ST=TX/L=Austin/O=AgavePlatform/CN={{jenkins_hostname}}" \
+    -key "{{cert_deployment_dir}}/{{ jenkins_hostname }}.key" \
+    -out "{{cert_deployment_dir}}/{{ jenkins_hostname }}.csr"
+  args:
+    creates: "{{cert_deployment_dir}}/{{ jenkins_hostname }}.csr"
+
+- name: Generate self-signed OpenSSL certificate
+  command: openssl req \
+    -x509 \
+    -days 1825 \
+    -key "{{cert_deployment_dir}}/{{ jenkins_hostname }}.key" \
+    -in "{{cert_deployment_dir}}/{{ jenkins_hostname }}.csr" \
+    -out "{{cert_deployment_dir}}/{{ jenkins_hostname }}.crt"
+  args:
+    creates: "{{cert_deployment_dir}}/{{ jenkins_hostname }}.crt"

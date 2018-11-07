@@ -1,0 +1,16 @@
+---
+# handles installation of default jobs jenkins
+- name: "Install Agave deployer source on host"
+  include_tasks: install_deployer.yml
+  become: yes
+  become_user: jenkins
+  tags:
+    - agave-deployer
+
+- name: "Install default jenkins jobs"
+  include_tasks: install_default_jenkins_jobs.yml
+  become: yes
+  when: jenkins_host_update_default_job_dsl | bool
+  tags:
+    - jenkins-default-jobs
+

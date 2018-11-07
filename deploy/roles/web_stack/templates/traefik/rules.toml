@@ -1,0 +1,319 @@
+# rules
+[backends]
+
+  ############################################
+  # Backend routes to website containers
+  ############################################
+
+  [backends.website]
+    [backends.website.servers.server1]
+    url = "http://website:80"
+    weight = 1
+    entryPoints = ["http","https"]
+
+  [backends.websitestaging]
+    [backends.websitestaging.servers.server1]
+    url = "http://wordpress:80"
+    weight = 1
+    entryPoints = ["http","https"]
+
+  [backends.dashboard]
+    [backends.dashboard.servers.server1]
+    url = "http://dashboard:80"
+    weight = 1
+
+  ############################################
+  # 301 subdomain redirects...handled by
+  # website redirection plugin
+  ############################################
+
+  # [backends.support]
+  #   [backends.support.servers.server1]
+  #   url = "http://website:80"
+  #   weight = 10
+  #
+  # [backends.docs]
+  #   [backends.docs.servers.server1]
+  #   url = "http://website:80"
+  #   weight = 10
+  #
+  # [backends.devs]
+  #   [backends.devs.servers.server1]
+  #   url = "http://website:80"
+  #   weight = 10
+
+  ############################################
+  # Backend routes to support service
+  # containers running on this server
+  ############################################
+
+  [backends.requestbin]
+    [backends.requestbin.servers.server1]
+    url = "http://requestbin:5000"
+    weight = 1
+
+  [backends.httpbin]
+    [backends.httpbin.servers.server1]
+    url = "https://httpbin.org:443"
+    weight = 1
+
+  [backends.jsonmirror]
+    [backends.jsonmirror.servers.server1]
+    url = "http://jsonmirror:3000"
+    weight = 1
+
+  [backends.xsedestatuscheckapi]
+      [backends.xsedestatuscheckapi.servers.server1]
+      url = "http://xsedestatuscheckapi:80"
+      weight = 1
+
+  [backends.slackin]
+    [backends.slackin.servers.server1]
+    url = "http://slackin:3000"
+    weight = 1
+
+  [backends.changelogparser]
+    [backends.changelogparser.servers.server1]
+    url = "http://changelogparser:80"
+    weight = 1
+
+
+  #[backends.apidocs12]
+  #  [backends.apidocs12.servers.server1]
+  #  url = "https://api.prod.agaveapi.co:443/"
+  #  weight = 1
+
+  ############################################
+  # Backend routes proxying to public tenant
+  # api instances
+  ############################################
+
+  [backends.tenants]
+    [backends.tenants.servers.server1]
+    url = "http://tenants:80"
+    weight = 1
+
+  [backends.usage]
+    [backends.usage.servers.server1]
+    url = "http://usage:80"
+    weight = 1
+
+  [backends.stats]
+    [backends.stats.servers.server1]
+    url = "http://stats:80"
+    weight = 1
+
+  ############################################
+  # Backend routes to devops services
+  ############################################
+
+  [backends.huggin]
+    [backends.huggin.servers.server1]
+    url = "http://huggin:80"
+    weight = 1
+
+  [backends.slackbot]
+    [backends.slackbot.servers.server1]
+    url = "http://slackbot:80"
+    weight = 1
+
+  [backends.jenkins]
+    [backends.jenkins.servers.server1]
+    url = "http://jenkins2.tacc.utexas.edu:8080"
+    weight = 1
+
+  ############################################
+  # Backend routes proxying to public tenant
+  # api instances
+  ############################################
+
+  [backends.togo]
+    [backends.togo.servers.server1]
+    url = "http://togo:80"
+    weight = 1
+
+  [backends.togostaging]
+    [backends.togostaging.servers.server1]
+    url = "http://togostaging:80"
+    weight = 1
+
+
+
+
+[frontends]
+
+  ############################################
+  # Frontend routes to website instances
+  ############################################
+
+  [frontends.frontend1]
+  backend = "website"
+  passHostHeader = true
+  priority = 5
+    [frontends.frontend1.routes.test_1]
+    rule = "Host:agaveapi.co,web.prod.agaveapi.co"
+
+  [frontends.frontendstaging]
+  backend = "websitestaging"
+  passHostHeader = true
+    [frontends.frontendstaging.routes.test_1]
+    rule = "Host:web.staging.agaveapi.co"
+
+  [frontends.frontend14]
+  backend = "dashboard"
+  passHostHeader = false
+  priority = 10
+    [frontends.frontend14.routes.test_1]
+    rule = "Host:agaveapi.co,web.staging.agaveapi.co;PathPrefixStrip:/dashboard"
+
+  [frontends.frontend17]
+  backend = "dashboard"
+  passHostHeader = false
+  priority = 10
+    [frontends.frontend17.routes.test_2]
+    rule = "Host:agaveapi.co,web.staging.agaveapi.co;PathPrefix:/vendors,/css,/js,/template"
+
+  ############################################
+  # 301 subdomain redirects...handled by
+  # website redirection plugin
+  ############################################
+
+  [frontends.threeoone]
+  backend = "website"
+  passHostHeader = true
+  priority = 10
+    [frontends.threeoone.routes.test_1]
+    rule = "Host:support.agaveplatform.org"
+
+  ############################################
+  # Frontend routes to support services
+  # available as subdomains
+  ############################################
+
+  [frontends.frontend2]
+  backend = "requestbin"
+  passHostHeader = true
+    [frontends.frontend2.routes.test_1]
+    rule = "Host:requestbin.agaveapi.co"
+
+  [frontends.frontend3]
+  backend = "httpbin"
+  passHostHeader = true
+    [frontends.frontend3.routes.test_1]
+    rule = "Host:httpbin.agaveapi.co"
+
+  [frontends.frontend4]
+  backend = "slackin"
+  passHostHeader = true
+    [frontends.frontend4.routes.test_1]
+    rule = "Host:slackin.agaveapi.co"
+
+  [frontends.frontend5]
+  backend = "jsonmirror"
+  passHostHeader = true
+  priority = 15
+    [frontends.frontend5.routes.test_1]
+    rule = "Host:agaveapi.co,web.staging.agaveapi.co;PathPrefixStrip:/json-mirror"
+
+  [frontends.frontend16]
+  backend = "xsedestatuscheckapi"
+  passHostHeader = true
+  priority = 10
+    [frontends.frontend16.routes.test_1]
+    rule = "Host:agaveapi.co,web.staging.agaveapi.co;PathPrefixStrip:/xsede/status"
+
+  [frontends.frontend18]
+  backend = "changelogparser"
+  passHostHeader = true
+  priority = 10
+    [frontends.frontend18.routes.test_1]
+    rule = "Host:agaveapi.co,web.staging.agaveapi.co;PathPrefixStrip:/changelog-parser"
+
+  #[frontends.frontend19]
+  #backend = "apidocs12"
+  #passHostHeader = true
+  #priority = 10
+  #  [frontends.frontend19.routes.test_1]
+  #  rule = "Host:agaveapi.co,web.staging.agaveapi.co;PathPrefixStrip:/swagger-ui/1.2"
+
+  ############################################
+  # Frontend routes to public tenant APIs
+  ############################################
+
+  [frontends.frontend6]
+  backend = "tenants"
+  passHostHeader = true
+  priority = 10
+    [frontends.frontend6.routes.rout1]
+    rule = "Host:agaveapi.co,web.staging.agaveapi.co;PathPrefixStrip:/tenants"
+
+  [frontends.frontend7]
+  backend = "usage"
+  passHostHeader = true
+  priority = 10
+    [frontends.frontend7.routes.rout1]
+    rule = "Host:agaveapi.co,web.staging.agaveapi.co;PathPrefixStrip:/usage"
+
+  [frontends.frontend8]
+  backend = "stats"
+  passHostHeader = true
+  priority = 10
+    [frontends.frontend8.routes.rout1]
+    rule = "Host:agaveapi.co,web.staging.agaveapi.co;PathPrefix:/stats"
+
+  ############################################
+  # Frontend routes to devops services
+  ############################################
+
+  [frontends.frontend10]
+  backend = "huggin"
+  passHostHeader = true
+    [frontends.frontend10.routes.huggin]
+    rule = "Host:devops.agaveapi.co;PathPrefixStrip:/huggin"
+
+  [frontends.frontend11]
+  backend = "slackbot"
+  passHostHeader = true
+    [frontends.frontend11.routes.rout1]
+    rule = "Host:devops.agaveapi.co;PathPrefixStrip:/slackbot"
+
+  [frontends.frontend15]
+  backend = "jenkins"
+  passHostHeader = true
+    [frontends.frontend15.routes.rout1]
+    rule = "Host:devops.agaveapi.co;PathPrefixStrip:/jenkins"
+
+  [frontends.frontend20]
+  backend = "jekins"
+  passHostHeader = false
+  priority = 10
+    [frontends.frontend20.routes.test_2]
+    rule = "Host:devops.agaveapi.co;PathPrefix:/api"
+
+  ############################################
+  # Frontend routes to Agave ToGo instances
+  ############################################
+
+  [frontends.frontend12]
+  backend = "togostaging"
+  passHostHeader = true
+    [frontends.frontend12.routes.rout1]
+    rule = "Host:togo.staging.agaveapi.co"
+
+  [frontends.frontend13]
+  backend = "togo"
+  passHostHeader = true
+    [frontends.frontend13.routes.rout1]
+    rule = "Host:togo.agaveapi.co"
+
+
+  # [frontends.frontend2]
+  # backend = "backend1"
+  # passHostHeader = true
+  # priority = 10
+  # [frontends.frontend2]
+  # backend = "backend1"
+  # priority = 10
+  # passHostHeader = true
+  #   [frontends.frontend1.routes.test_1]
+  #   rule = "PathPrefixStrip:/wordpress"

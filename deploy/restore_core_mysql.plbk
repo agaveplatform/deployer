@@ -1,0 +1,36 @@
+# Run this playbook to restore the core mysql db. The backups will be read from a directory specified
+# by the `agave_sql_import_dir` variable. This defaults to /tmp/mysql-backup/core/latest. If you are
+# restoring a dump generated with the backup_auth_mysql.plbk, this playbook will restore the latest
+# timestamped folder.
+#
+# variable agave_sql_import_dir.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# Example default invocation:
+# $ ansible-playbook -i host_files/sandbox_hosts backup_core_mysql.plbk
+#
+# Example invocation to backup to specific folder:
+# $ ansible-playbook -i host_files/sandbox_hosts backup_core_mysql.plbk -e agave_sql_import_dir=/storage/backups/auth/
+
+---
+
+- name: gather all hosts information
+  hosts: db[0]
+
+  # run sql migrations
+- hosts: db[0]
+
+  pre_tasks:
+    - include_vars: agave_core_configs/{{ tenant_id }}.yml
+    - include_vars: agave_core_configs/{{ tenant_id }}_passwords
+
+  roles:
+    - agave_sql_import
+
+  vars:
+    - agave_sql_import_user: "{{ mysql_core_user }}"
+    - agave_sql_import_password: "{{ mysql_core_password }}"
+    - agave_sql_import_port: "{{ mysql_core_port }}"
+    - agave_sql_import_host: "{{ mysql_core_host }}"
+    - agave_sql_import_dir: /tmp/mysql-backup/core/latest

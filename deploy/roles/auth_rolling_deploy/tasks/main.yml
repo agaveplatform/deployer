@@ -4,7 +4,6 @@
   register: A
   become: yes
   become_user: apim
-  become_method: sudo
 
 - name: msg
   debug: msg="A containers are not deployed (A_deployed path doesn't exist)"
@@ -15,7 +14,6 @@
   register: B
   become: yes
   become_user: apim
-  become_method: sudo
 
 - name: msg
   debug: msg="B containers are not deployed (B_deployed path doesn't exist)"
@@ -31,14 +29,12 @@
   shell: docker-compose -f /home/apim/A/docker-compose-noserf.yml up -d chdir=/home/apim/A
   become: yes
   become_user: apim
-  become_method: sudo
   when: A.stat.exists == false
 
 - name: ensure the A_deployed file exists
   file: path=/home/apim/A_deployed state=touch
   become: yes
   become_user: apim
-  become_method: sudo
   when: A.stat.exists == false
 
 - pause: minutes=2 prompt="Pausing while A containers start up before removing B containers."
@@ -51,7 +47,6 @@
       COMPOSE_HTTP_TIMEOUT: 120
   become: yes
   become_user: apim
-  become_method: sudo
   when: B.stat.exists
 
 - name: remove B containers
@@ -60,16 +55,16 @@
       COMPOSE_HTTP_TIMEOUT: 120
   become: yes
   become_user: apim
-  become_method: sudo
   when: B.stat.exists
 
 - name: remove the B_deployed file
   file: path=/home/apim/B_deployed state=absent
   become: yes
   become_user: apim
-  become_method: sudo
   when: B.stat.exists
 
+- name: wait for the B containers to finish deleting
+  pause: seconds=30
 
 # ------------
 # B deployment
@@ -80,14 +75,12 @@
   shell: docker-compose -f /home/apim/B/docker-compose-noserf.yml up -d chdir=/home/apim/B
   become: yes
   become_user: apim
-  become_method: sudo
   when: A.stat.exists
 
 - name: ensure the B_deployed file exists
   file: path=/home/apim/B_deployed state=touch
   become: yes
   become_user: apim
-  become_method: sudo
   when: A.stat.exists
 
 - pause: minutes=2 prompt="Pausing while B containers start up before removing A containers."
@@ -100,7 +93,6 @@
       COMPOSE_HTTP_TIMEOUT: 120
   become: yes
   become_user: apim
-  become_method: sudo
   when: A.stat.exists
 
 - name: remove A containers
@@ -109,12 +101,10 @@
       COMPOSE_HTTP_TIMEOUT: 120
   become: yes
   become_user: apim
-  become_method: sudo
   when: A.stat.exists
 
 - name: remove the A_deployed file
   file: path=/home/apim/A_deployed state=absent
   become: yes
   become_user: apim
-  become_method: sudo
   when: A.stat.exists

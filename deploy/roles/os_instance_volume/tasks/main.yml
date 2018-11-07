@@ -1,0 +1,20 @@
+---
+# Tasks to attach a cinder volume to an instance and format it
+- name: Attach the volume to the VM
+  os_server_volume:
+    state: present
+    server: "{{os_instance_volume_instance_name}}"
+    volume: "{{os_instance_volume_cinder_volume.id}}"
+  register: volume_attachment
+  tags:
+    - volume
+    - attachment
+  when: os_instance_volume_attach_to_instance|bool
+
+- name: Initializing file system on block volume
+  include_tasks: format_volume.yml
+  tags:
+    - volume
+    - attachment
+    - formatting
+

@@ -1,0 +1,56 @@
+<!-- 1. jenkins-default-job-dsl -->
+<project>
+    <actions></actions>
+    <displayName>jenkins-default-job-dsl</displayName>
+    <description>Seed job to generate Jenkins jobs from job dsl defined in an external repository.</description>
+    <keepDependencies>false</keepDependencies>
+    <properties>
+        <com.coravy.hudson.plugins.github.GithubProjectProperty>
+            <projectUrl>{{ jenkins_host_default_job_dsl_repo | regex_replace('.git$', '') }}/</projectUrl>
+        </com.coravy.hudson.plugins.github.GithubProjectProperty>
+    </properties>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <authToken>{{ jenkins_host_default_job_dsl_trigger_token }}</authToken>
+    <triggers>
+        <hudson.triggers.SCMTrigger>
+            <spec>H/5 * * * *</spec>
+            <ignorePostCommitHooks>false</ignorePostCommitHooks>
+        </hudson.triggers.SCMTrigger>
+    </triggers>
+    <concurrentBuild>false</concurrentBuild>
+    <builders>
+        <javaposse.jobdsl.plugin.ExecuteDslScripts>
+            <targets>src/jobs/**/*.groovy</targets>
+            <usingScriptText>false</usingScriptText>
+            <scriptText></scriptText>
+            <ignoreExisting>false</ignoreExisting>
+            <removedJobAction>DELETE</removedJobAction>
+            <removedViewAction>DELETE</removedViewAction>
+            <lookupStrategy>JENKINS_ROOT</lookupStrategy>
+            <additionalClasspath>src/main/groovy</additionalClasspath>
+        </javaposse.jobdsl.plugin.ExecuteDslScripts>
+    </builders>
+    <publishers></publishers>
+    <buildWrappers></buildWrappers>
+    <scm class='hudson.plugins.git.GitSCM'>
+        <userRemoteConfigs>
+            <hudson.plugins.git.UserRemoteConfig>
+                <url>{{ jenkins_host_default_job_dsl_repo | regex_replace('.git$', '') }}.git</url>
+            </hudson.plugins.git.UserRemoteConfig>
+        </userRemoteConfigs>
+        <branches>
+            <hudson.plugins.git.BranchSpec>
+                <name>*/{{ jenkins_host_default_job_dsl_repo_branch }}</name>
+            </hudson.plugins.git.BranchSpec>
+        </branches>
+        <configVersion>2</configVersion>
+        <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+        <gitTool>Default</gitTool>
+        <browser class='hudson.plugins.git.browser.GithubWeb'>
+            <url>{{ jenkins_host_default_job_dsl_repo | regex_replace('.git$', '') }}/</url>
+        </browser>
+    </scm>
+</project>

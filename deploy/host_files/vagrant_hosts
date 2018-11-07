@@ -62,7 +62,7 @@ vagrant.core.core_worker ansible_ssh_host=192.168.205.13 agave_core_workers_only
 vagrant.db ansible_ssh_host=192.168.205.12
 
 [local]
-localhost ansible_connection=local
+localhost ansible_connection=local  ansible_python_interpreter=../venv/bin/python
 
 ####################################
 #  Jenkins and CI services

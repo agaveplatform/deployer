@@ -1,0 +1,44 @@
+---
+
+- include_vars: tenants/{{ tenant_id }}/{{ tenant_id }}.yml
+- include_vars: tenants/{{ tenant_id }}/{{ tenant_id }}_passwords
+- include_vars: agave_core_configs/{{ tenant_id }}.yml
+- include_vars: agave_core_configs/{{ tenant_id }}_passwords
+
+- name: Install python mysqldb module - Debian
+  apt: name=python-mysqldb state=present
+  become: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install mysql client package - Debian
+  apt: name=mysql-client state=present
+  become: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install python mysqldb module - CentOS
+  yum: name=MySQL-python state=installed
+  become: yes
+  when: ansible_os_family == "RedHat"
+
+- name: Install mysql client package - CentOS
+  yum: name=mysql state=present
+  become: yes
+
+- name: "Get list of database dump files from {{ mysql_backup_dir }}"
+  shell: "ls {{ agave_sql_import_dir }} | egrep '\.(sql|gz|bz2)$'"
+  register: db_dumpfile_list
+
+- name: Output list of databases
+  debug:
+    msg: '{{ db_dumpfile_list }}'
+
+- name: Dump databases to compressed files on disk
+  mysql_db:
+    state: dump
+    name: "{{ item }}"
+    target: "{{ agave_sql_import_dir }}/{{ item }}"
+    login_user: '{{ agave_sql_import_user }}'
+    login_password: '{{ agave_sql_import_password }}'
+    login_port: '{{ agave_sql_import_port }}'
+    login_host: '{{ agave_sql_import_host }}'
+  loop: "{{ db_dumpfile_list.stdout_lines }}"

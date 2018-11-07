@@ -1,0 +1,36 @@
+# Run this playbook to backup the apim mysql db. The backups will be read from a directory specified
+# by the `agave_sql_backup_dir` variable. This defaults to /tmp/mysql-backup/auth. If you are restoring a dump
+#
+# if not specified.
+#
+# variable agave_sql_backup_dir.
+#
+# NOTE: This playbook requires Ansible v2.0+
+#
+# Example default invocation:
+# $ ansible-playbook -i host_files/sandbox_hosts backup_core_mysql.plbk
+#
+# Example invocation to backup to specific folder:
+# $ ansible-playbook -i host_files/sandbox_hosts backup_core_mysql.plbk -e agave_sql_backup_dir=/storage/backups/core
+
+---
+
+- name: gather all hosts information
+  hosts: db[0]
+
+  # run sql migrations
+- hosts: db[0]
+
+  pre_tasks:
+    - include_vars: tenants/{{ tenant_id }}/{{ tenant_id }}.yml
+    - include_vars: tenants/{{ tenant_id }}/{{ tenant_id }}_passwords
+
+  roles:
+    - agave_sql_backup
+
+  vars:
+    - agave_sql_backup_user: "{{ mysql_tenant_user }}"
+    - agave_sql_backup_password: "{{ mysql_tenant_pass }}"
+    - agave_sql_backup_port: "{{ mysql_port }}"
+    - agave_sql_backup_host: "{{ mysql_host }}"
+    - agave_sql_backup_dir: /tmp/mysql-backup/auth

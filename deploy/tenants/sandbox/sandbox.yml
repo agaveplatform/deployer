@@ -44,7 +44,7 @@ deploy_custom_oauth_app: False
 update_apim_core_dns: True
 apim_increase_global_timeout: False
 
-core_frontend_base_url_or_ip: "{{ hostvars[ groups['core'][0] ]['ansible_ssh_host'] }}"
+core_frontend_base_url_or_ip: "{{ hostvars[groups['core'][0]]['ansible_ssh_host'] }}"
 core_api_protocol: http
 
 # ------------------

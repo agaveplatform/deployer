@@ -1,0 +1,59 @@
+---
+
+- include_vars: tenants/{{ tenant_id }}/{{ tenant_id }}.yml
+- include_vars: tenants/{{ tenant_id }}/{{ tenant_id }}_passwords
+- include_vars: agave_core_configs/{{ tenant_id }}.yml
+- include_vars: agave_core_configs/{{ tenant_id }}_passwords
+
+- name: Install python mysqldb module - Debian
+  apt: name=python-mysqldb state=present
+  become: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install mysql client package - Debian
+  apt: name=mysql-client state=present
+  become: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install python mysqldb module - CentOS
+  yum: name=MySQL-python state=installed
+  become: yes
+  when: ansible_os_family == "RedHat"
+
+- name: Install mysql client package - CentOS
+  yum: name=mysql state=present
+  become: yes
+
+- name: Get list of database names to backup
+  shell: 'mysql -u {{ agave_sql_backup_user }} -p{{ agave_sql_backup_password }} -h{{ agave_sql_backup_host }} --port={{ agave_sql_backup_port }} -e "show databases;" '
+  register: dblist
+
+- name: Output list of databases
+  debug:
+    msg: '{{ dblist }}'
+
+- name: Defining dump directory
+  set_facts:
+    - agave_sql_backup_dump_dir: "{{ agave_sql_backup_dir }}/{{lookup('pipe','date +%Y%m%d%H%M%S')}}"
+
+- name: Ensure dump directory is present
+  file:
+    path: "{{ agave_sql_backup_dump_dir }}"
+    state: directory
+
+- name: Dump databases to compressed files on disk
+  mysql_db:
+    state: dump
+    name: "{{ item }}"
+    target: "{{ agave_sql_backup_dump_dir }}/{{ item }}-{{lookup('pipe','date +%Y%m%d%H%M%S')}}.gz"
+    login_user: '{{ agave_sql_backup_user }}'
+    login_password: '{{ agave_sql_backup_password }}'
+    login_port: '{{ agave_sql_backup_port }}'
+    login_host: '{{ agave_sql_backup_host }}'
+  loop: "{{ dblist.stdout_lines | difference(exclude_db) }}"
+
+- name: Creating "latest" soft link to the backup directory
+  file:
+    path: "{{ agave_sql_backup_dir }}/latest"
+    src: "{{ agave_sql_backup_dump_dir }}"
+    state: link
