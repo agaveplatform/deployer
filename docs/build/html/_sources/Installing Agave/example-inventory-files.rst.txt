@@ -7,7 +7,79 @@ After getting to know the basics of configuring your own inventory file, you can
 Sandbox Installations
 ======================
 
-You can configure an environment with single Auth, Persistence, and either single or multiple Core hosts.
+You can configure a sandbox environment with 1 or more hosts.
+
+
+Single Host
+------------
+The following table describes an example environment for a single host deployment:
+
+.. list-table:: Simple 1 host setup with each logical component group deployed on the same dedicated host.
+   :widths: 20 30
+   :header-rows: 1
+
+   * - Host Name
+     - Infrastructure Component to Install
+   * - sandbox.example.com
+     - | All Auth, Core, and Persistence components
+
+You can see the same host present in the ``[auth]``, ``[core]``, and ``[db]`` sections of the following example inventory file.
+
+::
+
+    [all]
+    sandbox.example.com ansible_ssh_host=192.168.205.5
+
+		# General settings to apply to all playbooks.
+    [all:vars]
+
+    # the name of your tenant.
+    tenant_id=sandbox
+    agave_tenant_id=sandbox
+
+    # the public hostname or ip of your installation
+    tenant_public_domain_or_ip=sandbox.agaveplatform.org
+
+    # The name of the core service config file to read in.
+    core_config_file=sandbox
+
+    # Create a agave group that contains the auth, core, and db groups
+    [agave:vars]
+
+    # SSH user, this user should allow ssh based auth without requiring a password
+    ansible_ssh_user=root
+
+    [agave:children]
+    db
+    auth
+    core
+
+    [db]
+    sandbox.example.com
+
+    [auth]
+    sandbox.example.com
+
+    [core]
+    # This group will host the science apis and should have at least 4 cores, 16GB memory, and 80GB disk. The following
+    # configuration caps the memory on individual core api containers and limits the number of workers tasks per
+    # container to relatively modest counts. This is not a production configuration. You should seriously consider
+    # splitting the worker and core services out over multiple hosts, or provisioning a server with at least 16 cores
+    # and 64GB memory for any significant traffic or data movement.
+    sandbox.example.com agave_core_tenants_mem_limit=128m agave_core_logging_mem_limit=256m agave_core_docs_mem_limit=128m agave_core_uuids_mem_limit=1024m agave_core_tags_mem_limit=1024m core_deploy_realtime=False agave_core_realtime_mem_limit=512m agave_core_metadata_mem_limit=1024m agave_core_monitors_mem_limit=1024m agave_core_systems_mem_limit=1024m agave_core_apps_mem_limit=1024m agave_core_notifications_mem_limit=1024m agave_core_job_max_submission_task=1 agave_core_job_max_staging_tasks=3 agave_core_job_max_archiving_tasks=2 agave_core_job_max_monitoring_tasks=1 agave_core_files_max_staging_tasks=2 agave_core_files_max_transform_tasks=1 core_deploy_monitors=False core_deploy_notifications=False core_deploy_transforms=False agave_core_jobs_mem_limit=4096m agave_core_files_mem_limit=4096m
+
+
+To use this example, modify the file to match your environment and specifications, and save it as /etc/ansible/hosts. When deploying all components to the same host, the core components proxy need to be run on an alternate port to avoid conflict. These can be set in the two `sandbox.yml` variable files or as extra vars when invoking the playbook.
+
+::
+
+  ansible-playbook deploy_agave.plbk \
+      --become \
+      -i host_vars/vagrant_single_host
+      -e core_api_port=8080 \
+      -e agave_core_proxy_http_port=8080 \
+      -e agave_core_proxy_https_port=8443 \
+      -e agave_core_iplant_proxy_service=http://149.165.157.217:8080
 
 
 Single Auth, Single Core, and Single Persistence
@@ -73,7 +145,7 @@ To use this example, modify the file to match your environment and specification
 
 
 Single Auth, Multiple Core, and Single Persistence
-------------------------------------------------
+--------------------------------------------------
 The following table describes an example environment for a single Auth, single Core, and single Persistence host:
 
 .. list-table:: Simple 3 host setup with each logical component group deployed on a dedicated host.
@@ -147,7 +219,7 @@ To use this example, modify the file to match your environment and specification
 
 
 Custom Installations
-===================
+====================
 
 Single Auth, Multiple Core, and Cloud Hosted Persistence
 --------------------------------------------------------
@@ -271,9 +343,9 @@ You can see these example hosts present in the ``[auth]``, ``[core_api]``, and `
                     ansible_ssh_host: 192.168.205.13
                     # Do not deploy the monitor worker containers on this host
                     core_deploy_monitors: False 
-		    # Do not deploy the notificaiton  worker containers on this host
+                    # Do not deploy the notificaiton  worker containers on this host
                     core_deploy_notifications: False
-		    # Do not deploy the transform worker containers on this host 
+                    # Do not deploy the transform worker containers on this host
                     core_deploy_transforms: False
                     # Do not deploy the job worker containers on this host
                     core_deploy_jobs: False

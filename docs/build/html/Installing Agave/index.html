@@ -204,12 +204,12 @@
 <div class="section" id="id3">
 <h2>Prerequisites<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>Before choosing an installation method, you must first satisfy the prerequisites on your hosts, which includes verifying system, network, and firewall requirements. After ensuring your hosts are properly set up, you can continue by choosing one of the following installation methods.</p>
-<p>The Agave Platform must run on the CentOS 7 operating system. If you wish to run the server from a Windows or Mac OS X host, you should provision the necessary CentOS virtual machines first. A Vagrant file is provided in the <code class="docutils literal"><span class="pre">local/vagrant</span></code> that will provision 3 CentOS 7.2 virtual machines on your local system that you can use for testing.</p>
+<p>The Agave Platform must run on the CentOS 7 operating system. If you wish to run the server from a Windows or Mac OS X host, you should provision the necessary CentOS virtual machines first. A Vagrant file is provided in the <code class="docutils literal notranslate"><span class="pre">local/vagrant</span></code> that will provision 3 CentOS 7.2 virtual machines on your local system that you can use for testing.</p>
 <p>The Agave Deployer and Docker use iptables to manage networking. Ensure that local firewall rules and other software making iptable changes do not alter the Agave Platform and Docker service setup.</p>
 <div class="section" id="on-premise-vs-cloud-providers">
 <h3>On-premise vs Cloud Providers<a class="headerlink" href="#on-premise-vs-cloud-providers" title="Permalink to this headline">¶</a></h3>
 <p>The Agave Platform can be installed on-premise or hosted on public or private clouds. For information, see <a href="#id5"><span class="problematic" id="id6">`Installation Agave`_</span></a>.</p>
-<p>Once you have your cluster nodes provisioned, update the <code class="docutils literal"><span class="pre">deploy/host_files/sandbox_hosts</span></code> file withe the connectivity information of your hosts. You will need to update the ip addresses, path to the private key, and privileged login username on your hosts.</p>
+<p>Once you have your cluster nodes provisioned, update the <code class="docutils literal notranslate"><span class="pre">deploy/host_files/sandbox_hosts</span></code> file withe the connectivity information of your hosts. You will need to update the ip addresses, path to the private key, and privileged login username on your hosts.</p>
 <p>choose the installation method that fits your case the best.</p>
 </div>
 </div>
@@ -220,13 +220,13 @@
 <h3>Method 1: Running the Ansible Playbooks<a class="headerlink" href="#method-1-running-the-ansible-playbooks" title="Permalink to this headline">¶</a></h3>
 <p>You can quickly get Agave Platform running in a container using images from Docker Hub on a Linux system. This method is supported on Fedora, CentOS, and Red Hat Enterprise Linux (RHEL) hosts only.</p>
 <blockquote>
-<div>Agave frontend services listen on ports <code class="docutils literal"><span class="pre">80</span></code>, <code class="docutils literal"><span class="pre">443</span></code>, <code class="docutils literal"><span class="pre">8080</span></code>, <code class="docutils literal"><span class="pre">8443</span></code> and <code class="docutils literal"><span class="pre">9000</span></code>. Agave backend services listen on 80, 443, 8440-8499, and 8070-8099. If you plan on enabling passive FTP and GridFTP support, Agave utilizes three port ranges to enable this behavior: 30000-31000, 50000-51000, 52900-52999. If another service is already listening on those ports on the respective host(s), you must stop that service before launching the Agave Platform containers.</div></blockquote>
+<div>Agave frontend services listen on ports <code class="docutils literal notranslate"><span class="pre">80</span></code>, <code class="docutils literal notranslate"><span class="pre">443</span></code>, <code class="docutils literal notranslate"><span class="pre">8080</span></code>, <code class="docutils literal notranslate"><span class="pre">8443</span></code> and <code class="docutils literal notranslate"><span class="pre">9000</span></code>. Agave backend services listen on 80, 443, 8440-8499, and 8070-8099. If you plan on enabling passive FTP and GridFTP support, Agave utilizes three port ranges to enable this behavior: 30000-31000, 50000-51000, 52900-52999. If another service is already listening on those ports on the respective host(s), you must stop that service before launching the Agave Platform containers.</div></blockquote>
 <div class="section" id="starting-an-all-in-one-server">
 <h4>Starting an All-in-One Server<a class="headerlink" href="#starting-an-all-in-one-server" title="Permalink to this headline">¶</a></h4>
 <ol class="arabic simple">
 <li>Start the server:</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ ansible-playbook -i deploy/host_files/sandbox_hosts deploy_agave.plbk
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ansible-playbook -i deploy/host_files/sandbox_hosts deploy_agave.plbk
 </pre></div>
 </div>
 <p>This command:</p>
@@ -245,15 +245,15 @@
 </div>
 <div class="section" id="method-2-using-the-agave-deployer-image">
 <h3>Method 2: Using the Agave Deployer image<a class="headerlink" href="#method-2-using-the-agave-deployer-image" title="Permalink to this headline">¶</a></h3>
-<p>The Agave Deployer is available as a Docker image, <code class="docutils literal"><span class="pre">agaveplatform/deployer</span></code>, in the public Docker Hub Registry. The image contains a prebuilt environment with all the necessary dependencies to build and run all the Agave Deployer Playbooks.</p>
+<p>The Agave Deployer is available as a Docker image, <code class="docutils literal notranslate"><span class="pre">agaveplatform/deployer</span></code>, in the public Docker Hub Registry. The image contains a prebuilt environment with all the necessary dependencies to build and run all the Agave Deployer Playbooks.</p>
 <div class="section" id="installing-and-running-the-agave-deployer-docker-image">
 <h4>Installing and Running the Agave Deployer Docker Image<a class="headerlink" href="#installing-and-running-the-agave-deployer-docker-image" title="Permalink to this headline">¶</a></h4>
 <p>Download the image from the Docker Hub.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ docker pull agaveplatform/deployer
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ docker pull agaveplatform/deployer
 </pre></div>
 </div>
 <p>Run the deployer with your updated hosts file and ssh private key volume mounted into the container</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ docker run -it --rm --name deployer <span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ docker run -it --rm --name deployer <span class="se">\</span>
          -v <span class="nv">$HOME</span>/.vagrant.d/insecure_private_key:/root/.ssh/id_rsa:ro
          -v deploy/host_files/sandbox_hosts:/etc/ansible/hosts
          agaveplatform/deployer deploy_agave.plbk
@@ -280,7 +280,7 @@
 <blockquote>
 <div>Do NOT do this on production hosts. Use a separate host specifically provisioned for testing to run against. The Deployer can easily provision hosts on EC2 and OpenStack for this purpose with the <cite>os_create_host.plbk</cite> Playbook.</div></blockquote>
 <p>To kick off the tests by running the <cite>run_postman.plbk</cite>.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ ansible-playbook -i deploy/host_files/sandbox_hosts run_postman.plbk
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ansible-playbook -i deploy/host_files/sandbox_hosts run_postman.plbk
 </pre></div>
 </div>
 <p>The tests will run and output a summary table of the results. Machine readable test results are availble in json, xlm, and html in the <cite>deploy/tmp/agave-postman-test*/reports</cite> directory.</p>
@@ -299,7 +299,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Rion Dooley.
+        &copy; Copyright 2018, Rion Dooley
 
     </p>
   </div>
@@ -318,20 +318,14 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'0.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 

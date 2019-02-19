@@ -202,7 +202,7 @@
 <p># ssh-keygen
 Do not use a password.</p>
 <p>An easy way to distribute your SSH keys is by using a bash loop:</p>
-<div class="code shell highlight-default"><div class="highlight"><pre><span></span># for host in auth.agave  core.agave  db.agave ; do \
+<div class="code shell highlight-default notranslate"><div class="highlight"><pre><span></span># for host in auth.agave  core.agave  db.agave ; do \
       ssh-copy-id -i ~/.ssh/id_rsa.pub $host; \
   done
 </pre></div>
@@ -225,8 +225,8 @@ Do not use a password.</p>
 </div>
 <div class="section" id="installing-docker">
 <h2>Installing Docker<a class="headerlink" href="#installing-docker" title="Permalink to this headline">¶</a></h2>
-<p>The Agave Platform installer will also install and configure the Docker daemon on the hosts. Only trusted registries are enabled by default. If you will be pulling images from a registry with a self-signed cert, or cert signed by an untrusted CA, you should add the ip address or subnet of any insecure registries you plan to use to the <code class="docutils literal"><span class="pre">docker_insecure_registries</span></code> list variable in your inventory file. This will tell the installer to include those values as <code class="docutils literal"><span class="pre">--insecure-registry</span></code> parameters to the Docker daemon startup command on each host. The –insecure-registry option instructs the Docker daemon to trust any Docker registry on the indicated subnet, rather than requiring a certificate.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">...</span>
+<p>The Agave Platform installer will also install and configure the Docker daemon on the hosts. Only trusted registries are enabled by default. If you will be pulling images from a registry with a self-signed cert, or cert signed by an untrusted CA, you should add the ip address or subnet of any insecure registries you plan to use to the <code class="docutils literal notranslate"><span class="pre">docker_insecure_registries</span></code> list variable in your inventory file. This will tell the installer to include those values as <code class="docutils literal notranslate"><span class="pre">--insecure-registry</span></code> parameters to the Docker daemon startup command on each host. The –insecure-registry option instructs the Docker daemon to trust any Docker registry on the indicated subnet, rather than requiring a certificate.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
 
 <span class="p">[</span><span class="n">agave</span><span class="p">:</span><span class="nb">vars</span><span class="p">]</span>
 
@@ -250,10 +250,10 @@ Do not use a password.</p>
 </div>
 <div class="section" id="managing-container-logs">
 <h2>Managing Container Logs<a class="headerlink" href="#managing-container-logs" title="Permalink to this headline">¶</a></h2>
-<p>The Agave Platform installer will configure Docker to use the <code class="docutils literal"><span class="pre">json-file</span></code> logging driver by default. You can manage this by configuring Docker’s <a class="reference external" href="https://docs.docker.com/config/containers/logging/json-file/">json-file</a> logging driver to restrict the max log file size to 5MB and a maximum of 5 files.</p>
+<p>The Agave Platform installer will configure Docker to use the <code class="docutils literal notranslate"><span class="pre">json-file</span></code> logging driver by default. You can manage this by configuring Docker’s <a class="reference external" href="https://docs.docker.com/config/containers/logging/json-file/">json-file</a> logging driver to restrict the max log file size to 5MB and a maximum of 5 files.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Future versions of the installer will consolidate all logging into a <a class="reference external" href="https://www.fluentd.org">fluentd</a> forwarder running natively on the host. You will then have the option of consuming the fluentd stream in your preferred tool. Until then, logs are written to local disk and rotated via <code class="docutils literal"><span class="pre">logrotate</span></code>.</p>
+<p class="last">Future versions of the installer will consolidate all logging into a <a class="reference external" href="https://www.fluentd.org">fluentd</a> forwarder running natively on the host. You will then have the option of consuming the fluentd stream in your preferred tool. Until then, logs are written to local disk and rotated via <code class="docutils literal notranslate"><span class="pre">logrotate</span></code>.</p>
 </div>
 </div>
 </div>
@@ -278,7 +278,7 @@ Do not use a password.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Rion Dooley.
+        &copy; Copyright 2018, Rion Dooley
 
     </p>
   </div>
@@ -297,20 +297,14 @@ Do not use a password.</p>
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'0.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 

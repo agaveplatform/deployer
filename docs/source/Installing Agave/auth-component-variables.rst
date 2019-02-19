@@ -15,13 +15,13 @@ The following tables describe variables for use with the Ansible installer that 
      - string
      - | A unique id for this tenant.
        | *Note: This will be replaced by the ``agave_tenant_id``*
-       | *field in the near future. Both are currently *
+       | *field in the near future. Both are currently*
        | *required.*
    * - **agave_tenant_id**
      - string
      - | A unique id for this tenant.
        | *Note: This will be replace the ``tenant_id``*
-       | *field in the near future. Both are currently *
+       | *field in the near future. Both are currently*
        | *required.*
    * - **tenant_public_domain_or_ip**
      - string
@@ -99,6 +99,15 @@ The following tables describe variables for use with the Ansible installer that 
        | use when communicating with the core services. Use
        | ``http`` unless the auth services must communicate
        | with the core services across a firewall.
+   * - **core_api_port**
+     - int
+     - | Port on which the auth services will connect to
+       | core services proxy. Defaults to 443 or 80 depending
+       | on the value of **core_api_protocol**. This should
+       | always match the respective value of
+       | **agave_core_proxy_http_port** or
+       | **agave_core_proxy_https_port**
+       | in the core configuration section.
    * - **update_apim_core_dns**
      - bool
      - | Whether or not to update the /etc/hosts file with

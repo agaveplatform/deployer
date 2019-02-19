@@ -177,6 +177,32 @@
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>Agave is designed as a distributed, multi-tenant microservice architecture. Services run in Docker containers and  Docker containers. The platform conceptually breaks down into three logical set of components:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Component Group</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Authentication</td>
+<td>Identity and authentication services, API management,
+and higher-level administration services.</td>
+</tr>
+<tr class="row-odd"><td>Core Science APIs</td>
+<td>REST services providing the Science-as-a-Service
+capabilities to the platform such as job management,
+data movement, metadata services, app registration,
+notifications, etc.</td>
+</tr>
+<tr class="row-even"><td>Infrastructure</td>
+<td>Persistence and support services.</td>
+</tr>
+</tbody>
+</table>
 <div class="section" id="what-is-the-agave-platform-architecture">
 <h3>What Is the Agave Platform Architecture?<a class="headerlink" href="#what-is-the-agave-platform-architecture" title="Permalink to this headline">¶</a></h3>
 <p>Agave’s multi-tenant capability comes from its ability to securely serve multiple tenants from a single deployment of the platform. A tenant is a group of users, usually representing a community or organization, who share access to a common configuration of the platform. Within a tenant, IAM, data, services, documentation, and global default settings are configured for all users. Typically, a single Agave tenant will support tens to hundreds of client applications and thousands of users with no additional configuration.</p>
@@ -361,13 +387,13 @@
 <h2>Core Concepts<a class="headerlink" href="#core-concepts" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="introduction">
 <h3>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h3>
-<p>This section refers to the <code class="docutils literal"><span class="pre">deploy</span></code> directory which contains scripts and other files used for deploying components of Agave.
+<p>This section refers to the <code class="docutils literal notranslate"><span class="pre">deploy</span></code> directory which contains scripts and other files used for deploying components of Agave.
 Deployment is accomplished with Ansible playbooks; Ansible 2.0+ is required. We recommend <a href="#id2"><span class="problematic" id="id3">`installing and running from source`_</span></a>.
 (When running from source, make sure you activate the Ansible environment).</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">A docker image containing all deployment files from this repository as well as the required version of Ansible is now
-available from the docker hub. The image is <code class="docutils literal"><span class="pre">agaveplatform/deployer</span></code> and image tags correspond to tags in this repository.
+available from the docker hub. The image is <code class="docutils literal notranslate"><span class="pre">agaveplatform/deployer</span></code> and image tags correspond to tags in this repository.
 The image will be kept up to date as changes are made. We highly recommend using the image instead of trying to run from source.</p>
 </div>
 </div>
@@ -410,7 +436,7 @@ The image will be kept up to date as changes are made. We highly recommend using
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Rion Dooley.
+        &copy; Copyright 2018, Rion Dooley
 
     </p>
   </div>
@@ -429,20 +455,14 @@ The image will be kept up to date as changes are made. We highly recommend using
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'0.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 

@@ -141,6 +141,18 @@ The following tables describe variables for use with the Ansible installer that 
      - | Externally resolvable public hostname where the
        | core science API reverse proxy lives.
        | Default: api.sandbox.agaveplatform.org
+   * - **agave_core_proxy_http_port**
+     - int
+     - | Port on which the proxy will serve external http
+       | traffic. Defaults to 80. Should match the value of
+       | **core_api_port** when **core_api_protocol** is
+       | set to ``http`` in the auth component variables.
+   * - **agave_core_proxy_https_port**
+     - int
+     - | Port on which the proxy will serve external https
+       | traffic. Defaults to 443. Should match the value of
+       | **core_api_port** when **core_api_protocol** is
+       | set to ``https`` in the auth component variables.
    * - **agave_proxy_core_ip**
      - string
      - | Hostname for the core services.

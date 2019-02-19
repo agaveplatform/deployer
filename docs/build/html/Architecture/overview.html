@@ -182,6 +182,32 @@
   <div class="section" id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
 <p>Agave is designed as a distributed, multi-tenant microservice architecture. Services run in Docker containers and  Docker containers. The platform conceptually breaks down into three logical set of components:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Component Group</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Authentication</td>
+<td>Identity and authentication services, API management,
+and higher-level administration services.</td>
+</tr>
+<tr class="row-odd"><td>Core Science APIs</td>
+<td>REST services providing the Science-as-a-Service
+capabilities to the platform such as job management,
+data movement, metadata services, app registration,
+notifications, etc.</td>
+</tr>
+<tr class="row-even"><td>Infrastructure</td>
+<td>Persistence and support services.</td>
+</tr>
+</tbody>
+</table>
 <div class="section" id="what-is-the-agave-platform-architecture">
 <h2>What Is the Agave Platform Architecture?<a class="headerlink" href="#what-is-the-agave-platform-architecture" title="Permalink to this headline">¶</a></h2>
 <p>Agave’s multi-tenant capability comes from its ability to securely serve multiple tenants from a single deployment of the platform. A tenant is a group of users, usually representing a community or organization, who share access to a common configuration of the platform. Within a tenant, IAM, data, services, documentation, and global default settings are configured for all users. Typically, a single Agave tenant will support tens to hundreds of client applications and thousands of users with no additional configuration.</p>
@@ -224,7 +250,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Rion Dooley.
+        &copy; Copyright 2018, Rion Dooley
 
     </p>
   </div>
@@ -243,20 +269,14 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'0.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 

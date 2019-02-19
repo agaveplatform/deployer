@@ -15,11 +15,11 @@ Agave is designed as a distributed, multi-tenant microservice architecture. Serv
                      data movement, metadata services, app registration,
                      notifications, etc.
  Infrastructure      Persistence and support services.
-=================== ======================================
+=================== =======================================================
 
 
 What Is the Agave Platform Architecture?
-=========================================
+========================================
 
 Agave’s multi-tenant capability comes from its ability to securely serve multiple tenants from a single deployment of the platform. A tenant is a group of users, usually representing a community or organization, who share access to a common configuration of the platform. Within a tenant, IAM, data, services, documentation, and global default settings are configured for all users. Typically, a single Agave tenant will support tens to hundreds of client applications and thousands of users with no additional configuration.
 
@@ -33,7 +33,7 @@ In practice, most tenants do some capacity planning up front, then adjust their 
 
 
 How Is Agave Secured?
-=========================================
+=====================
 
 The Agave Platform authenticates users who present credentials, and then authorize them based on their role. Both developers and administrators can be authenticated via a number of means, primarily OAuth tokens and JSON Web Tokens. OAuth tokens are signed with JSON Web Algorithm RS256, which is RSA signature algorithm PKCS#1 v1.5 with SHA-256.
 

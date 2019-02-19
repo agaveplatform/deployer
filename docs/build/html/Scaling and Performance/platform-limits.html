@@ -318,7 +318,7 @@
 <div class="section" id="planning-your-environment-according-to-disk-limits">
 <h2>Planning Your Environment According to Disk Limits<a class="headerlink" href="#planning-your-environment-according-to-disk-limits" title="Permalink to this headline">¶</a></h2>
 <p>Data movement is the single largest load put on your hosts by the Science APIs. The worker containers use a local scratch space on disk for smaller file transfers and data transformation. Ensuring that you have not oversubscribed the available host disk is critical to avoid accidentally filling up the file system and locking the host.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">total_number_of_data_container</span> <span class="o">=</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">total_number_of_data_container</span> <span class="o">=</span>
      <span class="p">((</span><span class="n">agave_core_transforms_max_staging_tasks</span> <span class="o">+</span> <span class="n">agave_core_transforms_max_transform_tasks</span><span class="p">)</span> <span class="o">*</span> <span class="n">transform_worker_container_count</span><span class="p">)</span> <span class="o">+</span>
      <span class="p">((</span><span class="n">agave_core_apps_max_cloning_tasks</span> <span class="o">+</span> <span class="n">agave_core_apps_max_publishing_tasks</span><span class="p">)</span> <span class="o">*</span> <span class="n">app_worker_container_count</span><span class="p">)</span> <span class="o">+</span>
      <span class="p">((</span><span class="n">agave_core_files_max_transform_tasks</span> <span class="o">+</span> <span class="n">agave_core_files_max_staging_tasks</span><span class="p">)</span> <span class="o">*</span> <span class="n">file_worker_container_count</span><span class="p">)</span> <span class="o">+</span>
@@ -326,7 +326,7 @@
 </pre></div>
 </div>
 <p>The minimum scratch disk (GB) needed is then calculated as the number of containers that could potentially be concurrently copying data plus a 20% buffer.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">total_scratch_disk</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_number_of_data_container</span> <span class="o">*</span> <span class="n">agave_core_max_relay_transfer_size</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.2</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">total_scratch_disk</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_number_of_data_container</span> <span class="o">*</span> <span class="n">agave_core_max_relay_transfer_size</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.2</span>
 </pre></div>
 </div>
 </div>
@@ -334,7 +334,7 @@
 <h2>Planning Your Environment According to Memory Limits<a class="headerlink" href="#planning-your-environment-according-to-memory-limits" title="Permalink to this headline">¶</a></h2>
 <p>Similarly, for larger file operations, Agave performs data transfers in memory using streaming buffers. This initially creates a large memory overhead per transfer thread. The JVM within a container may not have an accurate picture of the available disk or memory on the host prior to accepting a transfer request, so deadlock, out of memory exceptions, and container crash and restart are possible. While all tasks will be rolled back and picked up by another container or by the original container upon restart, the time and resources originally spent transferring the data are lost. If for no other reason than efficiency, it is best to avoid oversubscribing the backend workers and ensure they have ample disk, memory, and cpu available to operate with a cushion.</p>
 <p>Using the values from the <a class="reference internal" href="#science-api-backend-worker-components">Science API Backend Worker Components</a> section, we can calculate the memory we will need for a worker host.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">minimum_worker_container_memory_mb</span> <span class="o">=</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">minimum_worker_container_memory_mb</span> <span class="o">=</span>
      <span class="p">((</span> <span class="n">agave_core_transforms_max_staging_tasks</span> <span class="o">+</span> <span class="n">agave_core_transforms_max_transform_tasks</span> <span class="p">)</span> <span class="o">*</span> <span class="n">transform_worker_container_count</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span> <span class="o">+</span>
      <span class="p">((</span> <span class="n">agave_core_apps_max_cloning_tasks</span> <span class="o">+</span> <span class="n">agave_core_apps_max_publishing_tasks</span> <span class="p">)</span> <span class="o">*</span> <span class="n">app_worker_container_count</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span> <span class="o">+</span>
      <span class="p">((</span> <span class="n">agave_core_files_max_transform_tasks</span> <span class="o">+</span> <span class="n">agave_core_files_max_staging_tasks</span> <span class="p">)</span> <span class="o">*</span> <span class="n">file_worker_container_count</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span> <span class="o">+</span>
@@ -345,7 +345,7 @@
 </pre></div>
 </div>
 <p>We then need to calculate the base memory footprint for each worker container:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">base_worker_container_memory_footprint_mb</span> <span class="o">=</span> <span class="p">(</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">base_worker_container_memory_footprint_mb</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">transform_worker_container_count</span> <span class="o">+</span>
     <span class="n">app_worker_container_count</span> <span class="o">+</span>
     <span class="n">file_worker_container_count</span> <span class="o">+</span>
@@ -355,7 +355,7 @@
 </pre></div>
 </div>
 <p>The minimum memory (GB) needed is then calculated as the number of containers that could potentially be concurrently copying data plus a 20% buffer.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">base_worker_container_footprint</span> <span class="o">=</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">base_worker_container_footprint</span> <span class="o">=</span>
     <span class="p">(</span><span class="n">minimum_worker_container_memory_mb</span> <span class="o">+</span> <span class="n">base_worker_container_memory_footprint_mb</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1024</span>
 </pre></div>
 </div>
@@ -364,7 +364,7 @@
 <p class="last">This should be recomputed for each host based on the configuration for that particular host.</p>
 </div>
 <p><strong>Example</strong>: Calculating worker host memory from the <a class="reference external" href="../Getting%20Started/sandbox.html">Setting up a Sandbox</a> quickstart guide.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">agave_core_transforms_max_staging_tasks</span> <span class="o">=</span> <span class="mi">1</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">agave_core_transforms_max_staging_tasks</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="gp">... </span><span class="n">agave_core_transforms_max_transform_tasks</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="gp">... </span><span class="n">transform_worker_container_count</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="gp">... </span><span class="n">agave_core_apps_max_cloning_tasks</span> <span class="o">=</span> <span class="mi">1</span>
@@ -393,7 +393,7 @@
 <div class="section" id="planning-your-environment-according-to-cpu-limits">
 <h2>Planning Your Environment According to CPU Limits<a class="headerlink" href="#planning-your-environment-according-to-cpu-limits" title="Permalink to this headline">¶</a></h2>
 <p>If your data transfer operations will include compression or be domiated by the use of protocols requiring encryption (SFTP, FTPS, HTTPS, etc.), then CPU load should also be taken into consideration when planning your environment. We can again use the values from the <a class="reference internal" href="#science-api-backend-worker-components">Science API Backend Worker Components</a> section to calculate the CPU count needed for a worker host.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">minimum_worker_container_cores</span> <span class="o">=</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">minimum_worker_container_cores</span> <span class="o">=</span>
      <span class="p">((</span> <span class="n">agave_core_transforms_max_staging_tasks</span> <span class="o">+</span> <span class="n">agave_core_transforms_max_transform_tasks</span> <span class="p">)</span> <span class="o">*</span> <span class="n">transform_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span>
      <span class="p">((</span> <span class="n">agave_core_apps_max_cloning_tasks</span> <span class="o">+</span> <span class="n">agave_core_apps_max_publishing_tasks</span> <span class="p">)</span> <span class="o">*</span> <span class="n">app_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span>
      <span class="p">((</span> <span class="n">agave_core_files_max_transform_tasks</span> <span class="o">+</span> <span class="n">agave_core_files_max_staging_tasks</span> <span class="p">)</span> <span class="o">*</span> <span class="n">file_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span>
@@ -403,12 +403,12 @@
      <span class="p">(</span> <span class="n">agave_core_monitors_max_tasks</span> <span class="o">*</span> <span class="n">monitors_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span> <span class="p">)</span>
 </pre></div>
 </div>
-<p>The minimum core count needed is then calculated as the <code class="docutils literal"><span class="pre">minimum_worker_container_cores</span></code> plus an overhead for system services.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">minimum_worker_host_cores</span> <span class="o">=</span> <span class="n">minimum_worker_container_cores</span> <span class="o">+</span> <span class="mf">1.5</span>
+<p>The minimum core count needed is then calculated as the <code class="docutils literal notranslate"><span class="pre">minimum_worker_container_cores</span></code> plus an overhead for system services.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">minimum_worker_host_cores</span> <span class="o">=</span> <span class="n">minimum_worker_container_cores</span> <span class="o">+</span> <span class="mf">1.5</span>
 </pre></div>
 </div>
 <p><strong>Example:</strong> Calculating worker host core count from the <a class="reference external" href="../Getting%20Started/sandbox.html">Setting up a Sandbox</a> quickstart guide.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">minimum_worker_container_cores</span> <span class="o">=</span> <span class="p">((</span> <span class="n">agave_core_transforms_max_staging_tasks</span> <span class="o">+</span> <span class="n">agave_core_transforms_max_transform_tasks</span> <span class="p">)</span> <span class="o">*</span> <span class="n">transform_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span> <span class="n">agave_core_apps_max_cloning_tasks</span> <span class="o">+</span> <span class="n">agave_core_apps_max_publishing_tasks</span> <span class="p">)</span> <span class="o">*</span> <span class="n">app_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span> <span class="n">agave_core_files_max_transform_tasks</span> <span class="o">+</span> <span class="n">agave_core_files_max_staging_tasks</span> <span class="p">)</span> <span class="o">*</span> <span class="n">file_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span>  <span class="o">+</span> <span class="p">((</span> <span class="n">agave_core_job_max_submission_tasks</span> <span class="o">+</span> <span class="n">agave_core_job_max_archiving_tasks</span> <span class="o">+</span> <span class="n">agave_core_job_max_staging_tasks</span> <span class="p">)</span> <span class="o">*</span> <span class="n">job_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span> <span class="n">agave_core_job_max_monitoring_tasks</span> <span class="o">*</span> <span class="n">job_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">25</span> <span class="p">)</span> <span class="o">+</span> <span class="p">(</span> <span class="n">agave_core_notifications_max_notification_tasks</span> <span class="o">*</span> <span class="n">notifications_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">25</span> <span class="p">)</span> <span class="o">+</span> <span class="p">(</span> <span class="n">agave_core_monitors_max_tasks</span> <span class="o">*</span> <span class="n">monitors_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span> <span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">minimum_worker_container_cores</span> <span class="o">=</span> <span class="p">((</span> <span class="n">agave_core_transforms_max_staging_tasks</span> <span class="o">+</span> <span class="n">agave_core_transforms_max_transform_tasks</span> <span class="p">)</span> <span class="o">*</span> <span class="n">transform_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span> <span class="n">agave_core_apps_max_cloning_tasks</span> <span class="o">+</span> <span class="n">agave_core_apps_max_publishing_tasks</span> <span class="p">)</span> <span class="o">*</span> <span class="n">app_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span> <span class="n">agave_core_files_max_transform_tasks</span> <span class="o">+</span> <span class="n">agave_core_files_max_staging_tasks</span> <span class="p">)</span> <span class="o">*</span> <span class="n">file_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span>  <span class="o">+</span> <span class="p">((</span> <span class="n">agave_core_job_max_submission_tasks</span> <span class="o">+</span> <span class="n">agave_core_job_max_archiving_tasks</span> <span class="o">+</span> <span class="n">agave_core_job_max_staging_tasks</span> <span class="p">)</span> <span class="o">*</span> <span class="n">job_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span> <span class="n">agave_core_job_max_monitoring_tasks</span> <span class="o">*</span> <span class="n">job_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">25</span> <span class="p">)</span> <span class="o">+</span> <span class="p">(</span> <span class="n">agave_core_notifications_max_notification_tasks</span> <span class="o">*</span> <span class="n">notifications_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">25</span> <span class="p">)</span> <span class="o">+</span> <span class="p">(</span> <span class="n">agave_core_monitors_max_tasks</span> <span class="o">*</span> <span class="n">monitors_worker_container_count</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span> <span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">minimum_worker_container_cores</span><span class="p">,</span> <span class="s2">&quot; cores&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 <span class="go">11.25 cores</span>
 </pre></div>
@@ -431,7 +431,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Rion Dooley.
+        &copy; Copyright 2018, Rion Dooley
 
     </p>
   </div>
@@ -450,20 +450,14 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'0.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 

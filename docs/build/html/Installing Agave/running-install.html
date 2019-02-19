@@ -211,13 +211,13 @@
 <div class="section" id="running-the-installation-playbooks">
 <h2>Running the Installation Playbooks<a class="headerlink" href="#running-the-installation-playbooks" title="Permalink to this headline">¶</a></h2>
 <p>The installer uses modularized playbooks allowing administrators to install specific components as needed. By breaking up the roles and playbooks, there is better targeting of ad hoc administration tasks. This results in an increased level of control during installations and results in time savings. The playbooks and their ordering are detailed below in <a class="reference internal" href="#running-individual-component-playbooks">Running Individual Component Playbooks</a>.</p>
-<p>After you have <a class="reference external" href="./configuring-your-inventory-file.html#configuring-ansible">configured Ansible</a> by defining an inventory file in <code class="docutils literal"><span class="pre">/etc/ansible/hosts</span></code>, run the installation playbook via Ansible using either the native <code class="docutils literal"><span class="pre">ansible-playbook`</span></code> command or containerized installer.</p>
+<p>After you have <a class="reference external" href="./configuring-your-inventory-file.html#configuring-ansible">configured Ansible</a> by defining an inventory file in <code class="docutils literal notranslate"><span class="pre">/etc/ansible/hosts</span></code>, run the installation playbook via Ansible using either the native <code class="docutils literal notranslate"><span class="pre">ansible-playbook`</span></code> command or containerized installer.</p>
 <div class="admonition danger">
 <p class="first admonition-title">Danger</p>
 <p class="last">Do not run Agave Platform playbooks under nohup. Using nohup with the playbooks causes file descriptors to be created and not closed. Therefore, the system can run out of files to open and the playbook will fail.</p>
 </div>
-<p>To run the Agave Platform installerm, run the <code class="docutils literal"><span class="pre">deploy_agave.yml</span></code> playbook to initiate the platform installation. Use the following command, specifying -i if your inventory file located somewhere other than <code class="docutils literal"><span class="pre">/etc/ansible/hosts</span></code>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># ansible-playbook [-i /path/to/inventory] \</span>
+<p>To run the Agave Platform installerm, run the <code class="docutils literal notranslate"><span class="pre">deploy_agave.yml</span></code> playbook to initiate the platform installation. Use the following command, specifying -i if your inventory file located somewhere other than <code class="docutils literal notranslate"><span class="pre">/etc/ansible/hosts</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># ansible-playbook [-i /path/to/inventory] \</span>
     <span class="o">~/</span><span class="n">agave</span><span class="o">-</span><span class="n">deployer</span><span class="o">/</span><span class="n">deploy</span><span class="o">/</span><span class="n">deploy_agave</span><span class="o">.</span><span class="n">yml</span>
 </pre></div>
 </div>
@@ -226,9 +226,9 @@
 </div>
 <div class="section" id="running-individual-component-playbooks">
 <h2>Running Individual Component Playbooks<a class="headerlink" href="#running-individual-component-playbooks" title="Permalink to this headline">¶</a></h2>
-<p>The main installation playbook <code class="docutils literal"><span class="pre">~/agave-deployer/deploy/deploy_agave.yml</span></code> runs a set of individual component playbooks in a specific order, and the installer reports back at the end what phases you have gone through. If the installation fails during a phase, you are notified on the screen along with the errors from the Ansible run.</p>
+<p>The main installation playbook <code class="docutils literal notranslate"><span class="pre">~/agave-deployer/deploy/deploy_agave.yml</span></code> runs a set of individual component playbooks in a specific order, and the installer reports back at the end what phases you have gone through. If the installation fails during a phase, you are notified on the screen along with the errors from the Ansible run.</p>
 <p>After you resolve the issue, rather than run the entire installation over again, you can pick up from the failed phase. You must then run each of the remaining playbooks in order:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># ansible-playbook [-i /path/to/inventory] &lt;playbook_file_location&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># ansible-playbook [-i /path/to/inventory] &lt;playbook_file_location&gt;</span>
 </pre></div>
 </div>
 <p>The following table is sorted in order of when each individual component playbook is run:</p>
@@ -283,9 +283,9 @@
 </div>
 <div class="section" id="run-postman-tests">
 <h3>Run Postman Tests<a class="headerlink" href="#run-postman-tests" title="Permalink to this headline">¶</a></h3>
-<p>A suite of Postman tests is bundled with the installer. Before running them, you should add another group to your inventory file containing <code class="docutils literal"><span class="pre">localhost</span></code> and customizing any of the Postman test variables you see fit.</p>
+<p>A suite of Postman tests is bundled with the installer. Before running them, you should add another group to your inventory file containing <code class="docutils literal notranslate"><span class="pre">localhost</span></code> and customizing any of the Postman test variables you see fit.</p>
 <p>An example inventory file with the Postman config is given below:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">postman</span><span class="p">:</span><span class="nb">vars</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">postman</span><span class="p">:</span><span class="nb">vars</span><span class="p">]</span>
 
 <span class="c1"># The hostname or ip of the linux server the newman tests will</span>
 <span class="c1"># register with Agave and use to run all data and compute tests</span>
@@ -314,12 +314,12 @@
 <span class="n">localhost</span> <span class="n">ansible_connection</span><span class="o">=</span><span class="n">local</span>
 </pre></div>
 </div>
-<p>Once you have updated your inventory file, you can run the tests by invoking the <code class="docutils literal"><span class="pre">~/agave-deployer/deploy/run_postman.plbk</span></code> playbook.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># ansible-playbook [-i /path/to/inventory] \</span>
+<p>Once you have updated your inventory file, you can run the tests by invoking the <code class="docutils literal notranslate"><span class="pre">~/agave-deployer/deploy/run_postman.plbk</span></code> playbook.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># ansible-playbook [-i /path/to/inventory] \</span>
     <span class="o">~/</span><span class="n">agave</span><span class="o">-</span><span class="n">deployer</span><span class="o">/</span><span class="n">deploy</span><span class="o">/</span><span class="n">run_postman</span><span class="o">.</span><span class="n">plbk</span> <span class="o">-</span><span class="n">l</span> <span class="n">postman</span>
 </pre></div>
 </div>
-<p>Once the tests complete, you will see a tabular output of the results printed to stdout. Reports in XML, JSON, and HTML are also available in the <code class="docutils literal"><span class="pre">~/agave-deployer/deploy/tmp/agave*/reports</span></code> folder.</p>
+<p>Once the tests complete, you will see a tabular output of the results printed to stdout. Reports in XML, JSON, and HTML are also available in the <code class="docutils literal notranslate"><span class="pre">~/agave-deployer/deploy/tmp/agave*/reports</span></code> folder.</p>
 </div>
 </div>
 <div class="section" id="uninstalling-the-agave-platform">
@@ -335,7 +335,7 @@
 <li>Service user home directory</li>
 </ul>
 <p>The playbook will delete content for any hosts defined in the inventory file that you specify when running the playbook. If you want to uninstall the Agave Platfrom across all hosts in your deployment, run the playbook using the inventory file you used when installing Agave initially or ran most recently:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># ansible-playbook [-i /path/to/inventory] \</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># ansible-playbook [-i /path/to/inventory] \</span>
     <span class="o">~/</span><span class="n">agave</span><span class="o">-</span><span class="n">deployer</span><span class="o">/</span><span class="n">deploy</span><span class="o">/</span><span class="n">docker_cleanup</span><span class="o">.</span><span class="n">plbk</span>
 </pre></div>
 </div>
@@ -367,7 +367,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Rion Dooley.
+        &copy; Copyright 2018, Rion Dooley
 
     </p>
   </div>
@@ -386,20 +386,14 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'0.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 

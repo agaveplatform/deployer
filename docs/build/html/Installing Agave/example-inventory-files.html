@@ -106,6 +106,7 @@
 <li class="toctree-l1"><a class="reference internal" href="configuring-your-inventory-file.html">Customizing Inventory Files</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Example Inventory Files</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#sandbox-installations">Sandbox Installations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#single-host">Single Host</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#single-auth-single-core-and-single-persistence">Single Auth, Single Core, and Single Persistence</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#single-auth-multiple-core-and-single-persistence">Single Auth, Multiple Core, and Single Persistence</a></li>
 </ul>
@@ -190,12 +191,89 @@
 <p>After getting to know the basics of configuring your own inventory file, you can review the following example inventories which describe various environment topographies, including using multiple core hosts for higher capacity. You can choose an example that matches your requirements, modify it to match your own environment, and use it as your inventory file when running the installation.</p>
 <div class="section" id="sandbox-installations">
 <h2>Sandbox Installations<a class="headerlink" href="#sandbox-installations" title="Permalink to this headline">¶</a></h2>
-<p>You can configure an environment with single Auth, Persistence, and either single or multiple Core hosts.</p>
+<p>You can configure a sandbox environment with 1 or more hosts.</p>
+<div class="section" id="single-host">
+<h3>Single Host<a class="headerlink" href="#single-host" title="Permalink to this headline">¶</a></h3>
+<p>The following table describes an example environment for a single host deployment:</p>
+<table border="1" class="colwidths-given docutils" id="id1">
+<caption><span class="caption-text">Simple 1 host setup with each logical component group deployed on the same dedicated host.</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="40%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Host Name</th>
+<th class="head">Infrastructure Component to Install</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>sandbox.example.com</td>
+<td><div class="first last line-block">
+<div class="line">All Auth, Core, and Persistence components</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>You can see the same host present in the <code class="docutils literal notranslate"><span class="pre">[auth]</span></code>, <code class="docutils literal notranslate"><span class="pre">[core]</span></code>, and <code class="docutils literal notranslate"><span class="pre">[db]</span></code> sections of the following example inventory file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="nb">all</span><span class="p">]</span>
+<span class="n">sandbox</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span> <span class="n">ansible_ssh_host</span><span class="o">=</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">205.5</span>
+
+            <span class="c1"># General settings to apply to all playbooks.</span>
+<span class="p">[</span><span class="nb">all</span><span class="p">:</span><span class="nb">vars</span><span class="p">]</span>
+
+<span class="c1"># the name of your tenant.</span>
+<span class="n">tenant_id</span><span class="o">=</span><span class="n">sandbox</span>
+<span class="n">agave_tenant_id</span><span class="o">=</span><span class="n">sandbox</span>
+
+<span class="c1"># the public hostname or ip of your installation</span>
+<span class="n">tenant_public_domain_or_ip</span><span class="o">=</span><span class="n">sandbox</span><span class="o">.</span><span class="n">agaveplatform</span><span class="o">.</span><span class="n">org</span>
+
+<span class="c1"># The name of the core service config file to read in.</span>
+<span class="n">core_config_file</span><span class="o">=</span><span class="n">sandbox</span>
+
+<span class="c1"># Create a agave group that contains the auth, core, and db groups</span>
+<span class="p">[</span><span class="n">agave</span><span class="p">:</span><span class="nb">vars</span><span class="p">]</span>
+
+<span class="c1"># SSH user, this user should allow ssh based auth without requiring a password</span>
+<span class="n">ansible_ssh_user</span><span class="o">=</span><span class="n">root</span>
+
+<span class="p">[</span><span class="n">agave</span><span class="p">:</span><span class="n">children</span><span class="p">]</span>
+<span class="n">db</span>
+<span class="n">auth</span>
+<span class="n">core</span>
+
+<span class="p">[</span><span class="n">db</span><span class="p">]</span>
+<span class="n">sandbox</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span>
+
+<span class="p">[</span><span class="n">auth</span><span class="p">]</span>
+<span class="n">sandbox</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span>
+
+<span class="p">[</span><span class="n">core</span><span class="p">]</span>
+<span class="c1"># This group will host the science apis and should have at least 4 cores, 16GB memory, and 80GB disk. The following</span>
+<span class="c1"># configuration caps the memory on individual core api containers and limits the number of workers tasks per</span>
+<span class="c1"># container to relatively modest counts. This is not a production configuration. You should seriously consider</span>
+<span class="c1"># splitting the worker and core services out over multiple hosts, or provisioning a server with at least 16 cores</span>
+<span class="c1"># and 64GB memory for any significant traffic or data movement.</span>
+<span class="n">sandbox</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span> <span class="n">agave_core_tenants_mem_limit</span><span class="o">=</span><span class="mi">128</span><span class="n">m</span> <span class="n">agave_core_logging_mem_limit</span><span class="o">=</span><span class="mi">256</span><span class="n">m</span> <span class="n">agave_core_docs_mem_limit</span><span class="o">=</span><span class="mi">128</span><span class="n">m</span> <span class="n">agave_core_uuids_mem_limit</span><span class="o">=</span><span class="mi">1024</span><span class="n">m</span> <span class="n">agave_core_tags_mem_limit</span><span class="o">=</span><span class="mi">1024</span><span class="n">m</span> <span class="n">core_deploy_realtime</span><span class="o">=</span><span class="kc">False</span> <span class="n">agave_core_realtime_mem_limit</span><span class="o">=</span><span class="mi">512</span><span class="n">m</span> <span class="n">agave_core_metadata_mem_limit</span><span class="o">=</span><span class="mi">1024</span><span class="n">m</span> <span class="n">agave_core_monitors_mem_limit</span><span class="o">=</span><span class="mi">1024</span><span class="n">m</span> <span class="n">agave_core_systems_mem_limit</span><span class="o">=</span><span class="mi">1024</span><span class="n">m</span> <span class="n">agave_core_apps_mem_limit</span><span class="o">=</span><span class="mi">1024</span><span class="n">m</span> <span class="n">agave_core_notifications_mem_limit</span><span class="o">=</span><span class="mi">1024</span><span class="n">m</span> <span class="n">agave_core_job_max_submission_task</span><span class="o">=</span><span class="mi">1</span> <span class="n">agave_core_job_max_staging_tasks</span><span class="o">=</span><span class="mi">3</span> <span class="n">agave_core_job_max_archiving_tasks</span><span class="o">=</span><span class="mi">2</span> <span class="n">agave_core_job_max_monitoring_tasks</span><span class="o">=</span><span class="mi">1</span> <span class="n">agave_core_files_max_staging_tasks</span><span class="o">=</span><span class="mi">2</span> <span class="n">agave_core_files_max_transform_tasks</span><span class="o">=</span><span class="mi">1</span> <span class="n">core_deploy_monitors</span><span class="o">=</span><span class="kc">False</span> <span class="n">core_deploy_notifications</span><span class="o">=</span><span class="kc">False</span> <span class="n">core_deploy_transforms</span><span class="o">=</span><span class="kc">False</span> <span class="n">agave_core_jobs_mem_limit</span><span class="o">=</span><span class="mi">4096</span><span class="n">m</span> <span class="n">agave_core_files_mem_limit</span><span class="o">=</span><span class="mi">4096</span><span class="n">m</span>
+</pre></div>
+</div>
+<p>To use this example, modify the file to match your environment and specifications, and save it as /etc/ansible/hosts. When deploying all components to the same host, the core components proxy need to be run on an alternate port to avoid conflict. These can be set in the two <cite>sandbox.yml</cite> variable files or as extra vars when invoking the playbook.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="n">deploy_agave</span><span class="o">.</span><span class="n">plbk</span> \
+    <span class="o">--</span><span class="n">become</span> \
+    <span class="o">-</span><span class="n">i</span> <span class="n">host_vars</span><span class="o">/</span><span class="n">vagrant_single_host</span>
+    <span class="o">-</span><span class="n">e</span> <span class="n">core_api_port</span><span class="o">=</span><span class="mi">8080</span> \
+    <span class="o">-</span><span class="n">e</span> <span class="n">agave_core_proxy_http_port</span><span class="o">=</span><span class="mi">8080</span> \
+    <span class="o">-</span><span class="n">e</span> <span class="n">agave_core_proxy_https_port</span><span class="o">=</span><span class="mi">8443</span> \
+    <span class="o">-</span><span class="n">e</span> <span class="n">agave_core_iplant_proxy_service</span><span class="o">=</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">149.165</span><span class="o">.</span><span class="mf">157.217</span><span class="p">:</span><span class="mi">8080</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="single-auth-single-core-and-single-persistence">
 <h3>Single Auth, Single Core, and Single Persistence<a class="headerlink" href="#single-auth-single-core-and-single-persistence" title="Permalink to this headline">¶</a></h3>
 <p>The following table describes an example environment for a single Auth, single Core, and single Persistence host:</p>
-<table border="1" class="colwidths-given docutils" id="id1">
-<caption><span class="caption-text">Simple 3 host setup with each logical component group deployed on a dedicated host.</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<table border="1" class="colwidths-given docutils" id="id2">
+<caption><span class="caption-text">Simple 3 host setup with each logical component group deployed on a dedicated host.</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
 <colgroup>
 <col width="40%" />
 <col width="60%" />
@@ -226,8 +304,8 @@
 </tr>
 </tbody>
 </table>
-<p>You can see these example hosts present in the <code class="docutils literal"><span class="pre">[auth]</span></code>, <code class="docutils literal"><span class="pre">[core]</span></code>, and <code class="docutils literal"><span class="pre">[db]</span></code> sections of the following example inventory file:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># General settings to apply to all playbooks.</span>
+<p>You can see these example hosts present in the <code class="docutils literal notranslate"><span class="pre">[auth]</span></code>, <code class="docutils literal notranslate"><span class="pre">[core]</span></code>, and <code class="docutils literal notranslate"><span class="pre">[db]</span></code> sections of the following example inventory file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># General settings to apply to all playbooks.</span>
 <span class="p">[</span><span class="nb">all</span><span class="p">:</span><span class="nb">vars</span><span class="p">]</span>
 
 <span class="c1"># the name of your tenant.</span>
@@ -270,8 +348,8 @@
 <div class="section" id="single-auth-multiple-core-and-single-persistence">
 <h3>Single Auth, Multiple Core, and Single Persistence<a class="headerlink" href="#single-auth-multiple-core-and-single-persistence" title="Permalink to this headline">¶</a></h3>
 <p>The following table describes an example environment for a single Auth, single Core, and single Persistence host:</p>
-<table border="1" class="colwidths-given docutils" id="id2">
-<caption><span class="caption-text">Simple 3 host setup with each logical component group deployed on a dedicated host.</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<table border="1" class="colwidths-given docutils" id="id3">
+<caption><span class="caption-text">Simple 3 host setup with each logical component group deployed on a dedicated host.</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
 <colgroup>
 <col width="40%" />
 <col width="60%" />
@@ -308,8 +386,8 @@
 </tr>
 </tbody>
 </table>
-<p>You can see these example hosts present in the <code class="docutils literal"><span class="pre">[auth]</span></code>, <code class="docutils literal"><span class="pre">[core]</span></code>, and <code class="docutils literal"><span class="pre">[db]</span></code> sections of the following example inventory file:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># General settings to apply to all playbooks.</span>
+<p>You can see these example hosts present in the <code class="docutils literal notranslate"><span class="pre">[auth]</span></code>, <code class="docutils literal notranslate"><span class="pre">[core]</span></code>, and <code class="docutils literal notranslate"><span class="pre">[db]</span></code> sections of the following example inventory file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># General settings to apply to all playbooks.</span>
 <span class="p">[</span><span class="nb">all</span><span class="p">:</span><span class="nb">vars</span><span class="p">]</span>
 
 <span class="c1"># the name of your tenant.</span>
@@ -364,8 +442,8 @@
 <div class="section" id="single-auth-multiple-core-and-cloud-hosted-persistence">
 <h3>Single Auth, Multiple Core, and Cloud Hosted Persistence<a class="headerlink" href="#single-auth-multiple-core-and-cloud-hosted-persistence" title="Permalink to this headline">¶</a></h3>
 <p>The following table describes an example environment for a single Auth and multiple Core hosts supporting workers for specific power users. Persistence is delgated to cloud hosted services.</p>
-<table border="1" class="colwidths-given docutils" id="id3">
-<caption><span class="caption-text">Custom 4 host setup with cloud hosted persistence.</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
+<table border="1" class="colwidths-given docutils" id="id4">
+<caption><span class="caption-text">Custom 4 host setup with cloud hosted persistence.</span><a class="headerlink" href="#id4" title="Permalink to this table">¶</a></caption>
 <colgroup>
 <col width="40%" />
 <col width="60%" />
@@ -408,8 +486,8 @@
 </tr>
 </tbody>
 </table>
-<p>You can see these example hosts present in the <code class="docutils literal"><span class="pre">[auth]</span></code>, <code class="docutils literal"><span class="pre">[core_api]</span></code>, and <code class="docutils literal"><span class="pre">[core_workers]</span></code> sections of the following example inventory file. Note that we have switched from the traditional INI syntax to YAML to make adding multiple host variables more legible.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span># General settings to apply to all playbooks.
+<p>You can see these example hosts present in the <code class="docutils literal notranslate"><span class="pre">[auth]</span></code>, <code class="docutils literal notranslate"><span class="pre">[core_api]</span></code>, and <code class="docutils literal notranslate"><span class="pre">[core_workers]</span></code> sections of the following example inventory file. Note that we have switched from the traditional INI syntax to YAML to make adding multiple host variables more legible.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># General settings to apply to all playbooks.
 all:
   vars:
     # the name of your tenant.
@@ -615,7 +693,7 @@ all:
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Rion Dooley.
+        &copy; Copyright 2018, Rion Dooley
 
     </p>
   </div>
@@ -634,20 +712,14 @@ all:
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'0.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 

@@ -403,7 +403,7 @@ In a production environment, the size of the persistence host depends on the req
 <div class="section" id="dns-requirements">
 <h3>DNS Requirements<a class="headerlink" href="#dns-requirements" title="Permalink to this headline">¶</a></h3>
 <p>The Agave Platform requires a publicly resolvable hostnames for each host. Within the platform, this can be managed through the setting of <cite>/etc/hosts</cite> files on the hosts. For production environments, valid DNS entries for each host should be created and included in the inventory files.</p>
-<p>By default, containers receive their DNS configuration file (/etc/resolv.conf) from their host. For the Science API data services and workers, passive communication channels often need to be configured to complete file operations. In these cases it it important that the host has a publicly resolvable ip address that the container knows about and can be accessed from the outside world. For this reason, the inventory files should include the ip of the host rather than hostname as the value of each host’s <code class="docutils literal"><span class="pre">ansible_ssh_host</span></code> variable.</p>
+<p>By default, containers receive their DNS configuration file (/etc/resolv.conf) from their host. For the Science API data services and workers, passive communication channels often need to be configured to complete file operations. In these cases it it important that the host has a publicly resolvable ip address that the container knows about and can be accessed from the outside world. For this reason, the inventory files should include the ip of the host rather than hostname as the value of each host’s <code class="docutils literal notranslate"><span class="pre">ansible_ssh_host</span></code> variable.</p>
 <p>If you do not have a properly functioning DNS environment, you could experience failure with:</p>
 <ul class="simple">
 <li>Installation via the reference Ansible-based scripts</li>
@@ -738,7 +738,7 @@ In a production environment, the size of the persistence host depends on the req
 <p>There are certain aspects to take into consideration if installing OpenShift Origin on a cloud provider. Consult the respective could provider security group documentation for more information on how to configure the above port ranges for access in your environment.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">For OpenStack deployments, the <code class="docutils literal"><span class="pre">os_create_hosts.plbk</span></code> playbook will configure the appropriate security groups for you.</p>
+<p class="last">For OpenStack deployments, the <code class="docutils literal notranslate"><span class="pre">os_create_hosts.plbk</span></code> playbook will configure the appropriate security groups for you.</p>
 </div>
 </div>
 </div>
@@ -763,7 +763,7 @@ In a production environment, the size of the persistence host depends on the req
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Rion Dooley.
+        &copy; Copyright 2018, Rion Dooley
 
     </p>
   </div>
@@ -782,20 +782,14 @@ In a production environment, the size of the persistence host depends on the req
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'0.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 

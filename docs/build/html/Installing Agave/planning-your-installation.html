@@ -210,7 +210,7 @@
 <li>What are the nature and duration of the computation you intend to run through Agave? The <a class="reference external" href="#sizing-considerations">Sizing Considerations</a> section provides guidelines for hosts and containers based on job throughput so you can determine how large your environment needs to be.</li>
 <li>How many hosts do you require in the cluster? The <a class="reference external" href="#environment-scenarios">Environment Scenarios</a> section provides multiple examples of Single Master and Multiple Master configurations.</li>
 <li>Is high availability (HA) for the platform or science API services required? High availability is recommended for fault tolerance. In this situation, you might aim to use the <a class="reference external" href="#multiple-auth-hosts-using-native-ha-multiple-core-service-hosts-and-clustered-persistence">Multiple Auth hosts Using Native HA, Multiple Core service hosts, and Clustered Persistence</a> example as a basis for your environment.</li>
-<li>Which identity provider do you use for authentication? If you already use a supported identity provider, it is a best practice to configure Agave's Auth components to use that identity provider during installation.</li>
+<li>Which identity provider do you use for authentication? If you already use a supported identity provider, it is a best practice to configure Agave’s Auth components to use that identity provider during installation.</li>
 </ul>
 </div>
 <div class="section" id="on-premises-versus-cloud-providers">
@@ -468,11 +468,11 @@
 </div>
 <div class="section" id="file-path-locations">
 <span id="file-path-locations"></span><h2>File Path Locations<a class="headerlink" href="#file-path-locations" title="Permalink to this headline">¶</a></h2>
-<p>All Agave Platform configuration files are placed in <code class="docutils literal"><span class="pre">/home/apim</span></code> directory during installation and will survive os upgrades. Unless logging is configuration to write to syslog, log data will be written to the <code class="docutils literal"><span class="pre">/var/log/agave</span></code> directory, and managed via the <em>logrotate</em> utility.</p>
+<p>All Agave Platform configuration files are placed in <code class="docutils literal notranslate"><span class="pre">/home/apim</span></code> directory during installation and will survive os upgrades. Unless logging is configuration to write to syslog, log data will be written to the <code class="docutils literal notranslate"><span class="pre">/var/log/agave</span></code> directory, and managed via the <em>logrotate</em> utility.</p>
 </div>
 <div class="section" id="storage-requirements">
 <span id="storage-requirements"></span><h2>Storage Requirements<a class="headerlink" href="#storage-requirements" title="Permalink to this headline">¶</a></h2>
-<p>Agave's Science APIs can, at times, cache significant data to the local disk during transfers and transformation requests. The data will be written to the <code class="docutils literal"><span class="pre">/home/apim/scratch</span></code> directory and cleaned up after each operation. Ensure that you have enough space on the root file system before deploying the Science APIs, or configure an alternative location to use as scratch space. See the System Requirements section for details.</p>
+<p>Agave’s Science APIs can, at times, cache significant data to the local disk during transfers and transformation requests. The data will be written to the <code class="docutils literal notranslate"><span class="pre">/home/apim/scratch</span></code> directory and cleaned up after each operation. Ensure that you have enough space on the root file system before deploying the Science APIs, or configure an alternative location to use as scratch space. See the System Requirements section for details.</p>
 </div>
 </div>
 
@@ -496,7 +496,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Rion Dooley.
+        &copy; Copyright 2018, Rion Dooley
 
     </p>
   </div>
@@ -515,20 +515,14 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'0.1',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 
