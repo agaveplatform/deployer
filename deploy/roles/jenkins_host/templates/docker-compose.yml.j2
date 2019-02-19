@@ -1,5 +1,5 @@
 
-version: '2'
+version: '3.2'
 
 services:
 
@@ -8,6 +8,7 @@ services:
 ################################################################
 
   traefik:
+    userns_mode: "host"
     image: traefik:latest
     hostname: {{ jenkins_hostname }}
     restart: on-failure

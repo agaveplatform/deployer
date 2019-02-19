@@ -20,14 +20,14 @@
   include_tasks: create_tls_certs.yml
 
 - name: "Pull the Docker images"
-  shell: docker-compose pull
+  shell: /usr/local/bin/docker-compose pull
   args:
     chdir: /home/apim/jenkins/traefik
   environment:
     COMPOSE_HTTP_TIMEOUT: 20000
 
 - name: "Start the reverse proxy"
-  shell: docker-compose up -d --force-recreate
+  shell: /usr/local/bin/docker-compose up -d --force-recreate
   args:
     chdir: /home/apim/jenkins/traefik
   environment:
