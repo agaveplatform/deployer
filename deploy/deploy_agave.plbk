@@ -22,7 +22,6 @@
 #
 ########################################################################
 
-
 - name: prepare each host by installing base packages
   import_playbook: docker_host.plbk
 
@@ -43,41 +42,13 @@
 - name: deploy the database containers in a single host configuration
   import_playbook: deploy_agave-dbs.plbk
 
-#- name: deploy the database containers in a single host configuration
-#  hosts: db
-#  gather_facts: no
-#
-#  roles:
-#      - agave_db_onehost
-
 # load auth data
 - name: setup logging and logrotation on the hosts
   import_playbook: load_auth_mysql.plbk
 
-#- name: init and migrate the apim db
-#  hosts: db
-#  roles:
-#      - mysql_apim
-#  vars:
-#      - env: sandbox
-#      - mysql_root_user: root
-#      - mysql_root_password: password
-#      - create_tenant_mysql_user: true
-
 # load core api migrations
 - name: initialize core science api database and run migrations on a single core host
   import_playbook: load_core_migrations.plbk
-#- name: initialize core science api database and run migrations on a single core host
-#  hosts: core[0]
-#
-#  roles:
-#      - role: agave_core_sql_migrations
-#        tags:
-#          - db
-#          - migrations
-#
-#  vars:
-#    - core_migrations_command: migrate
 
 ########################################################################
 #
@@ -89,17 +60,6 @@
 - name: deploy core science api containers
   import_playbook: deploy_core.plbk
 
-#- name: deploy core science api containers
-#  hosts: core
-#  gather_facts: no
-#
-#  roles:
-#    - role: agave_core
-##      when: (groups['core'] | length) == 1
-#      tags:
-#        - apis
-#        - core
-
 ########################################################################
 #
 #   APIM Stack
@@ -109,21 +69,6 @@
 # deploy the auth services
 - name: deploy the apim, auth, and identity services on a single host
   import_playbook: deploy_auth.plbk
-
-#- name: deploy the apim, auth, and identity services on a single host
-#  hosts: auth
-#  gather_facts: no
-#
-#  roles:
-#      - agave_auth
-#      - auth_rolling_deploy
-#      - ldap_apim
-#
-#  vars:
-#      - env: sandbox
-#      - mysql_root_user: root
-#      - mysql_root_password: password
-#      - remove_all_auth_containers: True
 
 # add default tenant admin and test users
 - name: Configuring LDAP with admin and test users
@@ -142,6 +87,7 @@
 #        tags:
 #          - admin
 #          - tests
+#
 #      - role: agave_postman
 #        tags:
 #          - postman
