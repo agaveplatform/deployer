@@ -39,14 +39,14 @@
   become: yes
   become_user: apim
 
-- name: Create ansible Mysql configuration file
-  template:
-    src: ".my.cnf.j2"
-    dest: "/home/apim/mysql_apim/.my.cnf"
-    owner: apim
-    mode: 0640
-  become: yes
-  become_user: apim
+#- name: Create ansible Mysql configuration file
+#  template:
+#    src: ".my.cnf.j2"
+#    dest: "/home/apim/mysql_apim/.my.cnf"
+#    owner: apim
+#    mode: 0640
+#  become: yes
+#  become_user: apim
 
 - name: Compile mysql load script
   template:
@@ -107,6 +107,8 @@
     state: present
     login_host: "{{ mysql_login_host }}"
     login_port: "{{ mysql_login_port }}"
+    login_user: "{{ mysql_root_user }}"
+    login_password: "{{ mysql_root_password }}"
     host: "{{ item }}"
   become: yes
   become_user: apim
