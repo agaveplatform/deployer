@@ -19,18 +19,17 @@
 # deploy the auth services
 - hosts: auth
   roles:
-      - agave_auth
-      - auth_rolling_deploy
+      - role: agave_auth
+        tags:
+          - auth
+          - config
+
+      - role: auth_rolling_deploy
+        tags:
+          - auth
+          - deploy
   vars:
       - env: sandbox
       - mysql_root_user: root
       - mysql_root_password: password
       - remove_all_auth_containers: True
-
-## add default tenant admin and test users
-#- name: Configuring LDAP with admin and test users
-#  import_playbook: load_ldap_users.plbk
-#
-## add boutique apis
-#- name: register all boutique APIs with the APIM
-#  import_playbook: register_boutique_apis.plbk
