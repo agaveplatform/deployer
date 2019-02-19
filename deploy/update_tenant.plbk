@@ -11,7 +11,7 @@
 # 5. env: the Agave environment (either 'staging' or 'prod', all lower case). This selects the correct group_vars to use.
 #
 # Example invocation:
-# $ ansible-playbook -i host_files/staging_hosts update_tenant.plbk
+# $ ansible-playbook -i host_files/sandbox_hosts update_tenant.plbk
 
 ---
 
