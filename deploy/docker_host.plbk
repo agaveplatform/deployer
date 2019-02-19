@@ -24,13 +24,21 @@
 # deploy and start containers
 - hosts: agave
   become: yes
-  become_method: sudo
-
-  roles:
-    - agave_host
-    - docker_host
 
   vars:
     - update_docker_version: True
     - update_docker_compose_version: True
     - clean_host: True
+    - disable_http_proxies: True
+
+  roles:
+    - role: agave_host
+      tags:
+        - host
+        - baseline
+
+    - role: docker_host
+      tags:
+        - docker
+        - docker-compose
+
