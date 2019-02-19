@@ -12,19 +12,19 @@
   when: etc_sudoers.stat.exists
   ignore_errors: True
 
-- name: remove apim dir
+- name: Remove apim dir
   shell: rm -rf /home/apim
   become: yes
   when: clean_host
   ignore_errors: True
 
-- name: remove ansible temp dir
+- name: Remove ansible temp dir
   shell: rm -rf /root/.ansible/tmp
   become: yes
   when: clean_host
   ignore_errors: True
 
-- name: remove containers
+- name: Remove containers
   shell: "docker ps -aq | xargs --no-run-if-empty docker rm -f"
   become: yes
   when: clean_host
@@ -108,34 +108,52 @@
   include_tasks: disable_http_proxies.yml
   when: disable_http_proxies|bool
 
-- name: give other users access to apim home directory
+- name: Give other users access to apim home directory
   file: path=/home/apim mode=0750
   become: yes
 
-- name: install jq binary
+- name: Install jq binary
   get_url:
     url: https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
     dest: /usr/local/bin/jq
     mode: 0755
   become: yes
 
-- name: add common RHEL software packages
+- name: Add common RHEL software packages
   yum: name='{{ item }}' state=present update_cache=yes
   become: yes
   when: ansible_os_family == "RedHat"
   with_items:
       - ntp
 
-- name: add common Debian software packages
+- name: Add common Debian software packages
   apt: name='{{ item }}' state=present update_cache=yes
   become: yes
   when: ansible_os_family == "Debian"
   with_items:
       - ntp
 
-
-- name: ensure services enabled
+- name: Ensure services enabled
   service: name='{{ item }}' state=started enabled=yes
   become: yes
-  with_items:
-      - ntpd
+  loop:
+  - ntpd
+
+- name: "Add {{ extra_paths }} to default system path"
+  become: yes
+  lineinfile:
+    dest: /etc/profile
+    state: present
+    create: true
+    insertbefore: '^HOSTNAME=.*'
+    line: 'pathmunge /usr/local/bin'
+  loop: "{{ extra_paths }}"
+  loop_control:
+    loop_var: extra_path
+
+#- name: add /usr/local/bin to root user path
+#  lineinfile:
+#    dest: /etc/profile.d/sh.local
+#    line: "export PATH=$PATH:/usr/local/bin"
+#    state: present
+#  become: yes

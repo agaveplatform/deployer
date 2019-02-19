@@ -1,3 +1,7 @@
 agave_linux_user_name: apim
 clean_host: False
 disable_http_proxies: True
+
+# extra paths to add to the default system environment PATH
+extra_paths:
+  - /usr/local/bin
