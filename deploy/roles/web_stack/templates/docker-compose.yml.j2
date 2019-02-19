@@ -3,6 +3,7 @@ version: '3.2'
 services:
 
   traefik:
+    userns_mode: "host"
     image: traefik
     command: --configFile=/traefik.toml
     hostname: {{ web_stack_hostname }}
@@ -26,6 +27,7 @@ services:
       - "traefik.enable=true"
 
   website:
+    userns_mode: "host"
     image: agaveapi/website:latest
     hostname: {{ web_stack_hostname }}
     restart: always
@@ -66,6 +68,7 @@ services:
       - web
 
   togo:
+    userns_mode: "host"
     image: agaveapi/agave-togo:develop
     restart: always
     hostname: togo.{{ web_stack_hostname }}
@@ -88,6 +91,7 @@ services:
       - togo
 
   jsonmirror:
+    userns_mode: "host"
     image: 'agaveapi/json-mirror:latest'
     hostname: {{ web_stack_hostname }}
     restart: always
@@ -105,6 +109,7 @@ services:
       - jsonmirror
 
   dashboard:
+    userns_mode: "host"
     image: agaveapi/stats-dashboard:latest
     hostname: {{ web_stack_hostname }}
     restart: always
@@ -125,6 +130,7 @@ services:
       - web
 
   requestbin:
+    userns_mode: "host"
     image: agaveapi/requestbin:master
     hostname: requestbin.{{ web_stack_hostname }}
     mem_limit: 512m
@@ -147,6 +153,7 @@ services:
       - proxy
   
   httpbin:
+    userns_mode: "host"
     image: agaveapi/httpbin:latest
     hostname: httpbin.{{ web_stack_hostname }}
     mem_limit: 512m
@@ -165,6 +172,7 @@ services:
 
 
   slackin:
+    userns_mode: "host"
     image: agaveapi/slackin:latest
     hostname: slackin.{{ web_stack_hostname }}
     command: './bin/slackin --port 3000 agaveapi xoxp-31352532772-31355418646-31386698294-8ed3f8e7e2'
@@ -187,6 +195,7 @@ services:
       - slackin
 
   changelogparser:
+    userns_mode: "host"
     image: agaveapi/changelog-parser:latest
     restart: always
     ports:
@@ -207,6 +216,7 @@ services:
   ########################################################################
 
   reverseip:
+    userns_mode: "host"
     image: fiorix/freegeoip
     restart: on_failure
     ports:
@@ -216,6 +226,7 @@ services:
 
 
   redis:
+    userns_mode: "host"
     image: redis:alpine
     command: redis-server --appendonly yes
     hostname: {{ web_stack_hostname }}

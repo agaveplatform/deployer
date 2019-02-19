@@ -1,8 +1,9 @@
-version: '2'
+version: '3.2'
 
 services:
 
   traefik:
+    userns_mode: "host"
     image: traefik:latest
     restart: on-failure
     ports:
@@ -20,6 +21,7 @@ services:
     restart: on-failure
 
   togo:
+    userns_mode: "host"
     image: agaveplatform/agave-togo:latest
     restart: on-failure
     hostname: {{ togo_public_hostname_or_ip }}
