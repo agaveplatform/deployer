@@ -9,44 +9,45 @@
 - name: disable selinux
   selinux: state=disabled
 
-- debug: msg="Uninstalling existing docker versions "
+- debug:
+    msg: "Uninstalling existing docker versions "
 
 - name: Remove previous docker installation
   yum:
-    name: "{{ item.package }}"
+    name: "{{ item }}"
     state: absent
-  with_items: "{{ docker_cleanup_packages_EL }}"
-  when: update_docker_version
+  loop: "{{ docker_cleanup_packages_EL }}"
+  when: update_docker_version|bool
 
 - name: Unlink any potentially conflicting bridge networks from older installs
   shell: ip link del docker0
-  when:  update_docker_version
+  when:  update_docker_version|bool
   ignore_errors: yes
 
 - name: Remove previous docker directories. This blows away all docker networking
   file:
     path: "{{item}}"
     state: absent
-  with_items:
+  loop:
     - /var/docker/network
     - /etc/docker
     - /var/lib/docker
     - /run/docker.sock
     - /run/docker.pid
     - /etc/systemd/system/docker.service.d
-  when:  update_docker_version
+  when:  update_docker_version|bool
 
 - name: Ensure new docker networking directory is present
   file:
     path: /var/docker/network/files
     state: directory
-  when:  update_docker_version
+  when:  update_docker_version|bool
 
 - name: Remove repository from a specific repo file
   yum_repository:
     name: "{{item}}"
     state: absent
-  with_items:
+  loop:
     - epel
     - docker
     - docker-ce
@@ -70,7 +71,7 @@
     state: present
     update_cache: yes
     disable_gpg_check: yes
-  with_items:
+  loop:
     - libselinux-python
     - git
     - cronie
@@ -88,41 +89,26 @@
     name: '{{ item }}'
     state: started
     enabled: yes
-  with_items:
+  loop:
       - psacct
 
 - debug: msg="Installing docker version {{ docker_version }}"
 
 - name: Install docker engine
   yum: name=docker-engine-{{ docker_version }} state=present
-  when: update_docker_version
+  when: update_docker_version|bool
 
 - name: Update Docker systemd service definition
   template: src="systemsd-docker.service.j2" dest="/usr/lib/systemd/system/docker.service"
-  when: update_docker_version and docker_insecure_registries|length > 0
+  when: update_docker_version|bool
 
 - name: Reload docker service definition
   systemd:
     daemon_reload: yes
-  when: update_docker_version
+  when: update_docker_version|bool
 
 - name: Restart Docker with the new service definition
   systemd:
     name: docker.service
     state: restarted
-  when: update_docker_version
-
-
-#- name: Create docker storage volume
-#  shell: vgcreate docker-storage /dev/sdb1 /dev/sdb2
-#
-#
-#- name: Create docker storage volume
-#  shell: lvcreate -n docker-pool -L 2G docker-storage
-#
-#- name: Create docker storage volume
-#  shell: lvcreate -n docker-poolmeta -L 500M docker-storage
-#
-#- name: Create docker storage volume
-#  shell: lvconvert --type thin-pool --poolmetadata docker-storage/docker-poolmeta docker-storage/docker-pool
-#
+  when: update_docker_version|bool

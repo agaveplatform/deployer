@@ -41,14 +41,18 @@
   when: update_docker_version or update_docker_compose_version
 
 - name: Install docker compose
-  shell: curl -skL -o /usr/bin/docker-compose https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64
+  shell: curl -skL -o /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64
   become: yes
   when: update_docker_compose_version
 
 - name: Set permissions on docker compose binary
-  acl: permissions="rx" name=/usr/bin/docker-compose state=present etype=user entity=apim
+  file:
+    state: file
+    mode: 0755
+    path: /usr/local/bin/docker-compose
   become: yes
   when: update_docker_compose_version
+
 
 # todo - need to check this
 - name: Flush iptables INPUT Chain
@@ -57,7 +61,11 @@
   become: yes
 
 - name: Ensure docker is running
-  service: name=docker state=started enabled=yes
+  systemd:
+    name: docker
+    state: started
+    daemon_reload: yes
+    enabled: yes
   become: yes
 
 # Aliases, completion, helpers for docker and docker compose
@@ -72,7 +80,7 @@
   become: yes
 
 - name: Install docker-compose bash completion
-  shell: curl -skL -o /etc/bash_completion.d/docker-compose https://raw.githubusercontent.com/docker/compose/1.21.2/contrib/completion/bash/docker-compose
+  shell: curl -skL -o /etc/bash_completion.d/docker-compose https://raw.githubusercontent.com/docker/compose/{{ docker_compose_version }}/contrib/completion/bash/docker-compose
   become: yes
 
 - name: Add execute permission to docker-compose bash completion

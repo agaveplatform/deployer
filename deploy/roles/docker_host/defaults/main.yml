@@ -13,11 +13,16 @@ update_docker_compose_version: False
 update_docker_version: False
 
 docker_cleanup_packages_EL:
-  - {package: "docker"}
-  - {package: "docker-common"}
-  - {package: "docker-client"}
-  - {package: "docker-client-latest"}
-  - {package: "docker-engine"}
+  - docker
+  - docker-client 
+  - docker-client-latest 
+  - docker-common 
+  - docker-latest 
+  - docker-latest-logrotate 
+  - docker-logrotate 
+  - docker-selinux 
+  - docker-engine-selinux 
+  - docker-engine
 
 docker_cleanup_packages_Ubuntu:
   - {package: "docker.io"}
