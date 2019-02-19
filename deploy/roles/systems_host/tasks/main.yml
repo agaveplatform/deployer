@@ -24,14 +24,14 @@
   when: stop_containers
 
 - name: start storage containers
-  shell: docker-compose -f docker-compose-storage.yml up -d chdir=/home/apim
+  shell: /usr/local/bin/docker-compose -f docker-compose-storage.yml up -d chdir=/home/apim
   when: start_containers
   become: yes
   become_user: apim
   become_method: sudo
 
 - name: start compute containers
-  shell: docker-compose -f docker-compose-compute.yml up -d chdir=/home/apim
+  shell: /usr/local/bin/docker-compose -f docker-compose-compute.yml up -d chdir=/home/apim
   when: start_containers
   become: yes
   become_user: apim

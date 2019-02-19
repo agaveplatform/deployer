@@ -39,14 +39,14 @@
 
   # note: this should almost never be used; exception is when wanting to competely start from scratch.
 - name: Pull the latest images
-  shell: docker-compose -f {{togo_static_deployment_directory}}/docker-compose.yml pull --ignore-pull-failures
+  shell: /usr/local/bin/docker-compose -f {{togo_static_deployment_directory}}/docker-compose.yml pull --ignore-pull-failures
   ignore_errors: yes
   when: remove_all_togo_containers|bool
   environment:
       COMPOSE_HTTP_TIMEOUT: 2000
 
 - name: Remove all existing togo containers
-  shell: docker-compose -f {{ togo_static_deployment_directory }}/docker-compose.yml down
+  shell: /usr/local/bin/docker-compose -f {{ togo_static_deployment_directory }}/docker-compose.yml down
   ignore_errors: yes
   when: remove_all_togo_containers|bool
   environment:
@@ -57,7 +57,7 @@
   when: remove_all_togo_containers|bool
 
 - name: Start ToGo stack
-  shell: docker-compose -f {{ togo_static_deployment_directory }}/docker-compose.yml up -d
+  shell: /usr/local/bin/docker-compose -f {{ togo_static_deployment_directory }}/docker-compose.yml up -d
   environment:
       COMPOSE_HTTP_TIMEOUT: 2000
 #
