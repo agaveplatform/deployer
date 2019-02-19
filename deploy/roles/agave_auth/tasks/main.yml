@@ -126,15 +126,27 @@
   become: yes
   when: custom_docs_exist.stat.exists == False
 
-# need to ignore errors because tenant may not have defined any APIs
-- name: Copy tenant-specific apis
-  copy:
-    src: "tenants/{{ tenant_id }}/apis/"
-    dest: "/home/apim/auth-services/{{ tenant_id }}/apis"
+
+- name: Compile tenant-specific apis
+  template:
+    src: "{{ item }}"
+    dest: "/home/apim/auth-services/{{ tenant_id }}/apis/{{ item | basename }}"
     owner: apim
     mode: 0640
-  become: yes
+  with_fileglob:
+    - "tenants/{{ tenant_id }}/apis/*"
   ignore_errors: yes
+  become: yes
+
+# need to ignore errors because tenant may not have defined any APIs
+#- name: Copy tenant-specific apis
+#  copy:
+#    src: "tenants/{{ tenant_id }}/apis/"
+#    dest: "/home/apim/auth-services/{{ tenant_id }}/apis"
+#    owner: apim
+#    mode: 0640
+#  become: yes
+#  ignore_errors: yes
 
 - name: Copy custom oauth app
   copy:
