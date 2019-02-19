@@ -93,3 +93,6 @@ vagrant.jenkins ansible_ssh_host=192.168.205.14 jenkins_public_hostname_or_ip=je
 
 [togo]
 vagrant.togo ansible_ssh_host=192.168.205.15 togo_public_hostname_or_ip=togo.sandbox.agaveplatform.org
+
+[docker:children]
+agave
