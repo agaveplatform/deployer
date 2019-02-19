@@ -1,5 +1,5 @@
 ---
-version: '2'
+version: '3.2'
 
 services:
 
@@ -21,7 +21,7 @@ services:
       MYSQL_USER: {{ mysql_core_user }}
       MYSQL_ROOT_PASSWORD: {{ mysql_root_password }}
       MYSQL_PASSWORD: {{ mysql_core_password }}
-  
+
   mysql_auth:
     image: mysql:5.6
     restart: always
@@ -39,7 +39,7 @@ services:
       MYSQL_USER: {{mysql_tenant_user}}
       MYSQL_ROOT_PASSWORD: {{ mysql_root_password }}
       MYSQL_PASSWORD: {{ mysql_tenant_pass }}
-  
+
   mongo:
     image: agaveplatform/mongodb:2.6
     restart: always
@@ -55,7 +55,7 @@ services:
     environment:
       MONGODB_USERNAME: {{ mongodb_user }}
       MONGODB_PASSWORD: {{ mongodb_password }}
-  
+
   beanstalk:
     image: agaveplatform/beanstalkd
     restart: always
@@ -65,7 +65,7 @@ services:
     volumes:
     - /home/apim/agave-db-onehost/beanstalkd_data:/var/log/beanstalkd
 {% endif %}
-  
+
   slapd:
     image: agaveplatform/slapd
     restart: always

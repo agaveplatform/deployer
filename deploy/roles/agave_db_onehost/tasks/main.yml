@@ -5,63 +5,66 @@
 - include_vars: agave_core_configs/{{ tenant_id }}.yml
 - include_vars: agave_core_configs/{{ tenant_id }}_passwords
 
-- name: Compile docker_compose template
-  template: src=docker-compose-dbs-onehost.yml.j2 dest=/home/apim/docker-compose-dbs-onehost.yml
+- name: Create deployment directory
+  file:
+    path: "/home/apim/agave-db-onehost/"
+    state: directory
+    owner: apim
+    mode: 0750
   become: yes
   become_user: apim
-  become_method: sudo
+
+- name: Compile docker_compose template
+  template:
+    src: docker-compose-dbs-onehost-v2.yml.j2
+    dest: /home/apim/agave-db-onehost/docker-compose-dbs-onehost.yml
+    owner: apim
+    mode: 0750
+  become: yes
+  become_user: apim
 
 - name: Create ansible Mysql configuration file
-  template: src=my.cnf.j2 dest=/home/apim/my.cnf
+  template:
+    src: my.cnf.j2
+    dest: /home/apim/agave-db-onehost/my.cnf
   become: yes
   become_user: apim
-  become_method: sudo
 
 - name: Check for existing containers
-  shell: docker ps -aq
+  shell: /usr/local/bin/docker-compose -f docker-compose-dbs-onehost.yml ps -q
+  args:
+    chdir: /home/apim/agave-db-onehost/
+  environment:
+    COMPOSE_HTTP_TIMEOUT: 20000
   become: yes
   become_user: apim
-  become_method: sudo
   ignore_errors: yes
-  register: docker_ps_db_containers
+  register: docker_compose_ps_db_containers
 
 # ignore errors here since this call will fail if there are no containers running
-- name: remove existing containers
-  shell: "docker ps -aq | xargs --no-run-if-empty docker rm -f"
+- name: Remove existing containers
+  shell: /usr/local/bin/docker-compose -f docker-compose-dbs-onehost.yml down -v
+  args:
+    chdir: /home/apim/agave-db-onehost/
+  environment:
+    COMPOSE_HTTP_TIMEOUT: 20000
   become: yes
   become_user: apim
-  become_method: sudo
   ignore_errors: yes
-  when: kill_db_containers == True and docker_ps_db_containers.stdout
+  when:
+    - kill_db_containers|bool
+    - docker_compose_ps_db_containers is success
+    - docker_compose_ps_db_containers.stdout !== ''
   register: docker_rm_db_containers
 
-- pause: seconds=30
-  when: kill_db_containers == True and docker_ps_db_containers.stdout
+- pause:
+    seconds: 30
+  when: kill_db_containers == True
 
-#- name: stop the old containers
-#  shell: docker-compose -f docker-compose-dbs-onehost.yml stop  chdir=/home/apim
-#  become: yes
-#  become_user: apim
-#  become_method: sudo
-#  ignore_errors: yes
-#  environment:
-#      COMPOSE_HTTP_TIMEOUT: 2000
-#
-#- name: remove the old containers
-#  shell: docker-compose -f docker-compose-dbs-onehost.yml rm -f chdir=/home/apim
-#  become: yes
-#  become_user: apim
-#  become_method: sudo
-#  ignore_errors: yes
-#  environment:
-#      COMPOSE_HTTP_TIMEOUT: 2000
-#
-#- pause: seconds=15
-
-- name: clear persistent container data
+- name: Clear persistent container data
   file:
     state: absent
-    path: "/home/apim/{{item}}"
+    path: "/home/apim/agave-db-onehost/{{item}}"
   with_items:
     - slapd_data
     - beanstalkd_data
@@ -70,18 +73,23 @@
     - mysql_auth_data
   when: kill_db_containers and create_persistent_db_volumes
 
-- name: pull the docker images
-  shell: docker-compose -f docker-compose-dbs-onehost.yml pull --ignore-pull-failures chdir=/home/apim
+- name: Pull the docker images
+  shell: /usr/local/bin/docker-compose -f docker-compose-dbs-onehost.yml pull --ignore-pull-failures
+  args:
+    chdir: /home/apim/agave-db-onehost
   become: yes
   become_user: apim
-  become_method: sudo
   environment:
-      COMPOSE_HTTP_TIMEOUT: 20000
+    COMPOSE_HTTP_TIMEOUT: 20000
 
-- name: start the containers with docker compose
-  shell: docker-compose -f docker-compose-dbs-onehost.yml up -d  chdir=/home/apim
+- pause:
+    seconds: 30
+
+- name: Start the containers with docker compose
+  shell: /usr/local/bin/docker-compose -f docker-compose-dbs-onehost.yml up -d
+  args:
+    chdir: /home/apim/agave-db-onehost
   become: yes
   become_user: apim
-  become_method: sudo
   environment:
-      COMPOSE_HTTP_TIMEOUT: 20000
+    COMPOSE_HTTP_TIMEOUT: 20000
