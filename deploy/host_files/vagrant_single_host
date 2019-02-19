@@ -1,0 +1,125 @@
+[all]
+vagrant.single_host  ansible_ssh_host=192.168.205.5
+
+[all:vars]
+# General settings to apply to all playbooks. This simply maps a common ssh key and disable host checking. This should
+# be disabled in prod, however, when overriding dns from a deployment host, this is handy as it prevents the prompt
+# run without local volume bindings to avoid containers and volumes not cleaning up fast enough
+create_persistent_db_volumes=False
+
+# set to false to avoid clobbering ALL docker containers
+kill_core_containers=False
+
+# Set true if overwriting a old install (not if running playbooks multiple times).
+# clean_host must be set here at the global level otherwise it is overwritten.
+clean_host=False
+
+
+# the name of your tenant.
+tenant_id=sandbox
+agave_tenant_id=sandbox
+tenant_public_domain_or_ip=sandbox.agaveplatform.org
+
+# External core proxy ports to expose. These default to 80 and 443 on a multi-host deployment, but on a single-host
+# deployment, these will collide with the HA Proxy container in the auth components, so we need to change them here.
+agave_core_proxy_http_port=8080
+agave_core_proxy_https_port=8443
+core_api_port=8080
+
+# This is the address of the core proxy server as seen from the postits container itself. On a single host deployment,
+# we point this at the neutral port above.
+agave_core_iplant_proxy_service=http://192.168.205.5:8080
+
+# The name of the core service config file to read in.
+core_config_file=sandbox
+
+[agave:vars]
+# General settings to apply to all agave hosts. This simply maps a common ssh key and disable host checking. This should
+# be disabled in prod, however, when overriding dns from a deployment host, this is handy as it prevents the prompt
+#ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+ansible_ssh_private_key_file=~/.ssh/id_rsa
+
+# update this if the privileged user account on your agave hosts is different. Usually this will be "root" or "centos"
+# depending on your VM image. This will only be used to connect to the host and su to the "apim" account that the
+# deployer will create when it configures the hosts.
+ansible_ssh_user=centos
+
+# Leverage pipelining to speed up remote operations by reusing connections.
+pipelining=True
+
+[agave:children]
+db
+auth
+core
+
+
+[db]
+# This group will host the persistence services and should have at least 2 cores, 8GB memory, and 80GB disk.
+# Seriously consider clustering the databases and moving them offsite using a multihost deployment.
+
+vagrant.single_host
+
+[db:children]
+mysql
+mongodb
+queue
+
+[mysql]
+# if clustering mysql, add hosts here and use this group to run the cluster management playbooks.
+
+[mongodb]
+# if sharding mongodb, add hosts here and use this group to run the cluster management playbooks.
+
+[queue]
+# if clustering the message queue, beanstalkd cannot be used. Switch to rabbitmq, add hosts here,
+# and use this group to run the cluster management playbooks.
+
+[auth]
+# This group will host the science apis and should have at least 2 cores, 8GB memory, and 80GB disk
+# This is sufficient for fairly heavy traffic, though you should scale it up to a HA setting if you expect
+# high degrees of concurrency in requests and long-lived file uploads/downloads.
+
+vagrant.single_host
+
+[core]
+# This group will host the science apis and should have at least 4 cores, 16GB memory, and 80GB disk in addition
+# to whatever is needed for the db and auth components. In a production deployment, seriously consider splitting
+# the worker and core services for any significant traffic or data movement.
+vagrant.single_host agave_core_tenants_mem_limit=128m agave_core_logging_mem_limit=256m agave_core_docs_mem_limit=128m agave_core_uuids_mem_limit=512m agave_core_tags_mem_limit=512m agave_core_realtime_mem_limit=256m agave_core_metadata_mem_limit=512m agave_core_monitors_mem_limit=512m agave_core_systems_mem_limit=512m agave_core_apps_mem_limit=1024m   agave_core_notifications_mem_limit=512m agave_core_job_max_submission_task=1 agave_core_job_max_staging_tasks=3 agave_core_job_max_archiving_tasks=2  agave_core_job_max_monitoring_tasks=1 agave_core_files_max_staging_tasks=2 agave_core_files_max_transform_tasks=1 core_deploy_monitors=False core_deploy_notifications=False core_deploy_transforms=False agave_core_jobs_mem_limit=4096m agave_core_files_mem_limit=4096m
+
+[core:children]
+
+core_api
+core_workers
+
+[core_api]
+
+[core_workers]
+
+[postman:vars]
+
+# The hostname or ip of the linux server the newman tests will register with Agave and use to run all data and
+# compute tests
+newman_agave_test_system_host=192.168.205.5
+
+# hostname of the tenant
+newman_agave_tenant_base_hostname=sandbox.agaveplatform.org
+
+# The sftp port on which Agave should connect to `newman_agave_test_system_host` during the tests
+newman_agave_test_system_port=22
+
+# The username with which Agave should connect to `newman_agave_test_system_host` during the tests
+newman_agave_test_system_username=postman_user
+
+# The virtual home directory to use in the system definition when Agave interacts with `newman_agave_test_system_host`
+newman_agave_test_system_homedir=/home/postman_user
+
+# The public key allowing connections to `newman_agave_test_system_host`
+newman_agave_test_system_public_key_file=~/.ssh/id_rsa.pub
+
+# The private key Agave should use to connect to `newman_agave_test_system_host`
+newman_agave_test_system_private_key_file=~/.ssh/id_rsa
+
+
+[postman]
+localhost ansible_connection=local
