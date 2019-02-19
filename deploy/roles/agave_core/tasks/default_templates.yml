@@ -1,11 +1,13 @@
-
 ---
 
 - name: compile compose templates
-  template: src={{ item }} dest=/home/apim/core-apis/{{ item | replace('.j2','') }}
+  template:
+    src: "{{ item }}"
+    dest: "/home/apim/core-apis/{{ item | replace('.j2','') }}"
+    owner: "apim"
+    mode: 0640
   become: yes
   become_user: apim
-  become_method: sudo
   when: deploy_core_default_templates
   with_items:
       - docker-compose.yml.j2
@@ -15,57 +17,23 @@
       - pull_images.sh.j2
 
 - name: Copy core-apis ssl files
-  copy: src=agave_core_configs/httpd/ dest=/home/apim/core-apis/ssl/ mode=0755
+  copy:
+    src: "agave_core_configs/httpd/"
+    dest: "/home/apim/core-apis/ssl/ mode=0755"
+    owner: "apim"
+    mode: 0640
   when: core_deploy_ssl_certs 
   become: yes
   become_user: apim
-  become_method: sudo
-
-#- name: Generate RSA Key
-#  command: openssl genrsa \
-#    -out "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key" 2048
-#  args:
-#    creates: "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key"
-#  become: yes
-#  become_user: apim
-#  become_method: sudo
 
 - name: Generate self-signed certs on remote host
   import_tasks: create_tls_certs.yml
   when: core_deploy_ssl_certs == false 
 
-#- name: Generate CSR
-#  command: openssl req \
-#    -new \
-#    -subj "/C/US/ST=TX/L=Austin/O=AgavePlatform/CN={{agave_core_hostname}}" \
-#    -key "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key" \
-#    -out "/home/apim/core-apis/ssl/{{agave_core_hostname}}.csr"
-#  args:
-#    creates: "/home/apim/core-api/ssl/{{agave_core_hostname}}.csr"
-#  become: yes
-#  become_user: apim
-#  become_method: sudo
-#  when: core_deploy_ssl_certs == false 
-#
-#- name: Generate self-signed OpenSSL certificate
-#  command: openssl req \
-#    -x509 \
-#    -days 1825 \
-#    -key "/home/apim/core-apis/ssl/{{agave_core_hostname}}.key" \
-#    -in "/home/apim/core-apis/ssl/{{agave_core_hostname}}.csr" \
-#    -out "/home/apim/core-apis/ssl/{{agave_core_hostname}}.crt"
-#  args:
-#    creates: "/home/apim/core-apis/ssl/{{agave_core_hostname}}.crt"
-#  become: yes
-#  become_user: apim
-#  become_method: sudo
-#  when: core_deploy_ssl_certs == false 
-
 - name: Pull latest docker images from templates
   shell: ./pull_images.sh chdir=/home/apim/core-apis/
   become: yes
   become_user: apim
-  become_method: sudo
   environment:
       AGAVE_VERSION: '{{ agave_core_version }}'
       COMPOSE_HTTP_TIMEOUT: 2000
@@ -77,28 +45,32 @@
   shell: docker ps -aq
   become: yes
   become_user: apim
-  become_method: sudo
   ignore_errors: yes
   register: docker_ps_core_containers
 
 # ignore errors here since this call will fail if there are no containers running
 - name: remove existing containers
-  shell: "docker ps -aq | xargs --no-run-if-empty docker rm -f"
+  shell: /usr/local/bin/docker-compose -p apim -f {{ item }} down
+  args:
+    chdir: "/home/apim/core-apis/"
+  loop:
+    - proxy.yml
+    - docker-compose.yml
   become: yes
   become_user: apim
-  become_method: sudo
   ignore_errors: yes
-  when: kill_core_containers and docker_ps_core_containers.stdout
+  when: kill_core_containers|bool and docker_ps_core_containers.stdout
   register: docker_rm_core_containers
 
 - pause: seconds=30
-  when: kill_core_containers and docker_ps_core_containers.stdout
+  when: kill_core_containers|bool and docker_ps_core_containers.stdout
 
 - name: start the core-apis proxy container with docker compose
-  shell: docker-compose -p apim -f proxy.yml up -d chdir=/home/apim/core-apis/
+  shell: /usr/local/bin/docker-compose -p apim -f proxy.yml up -d
+  args:
+    chdir: "/home/apim/core-apis/"
   become: yes
   become_user: apim
-  become_method: sudo
   environment:
       AGAVE_VERSION: '{{ agave_core_version }}'
       COMPOSE_HTTP_TIMEOUT: 2000

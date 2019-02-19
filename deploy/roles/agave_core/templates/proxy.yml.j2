@@ -1,3 +1,4 @@
+---
 ###############################################################
 # Core Science APIs - Sandbox
 # docker-compose.yml
@@ -10,14 +11,6 @@
 # of the default GridFTP and FTP port ranges to enable proper
 # operation of the protocol from within each container.
 #
-# Make sure to start your containers
-# with $AGAVE_VERSION defined in your environment. You should
-# also have the following /etc/hosts entries defined for your
-# hosting environment. (These are appropriate for docker-machine
-# on OSX.) In a production environment, these should resolve
-# to the appropriate hosts and/or dns entries.
-#
-#
 ###############################################################
 
 proxy:
@@ -28,8 +21,8 @@ proxy:
 {% endif %}
   hostname: {{ agave_core_hostname }}
   ports:
-    - '80:80'
-    - '443:443'
+    - '{{ agave_core_proxy_http_port }}:80'
+    - '{{ agave_core_proxy_https_port }}:443'
   extra_hosts:
 {% if core_deploy_httpd_balancer %}
     - "a.proxy.host:{{ agave_proxy_core_ip }}"

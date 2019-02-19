@@ -4,33 +4,31 @@
 - include_vars: agave_core_configs/{{ core_config_file }}_passwords
 
 - name: ensure core directories are present
-  file: path=/home/apim/{{ item }} state=directory
+  file:
+    path: "/home/apim/{{ item }}"
+    state: directory
   become: yes
   become_user: apim
-  become_method: sudo
   with_items:
       - core-apis
       - repos
       - core-apis/ssl
 
 - name: copy docker compose aliases for the service stack
-  template: src=docker-compose.aliases dest=/home/apim/.bashrc.d/docker-compose.aliases
+  template:
+    src: "docker-compose.aliases"
+    dest: "/home/apim/.bashrc.d/docker-compose.aliases"
   become: yes
   become_user: apim
-  become_method: sudo
 
 - name: Compile pull_images.sh template
-  template: src=pull_images.sh.j2 dest=/home/apim/core-apis/pull_images.sh
+  template:
+    src: "pull_images.sh.j2"
+    dest: "/home/apim/core-apis/pull_images.sh"
+    owner: apim
+    mode: 0750
   become: yes
   become_user: apim
-  become_method: sudo
-
-- name: set permissions on pull_images.sh
-  acl: permissions="rwx" name=/home/apim/core-apis/pull_images.sh state=present etype=user entity=apim
-  become: yes
-  become_user: root
-  become_method: sudo
-
 
 - include_tasks: default_templates.yml
   when: deploy_core_default_templates
@@ -38,12 +36,12 @@
 - include_tasks: repo.yml
   when: deploy_core_default_templates == false
 
-
 - name: start the core-apis containers with docker compose
-  shell: docker-compose -p apim -f docker-compose.yml up -d chdir=/home/apim/core-apis/
+  shell: /usr/local/bin/docker-compose -p apim -f docker-compose.yml up -d
+  args:
+    chdir: "/home/apim/core-apis/"
   become: yes
   become_user: apim
-  become_method: sudo
   when: deploy_core_apis
   environment:
       AGAVE_VERSION: '{{ agave_core_version }}'

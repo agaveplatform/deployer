@@ -38,6 +38,10 @@ core_compose_repo_name: core-compose
 #
 ######################################################################################
 
+# External core proxy ports to expose
+agave_core_proxy_http_port: 80
+agave_core_proxy_https_port: 443
+
 # DNS and network discovery endpoint configs
 agave_proxy_core_ip: "{{ hostvars[ groups['core'][0] ]['ansible_ssh_host'] }}"
 agave_core_hostname: api.sandbox.agaveplatform.org

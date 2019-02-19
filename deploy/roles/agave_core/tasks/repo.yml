@@ -18,7 +18,7 @@
 
 # ignore errors here since this call will fail if there are no containers running
 - name: remove existing containers
-  shell: docker-compose -p apim -f docker-compose.yml down
+  shell: /usr/local/bin/docker-compose -p apim -f docker-compose.yml down
   args:
     chdir: /home/apim/core-apis
   become: yes
@@ -31,7 +31,7 @@
 - pause: seconds=30
 
 - name: start the core-apis proxy container with docker compose
-  shell: docker-compose -p apim -f proxy.yml up -d chdir=/home/apim/core-apis/
+  shell: /usr/local/bin/docker-compose -p apim -f proxy.yml up -d chdir=/home/apim/core-apis/
   become: yes
   become_user: apim
   when: deploy_core_apis
