@@ -1,22 +1,26 @@
 
 - name: check if A_deployed
-  stat: path=/home/apim/A_deployed
+  stat:
+    path: "/home/apim/A_deployed"
   register: A
   become: yes
   become_user: apim
 
 - name: msg
-  debug: msg="A containers are not deployed (A_deployed path doesn't exist)"
+  debug:
+    msg: "A containers are not deployed (A_deployed path doesn't exist)"
   when: A.stat.exists == False
 
 - name: check if B_deployed
-  stat: path=/home/apim/B_deployed
+  stat:
+    path: "/home/apim/auth-services/B_deployed"
   register: B
   become: yes
   become_user: apim
 
 - name: msg
-  debug: msg="B containers are not deployed (B_deployed path doesn't exist)"
+  debug:
+    msg: "B containers are not deployed (B_deployed path doesn't exist)"
   when: B.stat.exists == False
 
 
@@ -26,23 +30,52 @@
 
 # if A is not deployed, always deploy it
 - name: deploy A
-  shell: docker-compose -f /home/apim/A/docker-compose-noserf.yml up -d chdir=/home/apim/A
+  shell: /usr/local/bin/docker-compose -f /home/apim/auth-services/A/docker-compose-noserf.yml up -d
+  args:
+    chdir: "/home/apim/auth-services/A"
   become: yes
   become_user: apim
   when: A.stat.exists == false
 
 - name: ensure the A_deployed file exists
-  file: path=/home/apim/A_deployed state=touch
+  file:
+    path: "/home/apim/auth-services/A_deployed"
+    state: "touch"
   become: yes
   become_user: apim
   when: A.stat.exists == false
 
-- pause: minutes=2 prompt="Pausing while A containers start up before removing B containers."
-  when: A.stat.exists == false and B.stat.exists
+#- pause: minutes=2 prompt="Pausing while A containers start up before removing B containers."
+#  when: A.stat.exists == false and B.stat.exists
+
+- name: Wait for A apache proxy to become available
+  shell: curl -I -skL http://localhost:4080/
+  register: apache_check_result
+  until: apache_check_result.stdout.find("200 OK") != -1
+  retries: 24
+  delay: 5
+  when: A.stat.exists == false
+
+- name: Update B apache rewrite configs and restart apache in A stack
+  shell: docker exec -i a_httpd.sandbox.agave.tacc.utexas.edu_1 /update-apache-rewrite-rules.sh
+  become: yes
+  become_user: apim
+  when: A.stat.exists == false
+
+
+- name: Wait for A apim container to start up before removing B containers
+  shell: curl -I -skL https://localhost:9443/
+  register: apim_check_result
+  until: apim_check_result.stdout.find("200 OK") != -1
+  retries: 24
+  delay: 5
+  when: A.stat.exists == false
 
 # stop & remove B containers when they are defined
 - name: stop B containers
-  shell: docker-compose -f /home/apim/B/docker-compose-noserf.yml stop chdir=/home/apim/B
+  shell: /usr/local/bin/docker-compose -f /home/apim/auth-services/B/docker-compose-noserf.yml stop
+  args:
+    chdir: "/home/apim/auth-services/B"
   environment:
       COMPOSE_HTTP_TIMEOUT: 120
   become: yes
@@ -50,7 +83,9 @@
   when: B.stat.exists
 
 - name: remove B containers
-  shell: docker-compose -f /home/apim/B/docker-compose-noserf.yml rm -f chdir=/home/apim/B
+  shell: /usr/local/bin/docker-compose -f /home/apim/auth-services/B/docker-compose-noserf.yml rm -f
+  args:
+    chdir: "/home/apim/auth-services/B"
   environment:
       COMPOSE_HTTP_TIMEOUT: 120
   become: yes
@@ -58,13 +93,20 @@
   when: B.stat.exists
 
 - name: remove the B_deployed file
-  file: path=/home/apim/B_deployed state=absent
+  file:
+    path: "/home/apim/auth-services/B_deployed"
+    state: "absent"
   become: yes
   become_user: apim
   when: B.stat.exists
 
-- name: wait for the B containers to finish deleting
-  pause: seconds=30
+- name: Wait for B apim container to shut down
+  wait_for:
+    host: 0.0.0.0
+    port: 9453
+    delay: 10
+    state: drained
+  when: B.stat.exists
 
 # ------------
 # B deployment
@@ -72,23 +114,54 @@
 
 # deploy B when A is defined
 - name: deploy B
-  shell: docker-compose -f /home/apim/B/docker-compose-noserf.yml up -d chdir=/home/apim/B
+  shell: /usr/local/bin/docker-compose -f /home/apim/auth-services/B/docker-compose-noserf.yml up -d
+  args:
+    chdir: "/home/apim/auth-services/B"
   become: yes
   become_user: apim
   when: A.stat.exists
 
 - name: ensure the B_deployed file exists
-  file: path=/home/apim/B_deployed state=touch
+  file:
+    path: "/home/apim/auth-services/B_deployed"
+    state: "touch"
   become: yes
   become_user: apim
   when: A.stat.exists
 
-- pause: minutes=2 prompt="Pausing while B containers start up before removing A containers."
-  when: A.stat.exists and B.stat.exists == false
+#- pause:
+#    minutes: 2
+#    prompt: "Pausing while B containers start up before removing A containers."
+#  when: A.stat.exists and B.stat.exists == false
+
+
+- name: Wait for B apim apache proxy to become available
+  shell: curl -I -skL http://localhost:5080/
+  register: apache_check_result
+  until: apache_check_result.stdout.find("200 OK") != -1
+  retries: 24
+  delay: 5
+  when: A.stat.exists
+
+- name: Update apache rewrite configs and restart apache in B stack
+  shell: docker exec -i b_httpd.sandbox.agave.tacc.utexas.edu_1 /update-apache-rewrite-rules.sh
+  become: yes
+  become_user: apim
+  when: A.stat.exists
+
+- name: Wait for B containers start up before removing A containers
+  shell: curl -I -skL https://localhost:9453/
+  register: apim_check_result
+  until: apim_check_result.stdout.find("200 OK") != -1
+  retries: 24
+  delay: 5
+  when: A.stat.exists
 
 # stop & remove A containers when they are defined
 - name: stop A containers
-  shell: docker-compose -f /home/apim/A/docker-compose-noserf.yml stop chdir=/home/apim/A
+  shell: /usr/local/bin/docker-compose -f /home/apim/auth-services/A/docker-compose-noserf.yml stop
+  args:
+    chdir: "/home/apim/auth-services/A"
   environment:
       COMPOSE_HTTP_TIMEOUT: 120
   become: yes
@@ -96,7 +169,9 @@
   when: A.stat.exists
 
 - name: remove A containers
-  shell: docker-compose -f /home/apim/A/docker-compose-noserf.yml rm -f chdir=/home/apim/A
+  shell: /usr/local/bin/docker-compose -f /home/apim/auth-services/A/docker-compose-noserf.yml rm -f
+  args:
+    chdir: "/home/apim/auth-services/A"
   environment:
       COMPOSE_HTTP_TIMEOUT: 120
   become: yes
@@ -104,7 +179,18 @@
   when: A.stat.exists
 
 - name: remove the A_deployed file
-  file: path=/home/apim/A_deployed state=absent
+  file:
+    path: "/home/apim/auth-services/A_deployed"
+    state: absent
   become: yes
   become_user: apim
   when: A.stat.exists
+
+- name: Wait for A apim container to shut down
+  wait_for:
+    host: 0.0.0.0
+    port: 9443
+    delay: 10
+    state: drained
+  when: A.stat.exists
+
