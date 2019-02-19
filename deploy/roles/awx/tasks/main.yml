@@ -3,7 +3,7 @@
 ---
 
 - name: stop the awx stack containers
-  shell: docker-compose stop
+  shell: /usr/local/bin/docker-compose stop
   args:
     chdir: "{{role_path}}/files"
   when: stop_awx_containers
@@ -12,7 +12,7 @@
     COMPOSE_HTTP_TIMEOUT: 2000
 
 - name: clear the awx stack containers
-  shell: docker-compose down
+  shell: /usr/local/bin/docker-compose down
   args:
     chdir: "{{role_path}}/files"
   when: clear_awx_containers
@@ -20,7 +20,7 @@
     COMPOSE_HTTP_TIMEOUT: 2000
 
 - name: start the awx stack containers
-  shell: docker-compose up -d
+  shell: /usr/local/bin/docker-compose up -d
   args:
     chdir: "{{role_path}}/files"
   when: start_awx_containers

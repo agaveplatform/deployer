@@ -43,5 +43,6 @@ pip-selfcheck.json
 /docs/build/html/Introduction.html
 /docs/build/html/Validation.html
 /docs/build/html/Deploy.html
+ansible.log
 
-
+/deploy/host_files/mars
