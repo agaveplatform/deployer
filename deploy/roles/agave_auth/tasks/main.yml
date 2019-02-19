@@ -11,220 +11,267 @@
 
 - debug: msg="{{ api_server_base }}"
 
-- name: ensure directories are present
-  file: path={{ item }} state=directory
-  become: yes
-  become_user: apim
-  become_method: sudo
-  with_items:
-      - /home/apim/A
-      - /home/apim/B
-      - /home/apim/logs
-      - /home/apim/logs/{{ tenant_id }}
-      - /home/apim/{{ tenant_id }}
-      - /home/apim/{{ tenant_id }}/apis
-      - /home/apim/{{ tenant_id }}/docs/v2
-
-- name: remove contents of apim directory
-  shell: rm -rf /home/apim
+- name: Remove contents of apim directory
+  file:
+    state: absent
+    path: "/home/apim/auth-services/{{ item }}"
+  loop:
+    - "{{ tenant_id }}"
+    - A
+    - B
+    - hap-compose.yml
   ignore_errors: yes
   become: yes
-  become_user: apim
-  become_method: sudo
-  when: remove_apim_dir
+  when: remove_apim_dir|bool
 
-- name: create logs file
-  file: path={{ item }} state=touch
+- name: Ensure directories are present
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: apim
+    mode: 0750
   become: yes
-  become_user: apim
-  become_method: sudo
   with_items:
-      - /home/apim/logs/apim-logs
-      - /home/apim/logs/httpd-access-logs
-      - /home/apim/logs/httpd-error-logs
-      - /home/apim/logs/{{ tenant_id }}/deployment-logs
+      - /home/apim/auth-services/A
+      - /home/apim/auth-services/B
+      - /home/apim/auth-services/logs
+      - /home/apim/auth-services/logs/{{ tenant_id }}
+      - /home/apim/auth-services/{{ tenant_id }}
+      - /home/apim/auth-services/{{ tenant_id }}/apis
+      - /home/apim/auth-services/{{ tenant_id }}/docs/v2
 
-- name: compile the tenant config file
-  template: src=tenants/{{ tenant_id }}/{{ tenant_id }}.yml dest=/home/apim/{{ tenant_id }}/{{ tenant_id }}.yml
+- name: Create logs file
+  file:
+    path: "{{ item }}"
+    state: touch
+    owner: apim
+    mode: 0660
   become: yes
-  become_user: apim
-  become_method: sudo
-      
-#- name: copy the tenant config file
-#  copy: src=tenants/{{ tenant_id }}/{{ tenant_id }}.yml dest=/home/apim/{{ tenant_id }}/{{ tenant_id }}.yml
-#  become: yes
-#  become_user: apim
-#  become_method: sudo
+  with_items:
+      - /home/apim/auth-services/logs/apim-logs
+      - /home/apim/auth-services/logs/httpd-access-logs
+      - /home/apim/auth-services/logs/httpd-error-logs
+      - /home/apim/auth-services/logs/{{ tenant_id }}/deployment-logs
 
-- name: copy the password file
-  copy: src=tenants/{{ tenant_id }}/{{ tenant_id }}_passwords dest=/home/apim/{{ tenant_id }}/passwords
+- name: Compile the tenant config file
+  template:
+    src: "tenants/{{ tenant_id }}/{{ tenant_id }}.yml"
+    dest: "/home/apim/auth-services/{{ tenant_id }}/{{ tenant_id }}.yml"
+    owner: apim
+    mode: 0640
   become: yes
-  become_user: apim
-  become_method: sudo
 
-- name: compile core api templates
-  template: src={{ item }} dest=/home/apim/{{ tenant_id }}/apis/{{ item | basename }}
+- name: Copy the password file
+  copy:
+    src: "tenants/{{ tenant_id }}/{{ tenant_id }}_passwords"
+    dest: "/home/apim/auth-services/{{ tenant_id }}/passwords"
+    owner: apim
+    mode: 0640
+  become: yes
+
+- name: Compile core api templates
+  template:
+    src: "{{ item }}"
+    dest: "/home/apim/auth-services/{{ tenant_id }}/apis/{{ item | basename }}"
+    owner: apim
+    mode: 0640
   with_fileglob:
     - ../templates/core_apis_19/*
   when: deploy_core_api_templates
   become: yes
-  become_user: apim
-  become_method: sudo
 
-- name: copy tenant-specific httpd files
-  copy: src=tenants/{{ tenant_id }}/httpd/ dest=/home/apim/{{ tenant_id }}/httpd
+- name: Copy tenant-specific httpd files
+  copy:
+    src: "tenants/{{ tenant_id }}/httpd/"
+    dest: "/home/apim/auth-services/{{ tenant_id }}/httpd"
+    owner: apim
+    mode: 0640
   become: yes
-  become_user: apim
-  become_method: sudo
   when: deploy_custom_tls_certs
   register: copy_auth_tls_certs
   ignore_errors: True
 
-- name: generate tls certs on remote host
+- name: Generate tls certs on remote host
   include_tasks: create_tls_certs.yml
   when: deploy_custom_tls_certs == False or copy_auth_tls_certs.failed
 
-- name: register custom_docs_exist
+- name: Register custom_docs_exist
   local_action: stat path="{{ playbook_dir }}/tenants/{{ tenant_id }}/docs/v2/"
   register: custom_docs_exist
+  become: no
 
-- name: copy custom docs
-  copy: src=tenants/{{ tenant_id }}/docs/v2 dest=/home/apim/{{ tenant_id }}/docs/
+- name: Copy custom docs
+  copy:
+    src: "tenants/{{ tenant_id }}/docs/v2"
+    dest: "/home/apim/auth-services/{{ tenant_id }}/docs/"
+    owner: apim
+    mode: 0640
   when: custom_docs_exist.stat.exists == True
   become: yes
-  become_user: apim
-  become_method: sudo
 
-- name: download the swagger docs template
+- name: Download the swagger docs template
   get_url:
       url: https://raw.githubusercontent.com/TACC/agavepy/master/agavepy/resources.json.j2
       dest: "{{ playbook_dir }}/roles/agave_auth/templates/agaveapi_v2.json.j2"
   delegate_to: 127.0.0.1
   when: custom_docs_exist.stat.exists == False
+  become: no
 
-- name: compile the swagger template
-  template: src=agaveapi_v2.json.j2 dest=/home/apim/{{ tenant_id }}/docs/v2/agaveapi.json
+- name: Compile the swagger template
+  template:
+    src: "agaveapi_v2.json.j2"
+    dest: "/home/apim/auth-services/{{ tenant_id }}/docs/v2/agaveapi.json"
+    owner: apim
+    mode: 0640
   become: yes
-  become_user: apim
-  become_method: sudo
   when: custom_docs_exist.stat.exists == False
 
 # need to ignore errors because tenant may not have defined any APIs
-- name: copy tenant-specific apis
-  copy: src=tenants/{{ tenant_id }}/apis/ dest=/home/apim/{{ tenant_id }}/apis
+- name: Copy tenant-specific apis
+  copy:
+    src: "tenants/{{ tenant_id }}/apis/"
+    dest: "/home/apim/auth-services/{{ tenant_id }}/apis"
+    owner: apim
+    mode: 0640
   become: yes
-  become_user: apim
-  become_method: sudo
   ignore_errors: yes
 
-- name: copy custom oauth app
-  copy: src=tenants/{{ tenant_id }}/authenticationendpoint/ dest=/home/apim/{{ tenant_id }}/authenticationendpoint
+- name: Copy custom oauth app
+  copy:
+    src: "tenants/{{ tenant_id }}/authenticationendpoint/"
+    dest: "/home/apim/auth-services/{{ tenant_id }}/authenticationendpoint"
+    owner: apim
+    mode: 0640
   become: yes
-  become_user: apim
-  become_method: sudo
   when: update_custom_oauth_app
 
-- name: copy the apim public key
-  copy: src=tenants/{{ tenant_id }}/publickey dest=/home/apim/{{ tenant_id }}/publickey
+- name: Copy the apim public key
+  copy:
+    src: "tenants/{{ tenant_id }}/publickey"
+    dest: "/home/apim/auth-services/{{ tenant_id }}/publickey"
+    owner: apim
+    mode: 0640
   become: yes
-  become_user: apim
-  become_method: sudo
 
-- name: copy the id_admin_settings script
-  copy: src=update_id_admin_settings.sh dest=/home/apim/update_id_admin_settings.sh
+- name: Copy the id_admin_settings script
+  copy:
+    src: "update_id_admin_settings.sh"
+    dest: "/home/apim/auth-services/update_id_admin_settings.sh"
+    owner: apim
+    mode: 0750
   become: yes
-  become_user: apim
-  become_method: sudo
 
 # first, compile the compose file for the "green" deployment
 - set_fact:
     primary_auth_compose: True
 
 - name: Compile docker_compose template - A
-  template: src=docker-compose-noserf.yml.j2 dest=/home/apim/A/docker-compose-noserf.yml
+  template:
+    src: "docker-compose-noserf.yml.j2"
+    dest: "/home/apim/auth-services/A/docker-compose-noserf.yml"
+    owner: apim
+    mode: 0640
   become: yes
-  become_user: apim
-  become_method: sudo
 
 # now, compile the compose file for the "blue" deployment
 - set_fact:
     primary_auth_compose: False
 
 - name: Compile docker_compose template - B
-  template: src=docker-compose-noserf.yml.j2 dest=/home/apim/B/docker-compose-noserf.yml
+  template:
+    src: "docker-compose-noserf.yml.j2"
+    dest: "/home/apim/auth-services/B/docker-compose-noserf.yml"
+    owner: apim
+    mode: 0640
   become: yes
-  become_user: apim
-  become_method: sudo
 
-- name: Compile hap template
-  template: src=hap-compose.yml.j2 dest=/home/apim/hap-compose.yml
+- name: Compile HA Proxy template
+  template:
+    src: "hap-compose.yml.j2"
+    dest: "/home/apim/auth-services/hap-compose.yml"
+    owner: apim
+    mode: 0640
   become: yes
-  become_user: apim
-  become_method: sudo
 
 
-- name: Check for existing auth containers
-  shell: docker ps -aq
-  become: yes
-  become_user: apim
-  become_method: sudo
-  ignore_errors: yes
-  register: docker_ps_auth_containers
+#- name: Check for existing auth containers
+#  shell: /usr/local/bin/docker-compose -f /home/apim/auth-services/hap-compose.yml ps -q
+#  args:
+#    chdir: "/home/apim/auth-services"
+#  become: yes
+#  become_user: apim
+#  ignore_errors: yes
+#  register: docker_ps_auth_containers
 
 # note: this should almost never be used; exception is when wanting to competely start from scratch.
-- name: remove all auth containers
-  shell: "docker ps -aq | xargs --no-run-if-empty docker rm -f"
+- name: Remove all auth containers
+  shell: /usr/local/bin/docker-compose -f /home/apim/auth-services/{{ item }} down
+  args:
+    chdir: "/home/apim/auth-services/"
+  loop:
+    - hap-compose.yml
+    - A/docker-compose-noserf.yml
+    - B/docker-compose-noserf.yml
+  register: docker_rm_auth_containers
+  environment:
+    COMPOSE_HTTP_TIMEOUT: 20000
   ignore_errors: yes
   become: yes
   become_user: apim
-  become_method: sudo
-  when: remove_all_auth_containers == True and docker_ps_auth_containers.stdout
-  register: docker_rm_auth_containers
+  when: 
+    - remove_all_auth_containers|bool 
 
-- name: wait for the auth containers to finish deleting
-  pause: seconds=30
-  when: remove_all_auth_containers and docker_rm_auth_containers is success
 
-- name: pull auth containers images
-  shell: docker-compose -f /home/apim/hap-compose.yml pull --ignore-pull-failures
+- name: Wait for the auth containers to finish deleting
+  pause:
+    seconds: 30
+  when:
+    - remove_all_auth_containers|bool
+
+- name: Pull auth containers images
+  shell: /usr/local/bin/docker-compose -f /home/apim/auth-services/hap-compose.yml pull --ignore-pull-failures
+  args:
+    chdir: "/home/apim/auth-services"
   become: yes
   become_user: apim
-  become_method: sudo
   environment:
-      COMPOSE_HTTP_TIMEOUT: 20000
+    COMPOSE_HTTP_TIMEOUT: 20000
 
-- name: ensure haproxy is running
-  shell: docker-compose -f /home/apim/hap-compose.yml up -d
+- name: Ensure haproxy is running
+  shell: /usr/local/bin/docker-compose -f /home/apim/auth-services/hap-compose.yml up -d
+  args:
+    chdir: "/home/apim/auth-services"
   become: yes
   become_user: apim
-  become_method: sudo
   environment:
-      COMPOSE_HTTP_TIMEOUT: 20000
+    COMPOSE_HTTP_TIMEOUT: 20000
+
+- name: Copy script to update apim apache rewrite rules
+  template:
+    src: update-apache-rewrite-rules.sh.j2
+    dest: "/home/apim/auth-services/{{ tenant_id }}/update-apache-rewrite-rules.sh"
+    owner: apim
+    mode: 0750
 
 - name: Compile pull_images template
-  template: src=pull_images.sh.j2 dest=/home/apim/pull_images.sh
+  template:
+    src: "pull_images.sh.j2"
+    dest: "/home/apim/auth-services/pull_images.sh"
+    mode: 0750
+    owner: apim
   become: yes
-  become_user: apim
-  become_method: sudo
-
-- name: set permissions on pull_images.sh
-  acl: permissions="rwx" name=/home/apim/pull_images.sh state=present etype=user entity=apim
-  become: yes
-  become_user: root
-  become_method: sudo
 
 - name: Pull latest docker images
-  shell: sh pull_images.sh chdir=/home/apim
+  shell: /home/apim/auth-services/pull_images.sh
   become: yes
   become_user: apim
-  become_method: sudo
 
-- name: add deployment log entry.
+- name: Add deployment log entry.
   lineinfile:
     line: 'Deployer update {{ ansible_date_time.iso8601 }}'
     insertbefore: BOF
-    dest: /home/apim/logs/{{ tenant_id }}/deployment-logs
+    dest: /home/apim/auth-services/logs/{{ tenant_id }}/deployment-logs
     state: present
+    owner: apim
+    mode: 0640
   become: yes
-  become_user: apim
-  become_method: sudo

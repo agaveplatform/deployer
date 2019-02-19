@@ -25,6 +25,8 @@ deploy_core_api_templates: False
 # http or https
 core_api_protocol: http
 
+core_api_port: "{{ core_api_protocol === 'http' | ternary(80, 443) }}"
+
 # IP address for the core services.
 core_host: 172.17.42.1
 

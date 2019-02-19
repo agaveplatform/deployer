@@ -5,8 +5,8 @@ hap.{{ tenant_id }}.agave.tacc.utexas.edu:
         - "80:80"
         - "443:443"
     volumes:
-        - /home/apim/{{ tenant_id }}/{{ tenant_id }}.yml:/values.yml
-        - /home/apim/{{ tenant_id }}/passwords:/passwords
+        - /home/apim/auth-services/{{ tenant_id }}/{{ tenant_id }}.yml:/values.yml
+        - /home/apim/auth-services/{{ tenant_id }}/passwords:/passwords
     restart: unless-stopped
 
 {% endif %}
