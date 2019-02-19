@@ -1,9 +1,9 @@
 
 # usually will want this to be false to leverage the rolling deployment with 0 downtime. only set to true to
 # recover from an issue or more thoroughly test an update.
-remove_all_auth_containers: false
+remove_all_auth_containers: False
 
-# whether to remove the entire /home/apim directory. We do this only when deploying new instances of a tenant/platform
+# whether to remove the entire /home/apim/auth-services directory. We do this only when deploying new instances of a tenant/platform
 # to ensure files from previous deployments don't create issues.
 remove_apim_dir: False
 
