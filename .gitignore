@@ -46,3 +46,7 @@ pip-selfcheck.json
 ansible.log
 
 /deploy/host_files/mars
+local/vagrant/ebs-api.core.vdi
+local/vagrant/ebs-auth.vdi
+local/vagrant/ebs-db.vdi
+local/vagrant/ebs-worker.core.vdi
