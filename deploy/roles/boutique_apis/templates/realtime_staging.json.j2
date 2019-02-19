@@ -2,7 +2,7 @@
   "name": "Realtime",
   "version": "v2",
   "path": "/realtime",
-  "url": "http://{{ tenant_id }}.api.{{ agave_env }}.agaveapi.co/realtime",
+  "url": "{{ core_api_protocol }}://{{ tenant_id }}.api.{{ agave_env }}.agaveapi.co:{{ core_api_port }}/realtime",
   "visibility": "public",
   "roles": [],
   "methods": ["GET", "PUT", "POST", "HEAD", "DELETE"],

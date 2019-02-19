@@ -2,7 +2,7 @@
   "name": "Tags",
   "version": "v2",
   "path": "/tags",
-  "url": "http://{{ tenant_id }}.api.{{ agave_env }}.agaveapi.co/tags",
+  "url": "{{ core_api_protocol }}://{{ tenant_id }}.api.{{ agave_env }}.agaveapi.co:{{ core_api_port }}/tags",
   "visibility": "public",
   "roles": [],
   "methods": ["GET", "PUT", "POST", "HEAD", "DELETE"],

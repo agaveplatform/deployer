@@ -2,7 +2,7 @@
   "name": "UUIDs",
   "version": "v2",
   "path": "/uuids/v2",
-  "url": "http://{{ tenant_id }}.api.{{ agave_env }}.agaveapi.co/uuids",
+  "url": "{{ core_api_protocol }}://{{ tenant_id }}.api.{{ agave_env }}.agaveapi.co:{{ core_api_port }}/uuids",
   "visibility": "public",
   "roles": [],
   "methods": ["GET", "POST", "HEAD"],
