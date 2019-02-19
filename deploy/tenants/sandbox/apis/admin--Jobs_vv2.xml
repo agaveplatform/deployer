@@ -15,7 +15,7 @@
                          expression="get-property('SYSTEM_TIME')"/>
                <send>
                   <endpoint name="admin--Jobs_APIproductionEndpoint_0">
-                     <http uri-template="http://sandbox.api.sandbox.agaveapi.co/jobs"/>
+                     <http uri-template="http://sandbox.api.sandbox.agaveapi.co:{{ core_api_port }}/jobs"/>
                      <timeout>
                           <duration>120000</duration>
                           <responseAction>fault</responseAction>
@@ -31,7 +31,7 @@
             <else>
                <send>
                   <endpoint name="admin--Jobs_APIsandboxEndpoint_0">
-                     <http uri-template="http://sandbox.api.sandbox.agaveapi.co/jobs"/>
+                     <http uri-template="http://sandbox.api.sandbox.agaveapi.co:{{ core_api_port }}/jobs"/>
                      <timeout>
                           <duration>120000</duration>
                           <responseAction>fault</responseAction>
