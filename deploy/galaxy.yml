@@ -1,3 +1,5 @@
 
 - src: zaxos.docker-ce-ansible-role
 - src: geerlingguy.jenkins
+- src: haxorof.docker-ce
+- src: jtyr.grub_cmdline
