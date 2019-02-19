@@ -1,15 +1,17 @@
+---
+
 mysql_core:
   image: mysql:5.6
   restart: always
-{% if mysql_mem_limit %}   
+{% if mysql_mem_limit %}
   mem_limit: {{ mysql_mem_limit }}
 {% endif %}
   ports:
-    - '{{mysql_core_port|default('3301')}}:3306'
+  - '{{mysql_core_port|default('3301')}}:3306'
   volumes:
-    - /home/apim/my.cnf:/etc/mysql/my.cnf
+  - /home/apim/agave-db-onehost/my.cnf:/etc/mysql/my.cnf
 {%  if create_persistent_db_volumes %}
-    - /home/apim/mysql_core_data:/var/lib/mysql
+  - /home/apim/agave-db-onehost/mysql_core_data:/var/lib/mysql
 {% endif %}
   environment:
     MYSQL_DATABASE: agave-api
@@ -24,11 +26,11 @@ mysql_auth:
   mem_limit: {{ mysql_mem_limit }}
 {% endif %}
   ports:
-    - '{{mysql_port}}:3306'
+  - '{{mysql_port}}:3306'
   volumes:
-    - /home/apim/my.cnf:/etc/mysql/my.cnf
+  - /home/apim/agave-db-onehost/my.cnf:/etc/mysql/my.cnf
 {%  if create_persistent_db_volumes %}
-    - /home/apim/mysql_auth_data:/var/lib/mysql
+  - /home/apim/agave-db-onehost/mysql_auth_data:/var/lib/mysql
 {% endif %}
   environment:
     MYSQL_USER: {{mysql_tenant_user}}
@@ -42,10 +44,10 @@ mongo:
   mem_limit: {{ mongo_mem_limit }}
 {% endif %}
   ports:
-    - '{{mongodb_port}}:27017'
+  - '{{mongodb_port}}:27017'
 {%  if create_persistent_db_volumes %}
   volumes:
-    - /home/apim/mongo_data:/data
+  - /home/apim/agave-db-onehost/mongo_data:/data
 {% endif %}
   environment:
     MONGODB_USERNAME: {{ mongodb_user }}
@@ -55,22 +57,22 @@ beanstalk:
   image: agaveplatform/beanstalkd
   restart: always
   ports:
-    - '{{messaging_port}}:11300'
+  - '{{messaging_port}}:11300'
 {%  if create_persistent_db_volumes %}
   volumes:
-    - /home/apim/beanstalkd_data:/var/log/beanstalkd
+  - /home/apim/agave-db-onehost/beanstalkd_data:/var/log/beanstalkd
 {% endif %}
 
 slapd:
   image: agaveplatform/slapd
   restart: always
   ports:
-    - "389:389"
+  - "389:389"
   environment:
-      LDAP_DOMAIN: agaveapi
-      LDAP_ORGANISATION: "Agave"
-      LDAP_ROOTPASS: {{ auth_ldap_bind_password }}
+    LDAP_DOMAIN: agaveapi
+    LDAP_ORGANISATION: "Agave"
+    LDAP_ROOTPASS: {{ auth_ldap_bind_password }}
 {%  if create_persistent_db_volumes %}
   volumes:
-    - /home/apim/slapd_data:/data/ldap
+  - /home/apim/agave-db-onehost/slapd_data:/data/ldap
 {% endif %}
