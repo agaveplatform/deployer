@@ -5,58 +5,70 @@
 - include_vars: tenants/{{ tenant_id }}/{{ tenant_id }}.yml
 - include_vars: tenants/{{ tenant_id }}/{{ tenant_id }}_passwords
 
-- name: copy the id_admin_settings script
-  copy: src=update_id_admin_settings.sh dest=/home/apim/update_id_admin_settings.sh
+- name: Copy the id_admin_settings script
+  copy:
+    src: "update_id_admin_settings.sh"
+    dest: "/home/apim/auth-services/update_id_admin_settings.sh"
+    owner: "apim"
+    mode: 0640
   become: yes
   become_user: apim
 
-- name: compile the create_users script
-  template: src=create_users.sh.j2 dest=/home/apim/create_users.sh
+- name: Compile the create_users script
+  template:
+    src: "create_users.sh.j2"
+    dest: "/home/apim/auth-services/create_users.sh"
   become: yes
   become_user: apim
 
-- name: stop id_admin_temp container if running
+- name: Stop id_admin_temp container if running
   shell: docker kill id_admin_temp
   become: yes
   become_user: apim
   ignore_errors: yes
 
-- name: first, remove id_admin_temp container so role can be re-run even in case of partial execution
+- name: First, remove id_admin_temp container so role can be re-run even in case of partial execution
   shell: docker rm -f id_admin_temp
   become: yes
   become_user: apim
   ignore_errors: yes
 #  register: docker_rm_id_admin_temp
 
-- name: wait for the id_admin_temp container to finish deleting
+- name: Wait for the id_admin_temp container to finish deleting
   pause: seconds=30
 
-- name: create a one off id_admin container
-  shell: docker run -d -h {{host}} --name id_admin_temp -v /home/apim/create_users.sh:/create_users.sh -v /home/apim/update_id_admin_settings.sh:/update_id_admin_settings.sh -v /home/apim/{{ tenant_id }}/{{ tenant_id }}.yml:/values.yml -v /home/apim/{{ tenant_id }}/passwords:/passwords agaveplatform/agave_id_dedicated
+- name: Create a one off id_admin container
+  shell: |
+    docker run -d -h {{host}} --name id_admin_temp \
+          -v /home/apim/auth-services/create_users.sh:/create_users.sh \
+          -v /home/apim/auth-services/update_id_admin_settings.sh:/update_id_admin_settings.sh \
+          -v /home/apim/auth-services/{{ tenant_id }}/{{ tenant_id }}.yml:/values.yml \
+          -v /home/apim/auth-services/{{ tenant_id }}/passwords:/passwords \
+          agaveplatform/agave_id_dedicated
   become: yes
   become_user: apim
 
-- name: wait for the id_admin_temp container to finish coming online
+- name: Wait for the id_admin_temp container to finish coming online
   pause: seconds=30
 
 
-- name: update configs and restart apache
+- name: Update configs and restart apache
   shell: docker exec -i id_admin_temp sh /update_id_admin_settings.sh
   become: yes
   become_user: apim
 
-- name: add users
+- name: Add users
   shell: docker exec -i id_admin_temp sh /create_users.sh
   become: yes
   become_user: apim
 
-#- name: add users
-#  shell: sh create_users.sh chdir=/home/apim
+#- name: Add users
+#  shell: sh create_users.sh chdir=/home/apim/auth-services
 #  become: yes
 #  become_user: apim
 #  become_method: sudo
 
-- name: remove id_admin container
+- name: Remove id_admin container
   shell: docker rm -f id_admin_temp
   become: yes
   become_user: apim
